@@ -8,4 +8,8 @@ import { Router, RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'IzyTracking';
+
+  constructor(private router: Router) {
+    router.navigate(['/auth/sign-in']);
+  }
 }

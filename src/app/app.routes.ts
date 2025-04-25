@@ -7,29 +7,23 @@ import { DashboardLayoutComponent } from './modules/core/layouts/dashboard-layou
 
 export const routes: Routes = [
   {
-    path: '',
-    component: AppComponent,
+    path: 'auth',
+    component: AuthLayoutComponent,
     children: [
       {
-        path: 'auth',
-        component: AuthLayoutComponent,
-        children: [
-          {
-            path: 'sign-in',
-            component: SignInComponent,
-          },
-          {
-            path: 'sign-up',
-            component: SignUpComponent,
-          },
-        ],
+        path: 'sign-in',
+        component: SignInComponent,
       },
-
       {
-        path: 'dashboard',
-        component: DashboardLayoutComponent,
+        path: 'sign-up',
+        component: SignUpComponent,
       },
     ],
+  },
+
+  {
+    path: 'dashboard',
+    component: DashboardLayoutComponent,
   },
 
   {
