@@ -1,6 +1,6 @@
-<main class="w-full max-w-4xl mx-auto p-5 h-screen bg-white">
-  <div class="px-10 py-5 grid grid-cols-1 grid-rows-[1fr_auto] h-screen">
-    <main class="flex flex-col gap-3 mb-6">
+<main class="w-full max-w-4xl mx-auto h-screen bg-white">
+  <div class="pt-5 grid grid-cols-1 grid-rows-[1fr_auto] h-screen">
+    <main class="flex px-16 py-6 flex-col gap-3 mb-6">
       <div class="">
         <h2 class="text-4xl text-center mb-5">
           Bienvenido a <span class="font-bold">IzyTracking</span>.
@@ -13,12 +13,17 @@
         </p>
       </div>
       <router-outlet></router-outlet>
-    </main>
-
-    <footer class="">
       <p class="text-center text-gray-500 text-sm mt-5">
         © 2023 IzyTracking. Todos los derechos reservados.
       </p>
+    </main>
+
+    <footer class="relative">
+      <img
+        src="auth-image-001.png"
+        class="absolute bottom-0 h-[300px] w-full object-cover [object-position:50%_36%]"
+        alt=""
+      />
     </footer>
   </div>
 </main>
