@@ -20,6 +20,7 @@ import { ListBillingsComponent } from './modules/billing/components/list-billing
 import { CreateBillingComponent } from './modules/billing/components/create-billing/create-billing.component';
 import { ShowBillingComponent } from './modules/billing/components/show-billing/show-billing.component';
 import { ListReportsComponent } from './modules/reports/components/list-reports/list-reports.component';
+import { ShowServiceRequestComponent } from './modules/service-request/components/show-service-request/show-service-request.component';
 
 export const routes: Routes = [
   {
@@ -51,6 +52,10 @@ export const routes: Routes = [
           {
             path: 'create',
             component: ServiceRequestComponent,
+          },
+          {
+            path: 'show/:id',
+            component: ShowServiceRequestComponent,
           },
           {
             path: 'tariffs',

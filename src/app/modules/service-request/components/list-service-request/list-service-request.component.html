@@ -1,9 +1,97 @@
-<div class="w-full px-10 h-full">
+<div class="w-full px-10 h-full flex flex-col gap-5">
+  <h1 class="text-4xl font-semibold">Solicitudes de Servicios</h1>
   <div
-    class="-mt-10 max-h-[400px] rounded-lg h-full bg-gradient-to-b from-green-300 to-white flex flex-col justify-between"
+    class="max-h-[400px] rounded-lg h-full bg-gradient-to-b from-gray-200 to-transparent flex flex-col justify-between"
   >
-    <div class=""></div>
-    <div class="w-full h-[150px] px-6 py-3 rounded-b-lg bg-white">
+    <div class="grid grid-cols-3 overflow-y-hidden py-5 px-3.5 gap-6">
+      <div
+        class="flex flex-row items-center justify-between gap-5 px-4 py-2 mb-1 rounded-lg bg-gradient-to-b from-white to-transparent"
+      >
+        <img
+          class="w-32 h-32 rounded-full"
+          src="renders/automovil-render.png"
+          alt=""
+        />
+        <div class="flex w-full flex-row gap-2 items-center">
+          <div class="flex flex-col gap-3">
+            <h2 class="text-xl font-semibold">Referencia del Servicio</h2>
+
+            <p><b>Fecha:</b> dd/MM/YYYY</p>
+
+            <div class="flex flex-row w-full gap-2 justify-between">
+              <span class="text-gray-500"><b>Origen:</b> Origen A</span>
+              <span class="text-gray-500"><b>Destino:</b> Destino B</span>
+            </div>
+
+            <a
+              class="px-4 py-2 text-center w-full bg-black text-white rounded-lg hover:bg-black/80 transition duration-300 ease-in-out"
+              [routerLink]="['show/1']"
+            >
+              Revisar
+            </a>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-row items-center justify-between gap-5 px-4 py-2 mb-1 rounded-lg bg-gradient-to-b from-white to-transparent"
+      >
+        <img
+          class="w-32 h-32 rounded-full"
+          src="renders/automovil-render.png"
+          alt=""
+        />
+        <div class="flex w-full flex-row gap-2 items-center">
+          <div class="flex flex-col gap-3">
+            <h2 class="text-xl font-semibold">Referencia del Servicio</h2>
+
+            <p><b>Fecha:</b> dd/MM/YYYY</p>
+
+            <div class="flex flex-row w-full gap-2 justify-between">
+              <span class="text-gray-500"><b>Origen:</b> Origen A</span>
+              <span class="text-gray-500"><b>Destino:</b> Destino B</span>
+            </div>
+
+            <a
+              class="px-4 py-2 text-center w-full bg-black text-white rounded-lg hover:bg-black/80 transition duration-300 ease-in-out"
+              [routerLink]="['show/1']"
+            >
+              Revisar
+            </a>
+          </div>
+        </div>
+      </div>
+      <div
+        class="flex flex-row items-center justify-between gap-5 px-4 py-2 mb-1 rounded-lg bg-gradient-to-b from-white to-transparent"
+      >
+        <img
+          class="w-32 h-32 rounded-full"
+          src="renders/automovil-render.png"
+          alt=""
+        />
+        <div class="flex w-full flex-row gap-2 items-center">
+          <div class="flex flex-col gap-3">
+            <h2 class="text-xl font-semibold">Referencia del Servicio</h2>
+
+            <p><b>Fecha:</b> dd/MM/YYYY</p>
+
+            <div class="flex flex-row w-full gap-2 justify-between">
+              <span class="text-gray-500"><b>Origen:</b> Origen A</span>
+              <span class="text-gray-500"><b>Destino:</b> Destino B</span>
+            </div>
+
+            <a
+              class="px-4 py-2 text-center w-full bg-black text-white rounded-lg hover:bg-black/80 transition duration-300 ease-in-out"
+              [routerLink]="['show/1']"
+            >
+              Revisar
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="w-full h-[150px] px-6 py-3 rounded-b-lg bg-black text-white flex flex-col justify-center gap-4"
+    >
       <h2 class="text-3xl font-semibold">Actividad reciente de Servicios</h2>
 
       <div class="flex flex-row mt-3.5">
@@ -56,19 +144,36 @@
         </button>
       </h2>
       <div class="flex items-center gap-2">
-        <input
-          type="text"
-          placeholder="Buscar..."
-          class="px-4 py-2 min-w-sm border-b rounded-lg rounded-b-none focus:outline-none"
-        />
+        <div class="flex items-center border-b rounded-lg rounded-b-none">
+          <input
+            type="text"
+            placeholder="Buscar..."
+            class="px-4 py-2 min-w-sm focus:outline-none"
+          />
+          <button class="px-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5 text-gray-500"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1111.293 3.707l4 4a1 1 0 01-1.414 1.414l-4-4A6 6 0 012 8z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
     <div class="flex justify-center">
       <table class="w-full mt-5 bg-white rounded-xl">
         <thead class="text-gray-600 text-sm uppercase font-semibold">
           <tr>
-            <th class="px-6 py-3 text-center">Vehiculo</th>
-            <th class="px-6 py-3 text-center">Nombre</th>
+            <th class="px-6 py-3 text-center"></th>
+            <th class="px-6 py-3 text-center">Referencia</th>
             <th class="px-6 py-3 text-center">Estado</th>
             <th class="px-6 py-3 text-center">Fecha</th>
             <th class="px-6 py-3 text-center">Acciones</th>
@@ -76,20 +181,30 @@
         </thead>
         <tbody class="text-gray-600 text-sm font-light">
           <tr class="border-b border-gray-200 text-center">
-            <td class="px-6 py-4 whitespace-nowrap"></td>
+            <td
+              class="px-6 py-6 whitespace-nowrap group overflow-hidden to-white"
+            >
+              <div class="bg-radial from-gray-400/90 rounded-lg">
+                <img
+                  class="w-36 -translate-6 group-hover:translate-2 scale-150 transition aspect-square mx-auto"
+                  src="renders/automovil-render.png"
+                  alt=""
+                />
+              </div>
+            </td>
             <td class="px-6 py-4 whitespace-nowrap">Servicio 1</td>
             <td class="px-6 py-4 whitespace-nowrap">Pendiente</td>
             <td class="px-6 py-4 whitespace-nowrap">2023/10/01</td>
             <td
-              class="px-6 py-4 whitespace-nowrap flex flex-row gap-4 justify-center"
+              class="px-6 py-4 whitespace-nowrap flex flex-row gap-4 justify-center h-[200px] items-center"
             >
               <button
-                class="text-white cursor-pointer rounded-lg font-semibold bg-gradient-to-bl from-blue-500 to-blue-700 px-5 py-2 hover:brightness-110 transition"
+                class="text-white cursor-pointer rounded-lg font-semibold bg-black px-5 py-2 text-base hover:bg-black/80 transition shadow"
               >
-                Ver
+                Revisar
               </button>
               <button
-                class="text-white rounded-lg font-semibold bg-gradient-to-bl from-red-400 to-red-700 px-5 py-2 transition cursor-pointer hover:brightness-110"
+                class="text-black outline shadow text-base hover:bg-gray-300 cursor-pointer rounded-lg font-semibold px-5 py-2 hover:brightness-110 transition"
               >
                 Cancelar
               </button>
