@@ -6,12 +6,7 @@ import { DashboardSidebarComponent } from '../../components/dashboard-sidebar/da
 
 @Component({
   selector: 'app-dashboard-layout',
-  imports: [
-    RouterOutlet,
-    DashboardNavbarComponent,
-    DashboardFooterComponent,
-    DashboardSidebarComponent,
-  ],
+  imports: [RouterOutlet, DashboardNavbarComponent, DashboardSidebarComponent],
   templateUrl: './dashboard-layout.component.html',
   styleUrl: './dashboard-layout.component.css',
 })
