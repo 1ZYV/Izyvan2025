@@ -5,11 +5,11 @@
   >
     <div class="grid grid-cols-3 overflow-y-hidden py-5 px-3.5 gap-6">
       <div
-        class="flex flex-row items-center justify-between gap-5 px-4 py-2 mb-1 rounded-lg bg-gradient-to-b from-white to-transparent"
+        class="flex flex-row items-center justify-between gap-5 px-4 py-2 mb-1 bg-gradient-to-b from-white to-transparent"
       >
         <img
           class="w-32 h-32 rounded-full"
-          src="renders/automovil-render.png"
+          src="renders/van-render.png"
           alt=""
         />
         <div class="flex w-full flex-row gap-2 items-center">
@@ -33,11 +33,11 @@
         </div>
       </div>
       <div
-        class="flex flex-row items-center justify-between gap-5 px-4 py-2 mb-1 rounded-lg bg-gradient-to-b from-white to-transparent"
+        class="flex flex-row items-center justify-between gap-5 px-4 py-2 mb-1 bg-gradient-to-b from-white to-transparent"
       >
         <img
           class="w-32 h-32 rounded-full"
-          src="renders/automovil-render.png"
+          src="renders/bus-render.png"
           alt=""
         />
         <div class="flex w-full flex-row gap-2 items-center">
@@ -61,7 +61,7 @@
         </div>
       </div>
       <div
-        class="flex flex-row items-center justify-between gap-5 px-4 py-2 mb-1 rounded-lg bg-gradient-to-b from-white to-transparent"
+        class="flex flex-row items-center justify-between gap-5 px-4 py-2 mb-1 bg-gradient-to-b from-white to-transparent"
       >
         <img
           class="w-32 h-32 rounded-full"
@@ -198,11 +198,12 @@
             <td
               class="px-6 py-4 whitespace-nowrap flex flex-row gap-4 justify-center h-[200px] items-center"
             >
-              <button
+              <a
+                [routerLink]="['show/1']"
                 class="text-white cursor-pointer rounded-lg font-semibold bg-black px-5 py-2 text-base hover:bg-black/80 transition shadow"
               >
                 Revisar
-              </button>
+              </a>
               <button
                 class="text-black outline shadow text-base hover:bg-gray-300 cursor-pointer rounded-lg font-semibold px-5 py-2 hover:brightness-110 transition"
               >
