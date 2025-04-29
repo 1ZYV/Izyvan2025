@@ -17,6 +17,7 @@ export class ListServiceRequestComponent {
       originAdress: '123 Main St',
       destinationAddress: '456 Elm St',
       typeVehicle: 'Car',
+      ratings: 4,
     },
     {
       id: 2,
@@ -26,6 +27,7 @@ export class ListServiceRequestComponent {
       originAdress: '789 Maple Ave',
       destinationAddress: '101 Pine St',
       typeVehicle: 'Van',
+      ratings: 3,
     },
   ];
 }

@@ -1,5 +1,6 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { ServiceRequestRatingComponent } from '../service-request-rating/service-request-rating.component';
 
 type ServiceRequestCard = {
   id: number;
@@ -8,11 +9,12 @@ type ServiceRequestCard = {
   originAdress: string;
   destinationAddress: string;
   typeVehicle: string;
+  ratings: number;
 };
 
 @Component({
   selector: 'app-service-request-card',
-  imports: [RouterLink],
+  imports: [RouterLink, ServiceRequestRatingComponent],
   templateUrl: './service-request-card.component.html',
   styleUrl: './service-request-card.component.css',
 })
