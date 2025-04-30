@@ -1,1 +1,75 @@
-<p>history works!</p>
+<div class="grid grid-cols-2 h-full">
+  <div
+    class="w-full px-10 max-h-full border-r overflow-y-auto flex flex-col gap-5"
+  >
+    <h2
+      class="text-4xl justify-between font-semibold flex gap-3.5 items-center"
+    >
+      <span> Historial de Servicios </span>
+      <button
+        class="ml-2 hover:scale-105 px-3 py-2 rounded-lg transition duration-300 ease-in-out gap-3 bg-gradient-to-tl from-black to-[200%] to-white text-white flex items-center cursor-pointer"
+      >
+        <span class="text-base">Actualizar</span>
+        <span>
+          <app-refresh-icon></app-refresh-icon>
+        </span>
+      </button>
+    </h2>
+    <div class="flex items-center border-b rounded-lg rounded-b-none">
+      <input
+        type="text"
+        placeholder="Buscar..."
+        class="px-4 py-2 w-full focus:outline-none"
+      />
+      <span class="px-2 w-10">
+        <app-search-icon></app-search-icon>
+      </span>
+    </div>
+    <div class="flex max-w-full w-full overflow-x-auto justify-center">
+      <table class="mt-5 bg-white rounded-xl">
+        <thead class="text-gray-600 text-sm uppercase font-semibold">
+          <tr>
+            <th class="px-6 py-3 text-center"></th>
+            <th class="px-6 py-3 text-center">Referencia</th>
+
+            <th class="px-6 py-3 text-center">Dirección</th>
+            <th class="px-6 py-3 text-center">Precio</th>
+
+            <th class="px-6 py-3 text-center">Fecha</th>
+          </tr>
+        </thead>
+        <tbody class="text-gray-600 text-base">
+          <tr class="border-b border-gray-200 text-center">
+            <td
+              class="px-6 py-6 whitespace-nowrap group overflow-hidden to-white"
+            >
+              <div class="bg-radial from-gray-400/90 rounded-lg">
+                <img
+                  class="w-[50%] -translate-6 group-hover:translate-2 scale-150 transition aspect-square mx-auto"
+                  src="renders/automovil-render.png"
+                  alt=""
+                />
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">Servicio 1</td>
+            <td class="px-6 py-4 text-left text-sm text-pretty">
+              <p>
+                <span class="font-semibold">Origen</span> -
+                <span class="font-semibold">Destino</span>
+              </p>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">100.00 $</td>
+            <td class="px-6 py-4 whitespace-nowrap">2023/10/01</td>
+          </tr>
+          <!-- Repeat rows as needed -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <google-map height="100%" width="100%" [center]="center()" [zoom]="zoom()">
+    @if (directionsResults$(); as directionsResults) {
+    <map-directions-renderer [directions]="directionsResults" />
+    }
+  </google-map>
+</div>

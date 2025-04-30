@@ -5,8 +5,8 @@ import { RouterLink } from '@angular/router';
   selector: 'app-dashboard-sidebar',
   imports: [RouterLink],
   templateUrl: './dashboard-sidebar.component.html',
-  styleUrl: './dashboard-sidebar.component.css'
+  styleUrl: './dashboard-sidebar.component.css',
 })
 export class DashboardSidebarComponent {
-
+  userRole = 'agency';
 }

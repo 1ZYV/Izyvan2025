@@ -3,40 +3,7 @@
   <div
     class="max-h-[400px] rounded-lg h-full bg-gradient-to-b from-gray-200 to-transparent flex flex-col justify-between"
   >
-    <div class="flex flex-row justify-around overflow-y-hidden py-5 px-3.5 gap-6">
-      @for (serviceRequest of serviceRequests; track $index) {
-      <app-service-request-card [serviceRequest]="serviceRequest" />
-      }
-    </div>
-    <div
-      class="w-full h-[150px] px-6 py-3 rounded-b-lg bg-black text-white flex flex-col justify-center gap-4"
-    >
-      <h2 class="text-3xl font-semibold">Actividad reciente de Servicios</h2>
-
-      <div class="flex flex-row mt-3.5">
-        <a
-          [routerLink]="['create']"
-          class="px-5 py-2 bg-gray-200 flex flex-row gap-2 rounded-3xl text-black items-center hover:bg-gray-300 transition duration-300 ease-in-out"
-        >
-          <span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 inline-block mr-2"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 00-2 0v4.586l-1.293 1.293a1 1 0 001.414 1.414L10 10.414V5z"
-                clip-rule="evenodd"
-              />
-            </svg>
-          </span>
-          <span class="text-lg font-semibold">Agendar nuevo Servicio</span></a
-        >
-      </div>
-    </div>
+    <app-recent-service-request></app-recent-service-request>
   </div>
 
   <div class="overflow-x-auto mt-5 px-6 pb-2 py-4 bg-white rounded-xl">
@@ -48,17 +15,7 @@
         >
           <span class="text-base">Actualizar</span>
           <span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"
-              />
-            </svg>
+            <app-refresh-icon />
           </span>
         </button>
       </h2>
@@ -70,19 +27,7 @@
             class="px-4 py-2 min-w-sm focus:outline-none"
           />
           <button class="px-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 text-gray-500"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1111.293 3.707l4 4a1 1 0 01-1.414 1.414l-4-4A6 6 0 012 8z"
-                clip-rule="evenodd"
-              />
-            </svg>
+            <app-search-icon />
           </button>
         </div>
       </div>
@@ -98,7 +43,7 @@
             <th class="px-6 py-3 text-center">Acciones</th>
           </tr>
         </thead>
-        <tbody class="text-gray-600 text-sm font-light">
+        <tbody class="text-gray-600 text-base">
           <tr class="border-b border-gray-200 text-center">
             <td
               class="px-6 py-6 whitespace-nowrap group overflow-hidden to-white"

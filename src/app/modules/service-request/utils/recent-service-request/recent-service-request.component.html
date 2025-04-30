@@ -1,0 +1,36 @@
+<div class="flex flex-row justify-around overflow-y-hidden py-5 px-3.5 gap-6">
+  @for (serviceRequest of serviceRequests; track $index) {
+  <app-service-request-card [serviceRequest]="serviceRequest" />
+
+  }
+</div>
+
+<div
+  class="w-full h-[150px] px-6 py-3 rounded-b-lg bg-black text-white flex flex-col justify-center gap-4"
+>
+  <h2 class="text-3xl font-semibold">Actividad reciente de Servicios</h2>
+
+  <div class="flex flex-row mt-3.5">
+    <a
+      [routerLink]="['create']"
+      class="px-5 py-2 bg-gray-200 flex flex-row gap-2 rounded-3xl text-black items-center hover:bg-gray-300 transition duration-300 ease-in-out"
+    >
+      <span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6 inline-block mr-2"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 00-2 0v4.586l-1.293 1.293a1 1 0 001.414 1.414L10 10.414V5z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </span>
+      <span class="text-lg font-semibold">Agendar nuevo Servicio</span></a
+    >
+  </div>
+</div>

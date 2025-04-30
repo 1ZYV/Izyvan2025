@@ -1,6 +1,7 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ServiceRequestRatingComponent } from '../service-request-rating/service-request-rating.component';
+import { ViewIconComponent } from '../../../core/utils/icons/view-icon/view-icon.component';
 
 type ServiceRequestCard = {
   id: number;
@@ -14,7 +15,7 @@ type ServiceRequestCard = {
 
 @Component({
   selector: 'app-service-request-card',
-  imports: [RouterLink, ServiceRequestRatingComponent],
+  imports: [RouterLink, ServiceRequestRatingComponent, ViewIconComponent],
   templateUrl: './service-request-card.component.html',
   styleUrl: './service-request-card.component.css',
 })

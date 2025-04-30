@@ -5,7 +5,7 @@
     </div>
   </div>
   <ul>
-    <li class="overflow-hidden hover:bg-black/10">
+    <li class="overflow-hidden hover:bg-white/10">
       <a
         [routerLink]="['services']"
         class="w-full block py-4 hover:translate-x-3 px-6 transition"
@@ -13,7 +13,7 @@
         >Servicios</a
       >
     </li>
-    <li class="overflow-hidden hover:bg-black/10">
+    <li class="overflow-hidden hover:bg-white/10">
       <a
         [routerLink]="['history']"
         class="w-full block py-4 hover:translate-x-3 px-6 transition"
@@ -21,7 +21,9 @@
         >Historial</a
       >
     </li>
-    <li class="overflow-hidden hover:bg-black/10">
+
+    @if (userRole === "transportist") {
+    <li class="overflow-hidden hover:bg-white/10">
       <a
         [routerLink]="['vehicles']"
         class="w-full block py-4 hover:translate-x-3 px-6 transition"
@@ -29,7 +31,8 @@
         >Vehiculos</a
       >
     </li>
-    <li class="overflow-hidden hover:bg-black/10">
+    } @if (userRole === "tourism") {
+    <li class="overflow-hidden hover:bg-white/10">
       <a
         [routerLink]="['guides']"
         class="w-full block py-4 hover:translate-x-3 px-6 transition"
@@ -37,7 +40,8 @@
         >Guias</a
       >
     </li>
-    <li class="overflow-hidden hover:bg-black/10">
+    } @if (userRole === "transportist" || userRole === "tourism") {
+    <li class="overflow-hidden hover:bg-white/10">
       <a
         [routerLink]="['tariffs']"
         class="w-full block py-4 hover:translate-x-3 px-6 transition"
@@ -45,7 +49,8 @@
         >Tarifas</a
       >
     </li>
-    <li class="overflow-hidden hover:bg-black/10">
+    }
+    <li class="overflow-hidden hover:bg-white/10">
       <a
         [routerLink]="['billing']"
         class="w-full block py-4 hover:translate-x-3 px-6 transition"

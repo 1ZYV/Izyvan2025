@@ -1,0 +1,33 @@
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { ServiceRequestCardComponent } from '../service-request-card/service-request-card.component';
+
+@Component({
+  selector: 'app-recent-service-request',
+  imports: [RouterLink, ServiceRequestCardComponent],
+  templateUrl: './recent-service-request.component.html',
+  styleUrl: './recent-service-request.component.css',
+})
+export class RecentServiceRequestComponent {
+  serviceRequests = [
+    {
+      id: 1,
+      nameReference: 'Service Request 1',
+      date: '2023/10/01',
+      originAdress: '123 Main St',
+      destinationAddress: '456 Elm St',
+      typeVehicle: 'Car',
+      ratings: 4,
+    },
+    {
+      id: 2,
+
+      nameReference: 'Service Request 2',
+      date: '2023/10/02',
+      originAdress: '789 Maple Ave',
+      destinationAddress: '101 Pine St',
+      typeVehicle: 'Van',
+      ratings: 3,
+    },
+  ];
+}
