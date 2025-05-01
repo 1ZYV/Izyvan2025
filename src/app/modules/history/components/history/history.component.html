@@ -39,36 +39,55 @@
           </tr>
         </thead>
         <tbody class="text-gray-600 text-base">
+          @for (travel of travels(); track travel.id) {
           <tr class="border-b border-gray-200 text-center">
             <td
               class="px-6 py-6 whitespace-nowrap group overflow-hidden to-white"
             >
               <div class="bg-radial from-gray-400/90 rounded-lg">
+                @if (travel.vehicleType === "VAN"){
                 <img
-                  class="w-[50%] -translate-6 group-hover:translate-2 scale-150 transition aspect-square mx-auto"
+                  class="-translate-6 group-hover:translate-2 scale-150 transition mx-auto w-40 object-contain h-32 aspect-square"
+                  src="renders/van-render.png"
+                  alt=""
+                />
+                } @if (travel.vehicleType === "BUS"){
+                <img
+                  class="-translate-6 group-hover:translate-2 scale-150 transition mx-auto w-40 object-contain h-32 aspect-square"
+                  src="renders/bus-render.png"
+                  alt=""
+                />
+                } @if (travel.vehicleType === "AUTOMOVIL"){
+                <img
+                  class="-translate-6 group-hover:translate-2 scale-150 transition mx-auto w-40 object-contain h-32 aspect-square"
                   src="renders/automovil-render.png"
                   alt=""
                 />
+                }
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">Servicio 1</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              {{ travel.nameReference }}
+            </td>
             <td class="px-6 py-4 text-left text-sm text-pretty">
               <p>
-                <span class="font-semibold">Origen</span> -
-                <span class="font-semibold">Destino</span>
+                <span class="font-semibold">{{ travel.originAddress }}</span> -
+                <span class="font-semibold">{{
+                  travel.destinationAddress
+                }}</span>
               </p>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">100.00 $</td>
-            <td class="px-6 py-4 whitespace-nowrap">2023/10/01</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ travel.price }} $</td>
+            <td class="px-6 py-4 whitespace-nowrap">{{ travel.date }}</td>
           </tr>
-          <!-- Repeat rows as needed -->
+          }
         </tbody>
       </table>
     </div>
   </div>
 
   <google-map height="100%" width="100%" [center]="center()" [zoom]="zoom()">
-    @if (directionsResults$(); as directionsResults) {
+    @if (directionsResults(); as directionsResults) {
     <map-directions-renderer [directions]="directionsResults" />
     }
   </google-map>
