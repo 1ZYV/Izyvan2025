@@ -1,21 +1,21 @@
 <div
   class="flex flex-row max-w-[600px] w-full items-center rounded-lg justify-between gap-5 px-4 py-2 mb-1 bg-gradient-to-b from-white to-transparent"
 >
-  <div class="flex flex-col items-center gap-2.5">
+  <div class="flex flex-col items-center gap-2.5 max-w-[200px]">
     <span class="w-full flex justify-center items-center">
-      @if (serviceRequest()?.typeVehicle === "Van"){
+      @if (serviceRequest()?.vehicleType === "VAN"){
       <img
         class="w-40 object-contain h-32 aspect-square"
         src="renders/van-render.png"
         alt=""
       />
-      } @if (serviceRequest()?.typeVehicle === "Bus"){
+      } @if (serviceRequest()?.vehicleType === "BUS"){
       <img
         class="w-40 object-contain h-32 aspect-square"
         src="renders/bus-render.png"
         alt=""
       />
-      } @if (serviceRequest()?.typeVehicle === "Car"){
+      } @if (serviceRequest()?.vehicleType === "AUTOMOVIL"){
       <img
         class="w-40 object-contain h-32 aspect-square"
         src="renders/automovil-render.png"
@@ -24,7 +24,7 @@
       }
     </span>
 
-    <app-service-request-rating [ratings]="serviceRequest()?.ratings || 0" />
+    <app-service-request-rating [ratings]="serviceRequest()?.rating || 0" />
   </div>
   <div class="flex w-full flex-row gap-2 justify-center">
     <div class="flex flex-col gap-3">
@@ -34,11 +34,13 @@
 
       <p><b>Fecha:</b> {{ serviceRequest()?.date }}</p>
 
-      <div class="flex flex-row text-sm w-full gap-2 justify-between">
-        <span class="text-gray-500"
-          ><b>Origen:</b> {{ serviceRequest()?.originAdress }}</span
+      <div class="flex flex-row text-sm w-[300px] gap-2 justify-center">
+        <span
+          class="text-gray-500 text-ellipsis overflow-hidden whitespace-nowrap"
+          ><b>Origen:</b> {{ serviceRequest()?.originAddress }}</span
         >
-        <span class="text-gray-500"
+        <span
+          class="text-gray-500 w-full text-ellipsis overflow-hidden whitespace-nowrap"
           ><b>Destino:</b> {{ serviceRequest()?.destinationAddress }}</span
         >
       </div>

@@ -2,15 +2,16 @@ import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ServiceRequestRatingComponent } from '../service-request-rating/service-request-rating.component';
 import { ViewIconComponent } from '../../../core/utils/icons/view-icon/view-icon.component';
+import { VehicleType } from '../../../core/utils/enums/EnumVehicleTyoe';
 
 type ServiceRequestCard = {
   id: number;
   nameReference: string;
   date: string;
-  originAdress: string;
+  originAddress: string;
   destinationAddress: string;
-  typeVehicle: string;
-  ratings: number;
+  vehicleType: VehicleType;
+  rating?: number;
 };
 
 @Component({

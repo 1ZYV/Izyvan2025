@@ -1,5 +1,6 @@
 import { ServiceStatus } from '../enums/EnumServiceStatus';
 import { VehicleType } from '../enums/EnumVehicleTyoe';
+import { ITariff } from './ITariff';
 
 export interface IServiceRequest {
   id: number;
@@ -12,4 +13,9 @@ export interface IServiceRequest {
   vehicleType: VehicleType;
   date: string;
   price: number;
+
+  rating?: number;
+
+  tariff?: ITariff;
+  tourismProviderId?: number;
 }

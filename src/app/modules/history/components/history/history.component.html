@@ -26,67 +26,53 @@
         <app-search-icon></app-search-icon>
       </span>
     </div>
-    <div class="flex max-w-full w-full overflow-x-auto justify-center">
-      <table class="mt-5 bg-white rounded-xl">
-        <thead class="text-gray-600 text-sm uppercase font-semibold">
-          <tr>
-            <th class="px-6 py-3 text-center"></th>
-
-            <th class="px-6 py-3 text-center">Dirección</th>
-            <th class="px-6 py-3 text-center">Precio</th>
-
-            <th class="px-6 py-3 text-center">Fecha</th>
-          </tr>
-        </thead>
-        <tbody class="text-gray-600 text-base">
-          @for (travel of travels(); track travel.id) {
-          <tr
-            class="border-b group border-gray-200 text-center cursor-pointer hover:bg-gray-100 transition duration-300 ease-in-out"
-            (click)="
-              handleRequestDirections(
-                travel.originAddress,
-                travel.destinationAddress
-              )
-            "
-          >
-            <td class="px-6 py-6 whitespace-nowrap overflow-hidden to-white">
-              <div class="bg-radial from-gray-400/90 rounded-lg">
-                @if (travel.vehicleType === "VAN"){
-                <img
-                  class="-translate-6 group-hover:translate-2 scale-150 transition mx-auto w-40 object-contain h-32 aspect-square"
-                  src="renders/van-render.png"
-                  alt=""
-                />
-                } @if (travel.vehicleType === "BUS"){
-                <img
-                  class="-translate-6 group-hover:translate-2 scale-150 transition mx-auto w-40 object-contain h-32 aspect-square"
-                  src="renders/bus-render.png"
-                  alt=""
-                />
-                } @if (travel.vehicleType === "AUTOMOVIL"){
-                <img
-                  class="-translate-6 group-hover:translate-2 scale-150 transition mx-auto w-40 object-contain h-32 aspect-square"
-                  src="renders/automovil-render.png"
-                  alt=""
-                />
-                }
-              </div>
-            </td>
-
-            <td class="px-6 py-4 text-left text-sm text-pretty">
-              <p>
-                <span class="font-semibold">{{ travel.originAddress }}</span> -
-                <span class="font-semibold">{{
-                  travel.destinationAddress
-                }}</span>
+    <div class="flex max-w-full w-full h-full overflow-x-auto justify-center">
+      <div class="mt-5 bg-white rounded-xl divide-y divide-gray-200">
+        @for (travel of travels(); track travel.id) {
+        <div
+          class="p-4 group cursor-pointer group hover:bg-gray-100 transition duration-300 ease-in-out"
+          (click)="
+            handleRequestDirections(
+              travel.originAddress,
+              travel.destinationAddress
+            )
+          "
+        >
+          <div class="flex items-center gap-4">
+            <div class="bg-radial from-gray-400/90 rounded-lg">
+              @if (travel.vehicleType === "VAN"){
+              <img
+                class="scale-150 transition mx-auto w-20 object-contain h-16 aspect-square group-hover:translate-1.5"
+                src="renders/van-render.png"
+                alt=""
+              />
+              } @if (travel.vehicleType === "BUS"){
+              <img
+                class="scale-150 transition mx-auto w-20 object-contain h-16 aspect-square group-hover:translate-1.5"
+                src="renders/bus-render.png"
+                alt=""
+              />
+              } @if (travel.vehicleType === "AUTOMOVIL"){
+              <img
+                class="scale-150 transition mx-auto w-20 object-contain h-16 aspect-square group-hover:translate-1.5"
+                src="renders/automovil-render.png"
+                alt=""
+              />
+              }
+            </div>
+            <div class="flex-1">
+              <p class="text-sm text-pretty font-semibold">
+                {{ travel.originAddress }} - {{ travel.destinationAddress }}
               </p>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ travel.price }} $</td>
-            <td class="px-6 py-4 whitespace-nowrap">{{ travel.date }}</td>
-          </tr>
-          }
-        </tbody>
-      </table>
+              <p class="text-gray-600 text-sm">{{ travel.date }}</p>
+            </div>
+            <div class="text-right">
+              <p class="text-gray-800 font-semibold">{{ travel.price }} $</p>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
     </div>
   </div>
 

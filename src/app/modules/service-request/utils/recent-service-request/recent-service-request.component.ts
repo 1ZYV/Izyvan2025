@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ServiceRequestCardComponent } from '../service-request-card/service-request-card.component';
+import { IServiceRequest } from '../../../core/utils/interfaces/IServicerRequest';
+import { ServiceStatus } from '../../../core/utils/enums/EnumServiceStatus';
+import { VehicleType } from '../../../core/utils/enums/EnumVehicleTyoe';
 
 @Component({
   selector: 'app-recent-service-request',
@@ -9,25 +12,45 @@ import { ServiceRequestCardComponent } from '../service-request-card/service-req
   styleUrl: './recent-service-request.component.css',
 })
 export class RecentServiceRequestComponent {
-  serviceRequests = [
+  serviceRequests = signal<IServiceRequest[]>([
     {
       id: 1,
-      nameReference: 'Service Request 1',
-      date: '2023/10/01',
-      originAdress: '123 Main St',
-      destinationAddress: '456 Elm St',
-      typeVehicle: 'Car',
-      ratings: 4,
+      nameReference: 'Viaje 1',
+      status: ServiceStatus.COMPLETED,
+      pin: '1234',
+      originAddress: 'Aeropuerto El Dorado, Bogotá',
+      destinationAddress: 'Universidad Nacional de Colombia, Bogotá',
+      numberOfPassengers: 3,
+      vehicleType: VehicleType.BUS,
+      date: '2023-10-01',
+      price: 10000,
+      rating: 4,
     },
     {
       id: 2,
-
-      nameReference: 'Service Request 2',
-      date: '2023/10/02',
-      originAdress: '789 Maple Ave',
-      destinationAddress: '101 Pine St',
-      typeVehicle: 'Van',
-      ratings: 3,
+      nameReference: 'Viaje 2',
+      status: ServiceStatus.ACCEPTED,
+      pin: '5678',
+      originAddress: 'Chicago, IL',
+      destinationAddress: 'New York, NY',
+      numberOfPassengers: 2,
+      vehicleType: VehicleType.AUTOMOVIL,
+      date: '2023-10-02',
+      price: 15000,
+      rating: 5,
     },
-  ];
+    {
+      id: 3,
+      nameReference: 'Viaje 3',
+      status: ServiceStatus.IN_PROGRESS,
+      pin: '91011',
+      originAddress: 'White House, Washington, D.C.',
+      destinationAddress: 'Capitol Hill, Washington, D.C.',
+      numberOfPassengers: 4,
+      vehicleType: VehicleType.VAN,
+      date: '2023-10-03',
+      price: 20000,
+      rating: 3,
+    },
+  ]);
 }

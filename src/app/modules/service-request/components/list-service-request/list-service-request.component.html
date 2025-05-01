@@ -44,38 +44,98 @@
           </tr>
         </thead>
         <tbody class="text-gray-600 text-base">
+          @for (serviceRequest of serviceRequests(); track $index) {
+
           <tr class="border-b border-gray-200 text-center">
             <td
               class="px-6 py-6 whitespace-nowrap group overflow-hidden to-white"
             >
               <div class="bg-radial from-gray-400/90 rounded-lg">
+                @if (serviceRequest?.vehicleType === "VAN"){
                 <img
-                  class="w-36 -translate-6 group-hover:translate-2 scale-150 transition aspect-square mx-auto"
+                  class="w-40 object-contain h-32 -translate-6 group-hover:translate-2 scale-150 transition aspect-square mx-auto"
+                  src="renders/van-render.png"
+                  alt=""
+                />
+                } @if (serviceRequest?.vehicleType === "BUS"){
+                <img
+                  class="w-40 object-contain h-32 -translate-6 group-hover:translate-2 scale-150 transition aspect-square mx-auto"
+                  src="renders/bus-render.png"
+                  alt=""
+                />
+                } @if (serviceRequest?.vehicleType === "AUTOMOVIL"){
+                <img
+                  class="w-40 object-contain h-32 -translate-6 group-hover:translate-2 scale-150 transition aspect-square mx-auto"
                   src="renders/automovil-render.png"
                   alt=""
                 />
+                }
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">Servicio 1</td>
-            <td class="px-6 py-4 whitespace-nowrap">Pendiente</td>
-            <td class="px-6 py-4 whitespace-nowrap">2023/10/01</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              {{ serviceRequest?.nameReference }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="px-3 py-1 rounded-full text-white text-sm font-semibold"
+                [ngClass]="{
+                  'bg-blue-500': serviceRequest?.status === 'PROCESSING',
+                  'bg-green-500': serviceRequest?.status === 'ACCEPTED',
+                  'bg-yellow-500': serviceRequest?.status === 'ARRIVING',
+                  'bg-orange-500': serviceRequest?.status === 'IN_PROGRESS',
+                  'bg-teal-500': serviceRequest?.status === 'COMPLETED',
+                  'bg-red-500': serviceRequest?.status === 'AGENCY_CANCELED',
+                  'bg-red-400': serviceRequest?.status === 'PROVIDER_CANCELED',
+                  'bg-gray-500':
+                    serviceRequest?.status === 'NO_PROVIDER_AVAILABLE',
+                  'bg-gray-300': !serviceRequest?.status
+                }"
+              >
+                {{
+                  serviceRequest?.status === "PROCESSING"
+                    ? "En Proceso"
+                    : serviceRequest?.status === "ACCEPTED"
+                    ? "Aceptado"
+                    : serviceRequest?.status === "ARRIVING"
+                    ? "En Camino"
+                    : serviceRequest?.status === "IN_PROGRESS"
+                    ? "En Progreso"
+                    : serviceRequest?.status === "COMPLETED"
+                    ? "Completado"
+                    : serviceRequest?.status === "AGENCY_CANCELED"
+                    ? "Cancelado por Agencia"
+                    : serviceRequest?.status === "PROVIDER_CANCELED"
+                    ? "Cancelado por Proveedor"
+                    : serviceRequest?.status === "NO_PROVIDER_AVAILABLE"
+                    ? "Sin Proveedor"
+                    : "Estado Desconocido"
+                }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              {{ serviceRequest?.date }}
+            </td>
             <td
               class="px-6 py-4 whitespace-nowrap flex flex-row gap-4 justify-center h-[200px] items-center"
             >
               <a
-                [routerLink]="['show/1']"
-                class="text-white cursor-pointer rounded-lg font-semibold bg-black px-5 py-2 text-base hover:bg-black/80 transition shadow"
+                [routerLink]="['show', serviceRequest?.id]"
+                class="text-white cursor-pointer w-full rounded-lg font-semibold bg-black px-5 py-2 text-base hover:bg-black/80 transition shadow"
               >
                 Revisar
               </a>
+              @if (serviceRequest?.status !== 'COMPLETED' &&
+              serviceRequest?.status !== 'AGENCY_CANCELED' &&
+              serviceRequest?.status !== 'PROVIDER_CANCELED') {
               <button
-                class="text-black outline shadow text-base hover:bg-gray-300 cursor-pointer rounded-lg font-semibold px-5 py-2 hover:brightness-110 transition"
+                class="text-black outline w-full shadow text-base hover:bg-gray-300 cursor-pointer rounded-lg font-semibold px-5 py-2 hover:brightness-110 transition"
               >
                 Cancelar
               </button>
+              }
             </td>
           </tr>
-          <!-- Repeat rows as needed -->
+          }
         </tbody>
       </table>
     </div>

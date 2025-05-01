@@ -1,5 +1,5 @@
 <div class="flex flex-row justify-around overflow-y-hidden py-5 px-3.5 gap-6">
-  @for (serviceRequest of serviceRequests; track $index) {
+  @for (serviceRequest of serviceRequests().slice(-2); track $index) {
   <app-service-request-card [serviceRequest]="serviceRequest" />
 
   }
