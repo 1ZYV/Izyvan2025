@@ -1,4 +1,12 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { RefreshIconComponent } from '../../../core/utils/icons/refresh-icon/refresh-icon.component';
 import { SearchIconComponent } from '../../../core/utils/icons/search-icon/search-icon.component';
 
@@ -13,27 +21,27 @@ import { VehicleType } from '../../../core/utils/enums/EnumVehicleTyoe';
 import { ServiceStatus } from '../../../core/utils/enums/EnumServiceStatus';
 import { GeocodingService } from '../../../core/services/google-maps/geocoding/geocoding.service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { firstValueFrom } from 'rxjs';
+import {
+  firstValueFrom,
+  forkJoin,
+  map,
+  Observable,
+  switchMap,
+  tap,
+} from 'rxjs';
+import { ServiceRequestMapDirectionComponent } from '../../../service-request/utils/service-request-map-direction/service-request-map-direction.component';
 
 @Component({
   selector: 'app-history',
   imports: [
     RefreshIconComponent,
     SearchIconComponent,
-    GoogleMap,
-    GoogleMapsModule,
-    MapDirectionsRenderer,
+    ServiceRequestMapDirectionComponent,
   ],
   templateUrl: './history.component.html',
   styleUrl: './history.component.css',
 })
-export class HistoryComponent {
-  mapDirectionsService = inject(MapDirectionsService);
-  geoCodingService = inject(GeocodingService);
-
-  center = signal<google.maps.LatLngLiteral>({ lat: 0, lng: 0 });
-  zoom = signal<number>(5);
-
+export class HistoryComponent implements OnInit {
   travels = signal<IServiceRequest[]>([
     {
       id: 1,
@@ -73,51 +81,23 @@ export class HistoryComponent {
     },
   ]);
 
-  readonly directionsResults = signal<google.maps.DirectionsResult | undefined>(
-    undefined
+  private serviceRequestMapDirectionComponent = viewChild(
+    ServiceRequestMapDirectionComponent
   );
 
-  request = signal<google.maps.DirectionsRequest>({
-    origin: { lat: 0, lng: 0 },
-    destination: { lat: 0, lng: 0 },
-    travelMode: google.maps.TravelMode?.DRIVING || 'DRIVING',
-  });
+  center = signal<google.maps.LatLngLiteral>({ lat: 0, lng: 0 });
+  zoom = signal<number>(5);
 
-  originCoords = signal<google.maps.LatLng | undefined>(undefined);
-  destinationCoords = signal<google.maps.LatLng | undefined>(undefined);
-
-  constructor() {
-    this.handleRequestDirections(
-      this.travels()[0].originAddress,
-      this.travels()[0].destinationAddress
-    );
+  constructor() {}
+  ngOnInit(): void {
+    this.handleRefresh();
   }
 
-  async handleRequestDirections(
-    originAddress: string,
-    destinationAddress: string
-  ) {
-    // Obtener las coordenadas de origen y destino
-    const origin = await firstValueFrom(
-      this.geoCodingService.getGeocodingData(originAddress)
+  handleTravelClick(travel: IServiceRequest) {
+    this.serviceRequestMapDirectionComponent()?.handleRequestDirections(
+      travel.originAddress,
+      travel.destinationAddress
     );
-    const destination = await firstValueFrom(
-      this.geoCodingService.getGeocodingData(destinationAddress)
-    );
-
-    if (origin && destination) {
-      // Actualizar la solicitud de direcciones
-      this.request.set({
-        origin: origin as google.maps.LatLng,
-        destination: destination as google.maps.LatLng,
-        travelMode: google.maps.TravelMode?.DRIVING || 'DRIVING',
-      });
-
-      // Realizar la solicitud de direcciones y actualizar el resultado
-      this.mapDirectionsService.route(this.request()).subscribe((result) => {
-        this.directionsResults.set(result.result || undefined);
-      });
-    }
   }
 
   handleSearch(event: Event) {

@@ -1,0 +1,10 @@
+<google-map
+  [height]="height()"
+  [width]="width()"
+  [center]="center()"
+  [zoom]="zoom()"
+>
+  @if (directionsResults(); as directionsResults) {
+  <map-directions-renderer [directions]="directionsResults" />
+  }
+</google-map>

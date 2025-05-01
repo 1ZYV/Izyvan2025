@@ -31,12 +31,7 @@
         @for (travel of travels(); track travel.id) {
         <div
           class="p-4 group cursor-pointer group hover:bg-gray-100 transition duration-300 ease-in-out"
-          (click)="
-            handleRequestDirections(
-              travel.originAddress,
-              travel.destinationAddress
-            )
-          "
+          (click)="handleTravelClick(travel)"
         >
           <div class="flex items-center gap-4">
             <div class="bg-radial from-gray-400/90 rounded-lg">
@@ -76,9 +71,10 @@
     </div>
   </div>
 
-  <google-map height="100%" width="100%" [center]="center()" [zoom]="zoom()">
-    @if (directionsResults(); as directionsResults) {
-    <map-directions-renderer [directions]="directionsResults" />
-    }
-  </google-map>
+  <app-service-request-map-direction
+    [center]="center()"
+    [width]="'100%'"
+    [height]="'100%'"
+    [travel]="travels()[0]"
+  />
 </div>
