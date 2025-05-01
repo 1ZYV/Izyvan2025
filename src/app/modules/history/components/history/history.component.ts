@@ -52,8 +52,8 @@ export class HistoryComponent {
       nameReference: 'Viaje 2',
       status: ServiceStatus.ACCEPTED,
       pin: '5678',
-      originAddress: 'Calle 3 #3-3',
-      destinationAddress: 'Calle 4 #4-4',
+      originAddress: 'Chicago, IL',
+      destinationAddress: 'New York, NY',
       numberOfPassengers: 2,
       vehicleType: VehicleType.AUTOMOVIL,
       date: '2023-10-02',
@@ -64,8 +64,8 @@ export class HistoryComponent {
       nameReference: 'Viaje 3',
       status: ServiceStatus.IN_PROGRESS,
       pin: '91011',
-      originAddress: 'Calle 5 #5-5',
-      destinationAddress: 'Calle 6 #6-6',
+      originAddress: 'White House, Washington, D.C.',
+      destinationAddress: 'Capitol Hill, Washington, D.C.',
       numberOfPassengers: 4,
       vehicleType: VehicleType.VAN,
       date: '2023-10-03',
@@ -78,10 +78,13 @@ export class HistoryComponent {
   );
 
   request = signal<google.maps.DirectionsRequest>({
-    origin: { lat: 10.3908494, lng: -75.4752086 },
-    destination: { lat: 10.3889344, lng: -75.479825 },
+    origin: { lat: 0, lng: 0 },
+    destination: { lat: 0, lng: 0 },
     travelMode: google.maps.TravelMode?.DRIVING || 'DRIVING',
   });
+
+  originCoords = signal<google.maps.LatLng | undefined>(undefined);
+  destinationCoords = signal<google.maps.LatLng | undefined>(undefined);
 
   constructor() {
     this.handleRequestDirections(
@@ -90,32 +93,94 @@ export class HistoryComponent {
     );
   }
 
-  handleRequestDirections(originAddress: string, destinationAddress: string) {
-    // 1. Convertir cada llamada en una Signal
-    const originSignal = this.geoCodingService.getGeocodingData(originAddress);
-    const destSignal =
-      this.geoCodingService.getGeocodingData(destinationAddress);
+  async handleRequestDirections(
+    originAddress: string,
+    destinationAddress: string
+  ) {
+    // Obtener las coordenadas de origen y destino
+    const origin = await firstValueFrom(
+      this.geoCodingService.getGeocodingData(originAddress)
+    );
+    const destination = await firstValueFrom(
+      this.geoCodingService.getGeocodingData(destinationAddress)
+    );
 
-    // 2. Computed opcional: combinar o transformar
-    const bothCoords = computed(() => ({
-      origin: originSignal(),
-      destination: destSignal(),
-    }));
+    if (origin && destination) {
+      // Actualizar la solicitud de direcciones
+      this.request.set({
+        origin: origin as google.maps.LatLng,
+        destination: destination as google.maps.LatLng,
+        travelMode: google.maps.TravelMode?.DRIVING || 'DRIVING',
+      });
 
-    // 3. Efecto: ejecutar la función cuando cambie el valor de la Signal
-    effect(() => {
-      const coords = bothCoords();
-      if (coords.origin && coords.destination) {
-        this.request.set({
-          origin: { ...coords.origin } as google.maps.LatLng,
-          destination: { ...coords.destination } as google.maps.LatLng,
-          travelMode: google.maps.TravelMode?.DRIVING || 'DRIVING',
-        });
+      // Realizar la solicitud de direcciones y actualizar el resultado
+      this.mapDirectionsService.route(this.request()).subscribe((result) => {
+        this.directionsResults.set(result.result || undefined);
+      });
+    }
+  }
 
-        this.mapDirectionsService.route(this.request()).subscribe((result) => {
-          this.directionsResults.set(result.result || undefined);
-        });
-      }
-    });
+  handleSearch(event: Event) {
+    const input = (event.target as HTMLInputElement)?.value
+      .trim()
+      .toLowerCase();
+
+    if (!input) {
+      this.handleRefresh();
+      return;
+    }
+
+    const filteredTravels = this.travels().filter(
+      (travel) =>
+        travel.originAddress.toLowerCase().includes(input) ||
+        travel.destinationAddress.toLowerCase().includes(input)
+    );
+
+    if (filteredTravels.length > 0) {
+      this.travels.set(filteredTravels);
+    } else {
+      this.handleRefresh();
+    }
+  }
+
+  handleRefresh() {
+    this.travels.set([
+      {
+        id: 1,
+        nameReference: 'Viaje 1',
+        status: ServiceStatus.COMPLETED,
+        pin: '1234',
+        originAddress: 'Aeropuerto El Dorado, Bogotá',
+        destinationAddress: 'Universidad Nacional de Colombia, Bogotá',
+        numberOfPassengers: 3,
+        vehicleType: VehicleType.BUS,
+        date: '2023-10-01',
+        price: 10000,
+      },
+      {
+        id: 2,
+        nameReference: 'Viaje 2',
+        status: ServiceStatus.ACCEPTED,
+        pin: '5678',
+        originAddress: 'Chicago, IL',
+        destinationAddress: 'New York, NY',
+        numberOfPassengers: 2,
+        vehicleType: VehicleType.AUTOMOVIL,
+        date: '2023-10-02',
+        price: 15000,
+      },
+      {
+        id: 3,
+        nameReference: 'Viaje 3',
+        status: ServiceStatus.IN_PROGRESS,
+        pin: '91011',
+        originAddress: 'White House, Washington, D.C.',
+        destinationAddress: 'Capitol Hill, Washington, D.C.',
+        numberOfPassengers: 4,
+        vehicleType: VehicleType.VAN,
+        date: '2023-10-03',
+        price: 20000,
+      },
+    ]);
   }
 }

@@ -20,6 +20,7 @@
         type="text"
         placeholder="Buscar..."
         class="px-4 py-2 w-full focus:outline-none"
+        (keyup)="handleSearch($event)"
       />
       <span class="px-2 w-10">
         <app-search-icon></app-search-icon>
@@ -30,7 +31,6 @@
         <thead class="text-gray-600 text-sm uppercase font-semibold">
           <tr>
             <th class="px-6 py-3 text-center"></th>
-            <th class="px-6 py-3 text-center">Referencia</th>
 
             <th class="px-6 py-3 text-center">Dirección</th>
             <th class="px-6 py-3 text-center">Precio</th>
@@ -40,10 +40,16 @@
         </thead>
         <tbody class="text-gray-600 text-base">
           @for (travel of travels(); track travel.id) {
-          <tr class="border-b border-gray-200 text-center">
-            <td
-              class="px-6 py-6 whitespace-nowrap group overflow-hidden to-white"
-            >
+          <tr
+            class="border-b group border-gray-200 text-center cursor-pointer hover:bg-gray-100 transition duration-300 ease-in-out"
+            (click)="
+              handleRequestDirections(
+                travel.originAddress,
+                travel.destinationAddress
+              )
+            "
+          >
+            <td class="px-6 py-6 whitespace-nowrap overflow-hidden to-white">
               <div class="bg-radial from-gray-400/90 rounded-lg">
                 @if (travel.vehicleType === "VAN"){
                 <img
@@ -66,9 +72,7 @@
                 }
               </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              {{ travel.nameReference }}
-            </td>
+
             <td class="px-6 py-4 text-left text-sm text-pretty">
               <p>
                 <span class="font-semibold">{{ travel.originAddress }}</span> -
