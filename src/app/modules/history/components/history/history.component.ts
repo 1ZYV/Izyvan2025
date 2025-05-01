@@ -31,8 +31,8 @@ export class HistoryComponent {
 
   constructor(public mapDirectionsService: MapDirectionsService) {
     const request = signal<google.maps.DirectionsRequest>({
-      origin: { lat: 0, lng: 0 },
-      destination: { lat: 30, lng: -30 },
+      origin: { lat: 10.3908494, lng: -75.4752086 },
+      destination: { lat: 10.3889344, lng: -75.479825 },
       travelMode: google.maps.TravelMode?.DRIVING || 'DRIVING',
     });
 
