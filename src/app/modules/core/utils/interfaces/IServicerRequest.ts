@@ -18,4 +18,5 @@ export interface IServiceRequest {
 
   tariff?: ITariff;
   tourismProviderId?: number;
+  transportProviderId?: number;
 }

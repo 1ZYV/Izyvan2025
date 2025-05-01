@@ -1,7 +1,51 @@
 <div class="w-full px-10 h-full flex flex-col gap-5">
-  <app-service-request-map-direction
-    [travel]="travel()"
-    [height]="'400px'"
-    [width]="'400px'"
-  />
+  <div class="flex flex-col gap-3 h-fit">
+    <h1 class="text-4xl font-semibold">Detalles de la solicitud</h1>
+    <app-service-request-map-direction
+      [travel]="travel()"
+      [height]="'400px'"
+      [width]="'800px'"
+    />
+  </div>
+
+  <div
+    class="flex flex-row justify-between border items-center w-full max-w-[800px] group bg-white rounded-xl px-6 py-2"
+  >
+    <div class="flex flex-col gap-3">
+      <h1 class="text-2xl font-semibold">Detalles del viaje</h1>
+      <div class="flex flex-col gap-2 bg-white rounded-xl">
+        <p class="text-gray-800">Fecha: {{ travel().date }}</p>
+        <p class="text-gray-800">Precio: {{ travel().tariff?.price }} $</p>
+      </div>
+      <p class="text-gray-800 font-semibold text-lg">
+        Proveedor de Transporte
+        <br />
+        <span class="text-gray-600 font-normal text-base">
+          {{ transporterProvider()?.name }}
+        </span>
+      </p>
+    </div>
+
+    <div class="bg-radial from-gray-400/90 p-10 rounded-lg">
+      @if (travel().vehicleType === "VAN"){
+      <img
+        class="w-40 object-contain h-32 -translate-6 group-hover:translate-2 scale-150 transition aspect-square mx-auto"
+        src="renders/van-render.png"
+        alt=""
+      />
+      } @if (travel().vehicleType === "BUS"){
+      <img
+        class="w-40 object-contain h-32 -translate-6 group-hover:translate-2 scale-150 transition aspect-square mx-auto"
+        src="renders/bus-render.png"
+        alt=""
+      />
+      } @if (travel().vehicleType === "AUTOMOVIL"){
+      <img
+        class="w-40 object-contain h-32 -translate-6 group-hover:translate-2 scale-150 transition aspect-square mx-auto"
+        src="renders/automovil-render.png"
+        alt=""
+      />
+      }
+    </div>
+  </div>
 </div>
