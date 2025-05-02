@@ -33,7 +33,6 @@ export class ListServiceRequestComponent {
       numberOfPassengers: 3,
       vehicleType: VehicleType.BUS,
       date: '2023-10-01',
-      price: 10000,
     },
     {
       id: 2,
@@ -45,7 +44,6 @@ export class ListServiceRequestComponent {
       numberOfPassengers: 2,
       vehicleType: VehicleType.AUTOMOVIL,
       date: '2023-10-02',
-      price: 15000,
     },
     {
       id: 3,
@@ -57,7 +55,6 @@ export class ListServiceRequestComponent {
       numberOfPassengers: 4,
       vehicleType: VehicleType.VAN,
       date: '2023-10-03',
-      price: 20000,
     },
   ]);
 }

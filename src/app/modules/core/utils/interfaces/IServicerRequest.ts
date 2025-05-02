@@ -12,7 +12,6 @@ export interface IServiceRequest {
   numberOfPassengers: number;
   vehicleType: VehicleType;
   date: string;
-  price: number;
 
   rating?: number;
 
