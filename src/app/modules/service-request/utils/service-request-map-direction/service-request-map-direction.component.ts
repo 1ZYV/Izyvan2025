@@ -23,7 +23,7 @@ import { IServiceRequest } from '../../../core/utils/interfaces/IServicerRequest
   styleUrl: './service-request-map-direction.component.css',
 })
 export class ServiceRequestMapDirectionComponent implements OnInit {
-  travel = input.required<IServiceRequest>();
+  travel = input<IServiceRequest | undefined>();
 
   mapDirectionsService = inject(MapDirectionsService);
   geoCodingService = inject(GeocodingService);
