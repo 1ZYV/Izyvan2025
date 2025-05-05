@@ -22,7 +22,7 @@
       >
     </li>
 
-    @if (userRole === "transportist") {
+    @if (userRole === "provider" && providerType === "transportist") {
     <li class="overflow-hidden hover:bg-white/10">
       <a
         [routerLink]="['vehicles']"
@@ -31,7 +31,7 @@
         >Vehiculos</a
       >
     </li>
-    } @if (userRole === "tourism") {
+    } @if (userRole === "provider" && providerType === "tourism") {
     <li class="overflow-hidden hover:bg-white/10">
       <a
         [routerLink]="['guides']"
@@ -40,7 +40,7 @@
         >Guias</a
       >
     </li>
-    } @if (userRole === "transportist" || userRole === "tourism") {
+    } @if (userRole === "provider") {
     <li class="overflow-hidden hover:bg-white/10">
       <a
         [routerLink]="['tariffs']"
@@ -59,12 +59,12 @@
       >
     </li>
     <li class="overflow-hidden hover:bg-red-500/10">
-      <a
-        [routerLink]="['auth/sign-in']"
-        class="w-full block py-4 hover:translate-x-3 px-6 transition"
-        href=""
-        >Salir</a
+      <button
+        class="w-full block text-left cursor-pointer py-4 hover:translate-x-3 px-6 transition"
+        (click)="handleLogout()"
       >
+        Salir
+      </button>
     </li>
   </ul>
 </nav>

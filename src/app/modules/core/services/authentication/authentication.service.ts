@@ -17,12 +17,21 @@ export class AuthenticationService {
 
   users: IUser[] = [
     {
-      username: 'admin',
-      password: 'admin',
+      username: 'transportist',
+      password: 'transportist',
+      role: 'provider',
+      providerType: 'transportist',
     },
     {
-      username: 'user',
-      password: 'user',
+      username: 'agency',
+      password: 'agency',
+      role: 'agency',
+    },
+    {
+      username: 'tourist',
+      password: 'tourist',
+      role: 'provider',
+      providerType: 'tourism',
     },
   ];
 
