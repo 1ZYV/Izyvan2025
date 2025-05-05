@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { AuthenticationService } from '../../../core/services/authentication/authentication.service';
-import { Form, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Form, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
@@ -14,8 +14,8 @@ export class SignInComponent {
   authenticationService = inject(AuthenticationService);
 
   loginForm: FormGroup = new FormGroup({
-    username: new FormGroup(''),
-    password: new FormGroup(''),
+    username: new FormControl(''),
+    password: new FormControl(''),
   });
 
   handleSignIn() {
