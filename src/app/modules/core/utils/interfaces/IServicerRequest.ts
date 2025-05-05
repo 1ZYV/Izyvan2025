@@ -1,6 +1,7 @@
 import { ServiceStatus } from '../enums/EnumServiceStatus';
 import { VehicleType } from '../enums/EnumVehicleTyoe';
 import { ITariff } from './ITariff';
+import { IRouteEvent } from './IRouteEvent';
 
 export interface IServiceRequest {
   id: number;
@@ -18,4 +19,6 @@ export interface IServiceRequest {
   tariff?: ITariff;
   tourismProviderId?: number;
   transportProviderId?: number;
+
+  routeEvents?: IRouteEvent[];
 }
