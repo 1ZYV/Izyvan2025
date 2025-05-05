@@ -11,6 +11,7 @@ import { BrowserModule } from '@angular/platform-browser';
 })
 export class PlaceAutocompleteComponent {
   autocomplete!: google.maps.places.PlaceAutocompleteElement;
+  
 
   constructor(private ngZone: NgZone) {}
 
@@ -19,7 +20,7 @@ export class PlaceAutocompleteComponent {
       //@ts-ignore
       const placeAutocomplete = new google.maps.places.PlaceAutocompleteElement(
         {
-          componentRestrictions: { country: 'col' },
+          componentRestrictions: { country: ['CO'] },
           requestedLanguage: 'es',
         }
       );

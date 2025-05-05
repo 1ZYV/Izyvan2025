@@ -21,6 +21,7 @@ import { CreateBillingComponent } from './modules/billing/components/create-bill
 import { ShowBillingComponent } from './modules/billing/components/show-billing/show-billing.component';
 import { ListReportsComponent } from './modules/reports/components/list-reports/list-reports.component';
 import { ShowServiceRequestComponent } from './modules/service-request/components/show-service-request/show-service-request.component';
+import { authenticationGuard } from './modules/auth/guard/authentication.guard';
 
 export const routes: Routes = [
   {
@@ -39,6 +40,7 @@ export const routes: Routes = [
   },
 
   {
+    canMatch: [authenticationGuard],
     path: 'dashboard',
     component: DashboardLayoutComponent,
     children: [
