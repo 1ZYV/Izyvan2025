@@ -10,6 +10,7 @@ import { BrowserModule } from '@angular/platform-browser';
   styleUrl: './place-autocomplete.component.css',
 })
 export class PlaceAutocompleteComponent {
+<<<<<<< HEAD
   constructor(private ngZone: NgZone) {}
 
   ngAfterViewInit(): void {
@@ -21,6 +22,22 @@ export class PlaceAutocompleteComponent {
     });
     //@ts-ignore
     document.querySelector('#autocomplete')?.appendChild(autocomplete);
+=======
+  autocomplete!: google.maps.places.PlaceAutocompleteElement;
+  
+
+  constructor(private ngZone: NgZone) {}
+
+  async ngAfterViewInit(): Promise<void> {
+    const initializeAutocomplete = () => {
+      //@ts-ignore
+      const placeAutocomplete = new google.maps.places.PlaceAutocompleteElement(
+        {
+          componentRestrictions: { country: ['CO'] },
+          requestedLanguage: 'es',
+        }
+      );
+>>>>>>> 4c50351b99681a8616952e3702e40bafce3984b4
 
     autocomplete.addEventListener('gmp-select', async (e: any) => {
       const place = e.placePrediction.toPlace();

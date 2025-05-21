@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
-import { AuthenticationService } from '../../../core/services/authentication/authentication.service';
+
 import { Form, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthenticationService } from '../../services/authentication.service';
 
 @Component({
   selector: 'app-sign-in',
