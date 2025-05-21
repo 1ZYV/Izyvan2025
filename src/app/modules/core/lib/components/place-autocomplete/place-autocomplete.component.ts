@@ -10,36 +10,26 @@ import { BrowserModule } from '@angular/platform-browser';
   styleUrl: './place-autocomplete.component.css',
 })
 export class PlaceAutocompleteComponent {
-  autocomplete!: google.maps.places.PlaceAutocompleteElement;
-
   constructor(private ngZone: NgZone) {}
 
-  async ngAfterViewInit(): Promise<void> {
-    const initializeAutocomplete = () => {
-      //@ts-ignore
-      const placeAutocomplete = new google.maps.places.PlaceAutocompleteElement(
-        {
-          componentRestrictions: { country: 'col' },
-          requestedLanguage: 'es',
-        }
-      );
+  ngAfterViewInit(): void {
+    //@ts-ignore
+    const autocomplete = new google.maps.places.PlaceAutocompleteElement({
+      componentRestrictions: { country: ['co'] },
+      requestedLanguage: 'es',
+      locationBias: { lat: 10.4071, lng: -75.5134, radius: 50000 },
+    });
+    //@ts-ignore
+    document.querySelector('#autocomplete')?.appendChild(autocomplete);
 
-      //@ts-ignore
-      document.querySelector('#autocomplete')?.appendChild(placeAutocomplete);
+    autocomplete.addEventListener('gmp-select', async (e: any) => {
+      const place = e.placePrediction.toPlace();
+      await place.fetchFields({
+        fields: ['displayName', 'formattedAddress', 'location'],
+      });
+      console.log('Place:', JSON.stringify(place.location, null, 2));
+    });
 
-      placeAutocomplete.addEventListener(
-        'gmp-select',
-        //@ts-ignore
-        async ({ placePrediction }) => {
-          const place = placePrediction.toPlace();
-          await place.fetchFields({
-            fields: ['displayName', 'formattedAddress', 'location'],
-          });
-          console.log('Place:', JSON.stringify(place.location, null, 2));
-        }
-      );
-    };
-
-    initializeAutocomplete();
+    console.log(document.querySelector('#autocomplete'));
   }
 }

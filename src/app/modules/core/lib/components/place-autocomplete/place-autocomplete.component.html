@@ -1,2 +1,20 @@
 <!-- autocomplete.component.html -->
-<div class="" id="autocomplete"></div>
+<div class="focus:border-0" id="autocomplete"></div>
+
+<style>
+  /* Style the Google Places Autocomplete dropdown */
+
+  .pac-item {
+    padding: 0.75rem 1rem !important;
+    font-size: 1rem !important;
+    color: #374151 !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+    background: #fff !important;
+  }
+
+  .pac-item:hover,
+  .pac-item-selected {
+    background: #2563eb !important;
+    color: #ffffff !important;
+  }
+</style>
