@@ -1,20 +1,20 @@
-<!-- autocomplete.component.html -->
-<div class="focus:border-0" id="autocomplete"></div>
-
-<style>
-  /* Style the Google Places Autocomplete dropdown */
-
-  .pac-item {
-    padding: 0.75rem 1rem !important;
-    font-size: 1rem !important;
-    color: #374151 !important;
-    border-bottom: 1px solid #f3f4f6 !important;
-    background: #fff !important;
-  }
-
-  .pac-item:hover,
-  .pac-item-selected {
-    background: #2563eb !important;
-    color: #ffffff !important;
-  }
-</style>
+<div class="space-y-4">
+  <div class="flex flex-col gap-2">
+    <label for="origen" class="font-medium">Origen</label>
+    <input
+      id="origen"
+      type="text"
+      placeholder="Origen"
+      class="border border-blue-400 rounded px-4 py-2 w-full"
+    />
+  </div>
+  <div class="flex flex-col gap-2">
+    <label for="destino" class="font-medium">Destino</label>
+    <input
+      id="destino"
+      type="text"
+      placeholder="Destino"
+      class="border border-green-400 rounded px-4 py-2 w-full"
+    />
+  </div>
+</div>

@@ -1,52 +1,105 @@
-import { Component, ElementRef, NgZone, ViewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { GoogleMapsModule } from '@angular/google-maps';
-import { BrowserModule } from '@angular/platform-browser';
+import {
+  Component,
+  NgZone, // Service to run work inside or outside Angular's zone
+  AfterViewInit, // Lifecycle hook
+  Output, // Decorator for output properties
+  EventEmitter, // Class to emit custom events
+} from '@angular/core';
+import { BookingServiceService } from '../../../../service-request/services/booking-service.service'; // Service to manage booking state
 
 @Component({
   selector: 'app-place-autocomplete',
-  imports: [FormsModule, GoogleMapsModule],
+  standalone: true, // Indicates that the component is standalone
   templateUrl: './place-autocomplete.component.html',
-  styleUrl: './place-autocomplete.component.css',
+  styleUrls: ['./place-autocomplete.component.css'],
 })
-export class PlaceAutocompleteComponent {
-<<<<<<< HEAD
-  constructor(private ngZone: NgZone) {}
+export class PlaceAutocompleteComponent implements AfterViewInit {
+  // Stores the selected origin location (LatLng)
+  origen: google.maps.LatLng | null = null;
+  // Stores the selected destination location (LatLng)
+  destino: google.maps.LatLng | null = null;
 
+  // Output event emitter for when both origin and destination are selected
+  @Output() ubicacionesSeleccionadas = new EventEmitter<{
+    origen: google.maps.LatLng;
+    destino: google.maps.LatLng;
+  }>();
+
+  /**
+   * Constructor for the component.
+   * @param ngZone Angular's NgZone service.
+   * @param bookingService Service to manage booking origin and destination.
+   */
+  constructor(
+    private ngZone: NgZone,
+    private bookingService: BookingServiceService
+  ) {}
+
+  /**
+   * Lifecycle hook called after the component's view has been initialized.
+   * Initializes Google Places Autocomplete for origin and destination inputs.
+   */
   ngAfterViewInit(): void {
-    //@ts-ignore
-    const autocomplete = new google.maps.places.PlaceAutocompleteElement({
-      componentRestrictions: { country: ['co'] },
-      requestedLanguage: 'es',
-      locationBias: { lat: 10.4071, lng: -75.5134, radius: 50000 },
-    });
-    //@ts-ignore
-    document.querySelector('#autocomplete')?.appendChild(autocomplete);
-=======
-  autocomplete!: google.maps.places.PlaceAutocompleteElement;
-  
-
-  constructor(private ngZone: NgZone) {}
-
-  async ngAfterViewInit(): Promise<void> {
-    const initializeAutocomplete = () => {
-      //@ts-ignore
-      const placeAutocomplete = new google.maps.places.PlaceAutocompleteElement(
-        {
-          componentRestrictions: { country: ['CO'] },
-          requestedLanguage: 'es',
-        }
-      );
->>>>>>> 4c50351b99681a8616952e3702e40bafce3984b4
-
-    autocomplete.addEventListener('gmp-select', async (e: any) => {
-      const place = e.placePrediction.toPlace();
-      await place.fetchFields({
-        fields: ['displayName', 'formattedAddress', 'location'],
+    // Initialize autocomplete for the 'origen' input
+    this.initAutocomplete('origen', (location) => {
+      this.ngZone.run(() => {
+        // Run inside Angular's zone to ensure UI updates
+        this.origen = location;
+        console.log('Origen:', location); // Log the selected origin
+        this.bookingService.origin.set(location); // Update origin in booking service
+        this.checkAndEmitUbicaciones(); // Check if both locations are selected and emit
       });
-      console.log('Place:', JSON.stringify(place.location, null, 2));
     });
 
-    console.log(document.querySelector('#autocomplete'));
+    // Initialize autocomplete for the 'destino' input
+    this.initAutocomplete('destino', (location) => {
+      this.ngZone.run(() => {
+        // Run inside Angular's zone
+        this.destino = location;
+        console.log('Destino:', location); // Log the selected destination
+        this.bookingService.destiny.set(location); // Update destination in booking service
+        this.checkAndEmitUbicaciones(); // Check if both locations are selected and emit
+      });
+    });
+  }
+
+  /**
+   * Checks if both origin and destination are selected and emits an event.
+   */
+  private checkAndEmitUbicaciones() {
+    const currentOrigin = this.bookingService.origin(); // Get current origin from service
+    const currentDestiny = this.bookingService.destiny(); // Get current destination from service
+    if (currentOrigin && currentDestiny) {
+      // If both are selected
+      // Emit the selected locations
+      this.ubicacionesSeleccionadas.emit({
+        origen: currentOrigin,
+        destino: currentDestiny,
+      });
+    }
+  }
+
+  /**
+   * Initializes Google Places Autocomplete on a given input element.
+   * @param inputId The ID of the HTML input element.
+   * @param callback A function to call when a place is selected.
+   */
+  private initAutocomplete(
+    inputId: string,
+    callback: (location: google.maps.LatLng | null) => void
+  ) {
+    const input = document.getElementById(inputId) as HTMLInputElement; // Get the input element
+    // Create a new Autocomplete instance, restricted to Colombia and fetching geometry
+    const autocomplete = new google.maps.places.Autocomplete(input, {
+      componentRestrictions: { country: 'COL' }, // Restrict to Colombia
+      fields: ['geometry'], // Request only geometry data (location)
+    });
+
+    // Add a listener for the 'place_changed' event
+    autocomplete.addListener('place_changed', () => {
+      const place = autocomplete.getPlace(); // Get the selected place
+      const location = place.geometry?.location || null; // Extract the location (LatLng)
+      callback(location); // Call the callback with the location
+    });
   }
 }

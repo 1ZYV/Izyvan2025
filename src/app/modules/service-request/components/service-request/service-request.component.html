@@ -1,4 +1,5 @@
 <div class="grid grid-cols-2 h-full">
+  <!-- Left column for service request form -->
   <div class="w-2xl rounded-sm mx-auto py-4 px-10 h-fit flex flex-col gap-5">
     <h2
       class="text-4xl border-b py-2.5 text-center border-gray-300 font-semibold"
@@ -6,12 +7,88 @@
       Solicitar nuevo Servicio
     </h2>
 
-    <app-place-autocomplete />
+    <!-- Section for selecting origin and destination -->
+    <div class="flex flex-col gap-5">
+      <h3 class="text-xl font-semibold">
+        Selecciona el lugar de origen y destino
+      </h3>
+      <!-- Autocomplete component for place selection -->
+      <app-place-autocomplete />
+
+      <!-- Section for selecting vehicle type -->
+      <div class="flex flex-col gap-2">
+        <label for="vehicleType" class="text-gray-500">
+          Selecciona el tipo de vehículo
+        </label>
+        <!-- Component for vehicle type selection -->
+        <app-vehicle-type-selector />
+      </div>
+    </div>
+
+    <!-- Section for additional service information -->
+    <div class="flex flex-col gap-5">
+      <h3 class="text-xl font-semibold">Información adicional del servicio</h3>
+
+      <!-- Section for service date and time -->
+      <div class="flex flex-row gap-5">
+        <div class="flex flex-col w-full gap-2">
+          <label for="date" class="text-gray-500">Fecha del servicio</label>
+          <input
+            type="date"
+            class="border border-gray-300 w-full block rounded px-4 py-2"
+            name="date"
+            id="date"
+          />
+        </div>
+        <div class="flex flex-col w-full gap-2">
+          <label for="time" class="text-gray-500">Hora del servicio</label>
+          <input
+            type="time"
+            class="border border-gray-300 w-full block rounded px-4 py-2"
+            name="time"
+            id="time"
+          />
+        </div>
+      </div>
+
+      <!-- Section for service reference -->
+      <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-2">
+          <label for="reference" class="text-gray-500">
+            Referencia del servicio
+          </label>
+          <input
+            type="text"
+            class="border border-gray-300 rounded px-4 py-2"
+            name="reference"
+            id="reference"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Section for service description -->
+    <div class="flex flex-col gap-5">
+      <div class="flex flex-col gap-2">
+        <label for="description" class="text-gray-500">
+          Descripción del servicio
+        </label>
+        <textarea
+          name="description"
+          id="description"
+          rows="4"
+          class="border border-gray-300 rounded px-4 py-2"
+        ></textarea>
+      </div>
+    </div>
   </div>
+  <!-- Right column for displaying map directions -->
   <app-service-request-map-direction
     [center]="center()"
     [width]="'100%'"
     [height]="'100%'"
     [zoom]="zoom()"
+    [coords]="true"
   />
+  <!-- Indicates that map should use coordinates from booking service -->
 </div>
