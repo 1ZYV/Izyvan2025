@@ -1,10 +1,15 @@
 <div class="flex flex-col w-full h-full gap-5 px-10">
   <h1 class="text-4xl font-semibold">Solicitudes de Servicios</h1>
-  <div
+
+  @if(userRole === "agency"){
+    <div
     class="max-h-[400px] rounded-lg h-full bg-gradient-to-b from-gray-200 to-transparent flex flex-col justify-between"
   >
     <app-recent-service-request></app-recent-service-request>
   </div>
+  }
+
+  
 
   <div class="px-6 py-4 pb-2 mt-5 overflow-x-auto bg-white rounded-xl">
     <div class="flex items-center justify-between mb-4">

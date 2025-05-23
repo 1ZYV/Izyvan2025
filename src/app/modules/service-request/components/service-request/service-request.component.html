@@ -25,8 +25,8 @@
 
     <div class="flex flex-col gap-2 mx-4">
       <div class="flex flex-row items-center gap-3">
-        <input class="size-6" type="checkbox" name="Incluir servicio de turismo" id="">
-        <label for="" class="text-lg font-semibold">Incluir servicio de guía tusiristico</label>
+        <input class="size-6" id="hasTourism" type="checkbox" name="Incluir servicio de turismo" >
+        <label for="hasTourism" class="text-lg font-semibold">Incluir servicio de guía tusiristico</label>
       </div>
 
       <p class="text-sm text-gray-400">Este servicio es opcional, se le cobrará una tarifa adicional para los guias de
@@ -41,7 +41,7 @@
       <div class="flex flex-row gap-5">
         <div class="flex flex-col w-full gap-2">
           <label for="date" class="text-gray-500">Fecha del servicio</label>
-          <input type="date" class="border border-gray-300 w-full block rounded px-4 py-2" name="date" id="date" />
+          <input type="date" class="border border-gray-300 w-full block rounded px-4 py-2" name="date" id="date"/>
         </div>
         <div class="flex flex-col w-full gap-2">
           <label for="time" class="text-gray-500">Hora del servicio</label>
@@ -61,7 +61,7 @@
         <label for="passengerNumber" class="text-gray-500">
           Número de pasajeros
         </label>
-        <input type="number" min="0" max="30" class="border border-gray-300 rounded px-4 py-2" name="paseengerNumber" id="paseengerNumber" />
+        <input type="number" min="0" max="30" class="border border-gray-300 rounded px-4 py-2" name="passengerNumber" id="passengerNumber" />
       </div>
 
       <!-- Section for service description -->
@@ -71,11 +71,12 @@
             Descripción del servicio
           </label>
           <textarea name="description" id="description" rows="4"
-            class="border border-gray-300 rounded px-4 py-2"></textarea>
+            class="border border-gray-300 resize-none rounded px-4 py-2"></textarea>
         </div>
       </div>
     </div>
 
+    <button class="w-full px-4 py-2 rounded-lg bg-blue-500 text-white">Agendar servicio</button>
   </div>
   <!-- Right column for displaying map directions -->
   <app-service-request-map-direction [center]="center()" [width]="'100%'" [height]="'90vh'" [zoom]="zoom()"

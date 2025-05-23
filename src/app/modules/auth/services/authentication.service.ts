@@ -12,6 +12,7 @@ export class AuthenticationService {
   currentUser$ = this._currentUser.asObservable();
 
   router = inject(Router);
+  
 
   // Hardcoded users for demonstration purposes
 

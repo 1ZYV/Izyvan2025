@@ -21,4 +21,8 @@ export class ServiceRequestComponent {
   center = signal<google.maps.LatLngLiteral>({ lat: 0, lng: 0 });
   // Signal for the map's zoom level, default to 5
   zoom = signal<number>(5);
+
+  handleSumbitServiceRequest(){
+    
+  }
 }

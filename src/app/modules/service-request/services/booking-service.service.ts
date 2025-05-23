@@ -14,5 +14,14 @@ export class BookingServiceService {
   originLiteral = signal<string>("");
   destinyLiteral = signal<string>("");
 
+  includeTourismGuide = signal<boolean>(false);
+
+  nameReference = signal<string>("");
+  passengerNumber = signal<number>(0);
+  description = signal<string>("");
+
+  date = signal<string>("");
+  time = signal<string>("");
+
   constructor() {} // Constructor for the service
 }

@@ -1,6 +1,7 @@
 import { CommonModule, NgClass } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule, NgModel, ReactiveFormsModule } from '@angular/forms';
+import { BookingServiceService } from '../../../../service-request/services/booking-service.service';
 
 @Component({
   selector: 'app-vehicle-type-selector',
@@ -10,6 +11,12 @@ import { FormsModule, NgModel, ReactiveFormsModule } from '@angular/forms';
 })
 export class VehicleTypeSelectorComponent {
   selectedVehicleType: number | null = null;
+  bookingService = inject(BookingServiceService);
+
+  constructor(){
+    this.selectedVehicleType = this.bookingService.selectedVehicleType();
+  }
+
   vehicleTypes = [
     {
       value: 1,
@@ -36,5 +43,7 @@ export class VehicleTypeSelectorComponent {
 
   selectVehicleType(type: number) {
     this.selectedVehicleType = type;
+    this.bookingService.selectedVehicleType.set(type);
+
   }
 }

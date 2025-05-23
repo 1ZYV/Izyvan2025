@@ -1,6 +1,5 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ServiceRequestCardComponent } from '../../utils/service-request-card/service-request-card.component';
 import { RecentServiceRequestComponent } from '../../utils/recent-service-request/recent-service-request.component';
 import { RefreshIconComponent } from '../../../core/utils/icons/refresh-icon/refresh-icon.component';
 import { SearchIconComponent } from '../../../core/utils/icons/search-icon/search-icon.component';
@@ -8,6 +7,7 @@ import { ServiceStatus } from '../../../core/utils/enums/EnumServiceStatus';
 import { VehicleType } from '../../../core/utils/enums/EnumVehicleTyoe';
 import { IServiceRequest } from '../../../core/utils/interfaces/IServicerRequest';
 import { NgClass } from '@angular/common';
+import { AuthenticationService } from '../../../auth/services/authentication.service';
 
 @Component({
   selector: 'app-list-service-request',
@@ -22,6 +22,17 @@ import { NgClass } from '@angular/common';
   styleUrl: './list-service-request.component.css',
 })
 export class ListServiceRequestComponent {
+  authenticationService = inject(AuthenticationService);
+
+  userRole: string | undefined;
+
+  providerType: string | undefined;
+
+  currentUser = this.authenticationService.currentUser$.subscribe((user) => {
+    this.userRole = user?.role;
+    this.providerType = user?.providerType ? user.providerType : undefined;
+  });
+
   serviceRequests = signal<IServiceRequest[]>([
     {
       id: 1,
