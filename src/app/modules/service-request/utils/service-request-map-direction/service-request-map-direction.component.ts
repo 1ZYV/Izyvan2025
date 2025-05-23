@@ -70,8 +70,8 @@ export class ServiceRequestMapDirectionComponent implements OnInit {
     effect(() => {
       if (this.coords()) {
         // Check if directions should be fetched by coordinates
-        const origin = this.bookingService.origin(); // Get origin from booking service
-        const destination = this.bookingService.destiny(); // Get destination from booking service
+        const origin = this.bookingService.originLngLtd(); // Get origin from booking service
+        const destination = this.bookingService.destinyLngLtd(); // Get destination from booking service
         if (origin && destination) {
           // If both origin and destination are available
           // Request directions using coordinates

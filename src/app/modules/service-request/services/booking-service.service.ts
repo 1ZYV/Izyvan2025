@@ -4,10 +4,15 @@ import { Injectable, signal } from '@angular/core'; // Import Injectable for ser
   providedIn: 'root', // Makes the service available application-wide
 })
 export class BookingServiceService {
+  // Signal to store the selected vehicle type (number or null if not set)
+  selectedVehicleType = signal<number | null>(null);
   // Signal to store the origin location (LatLng or null if not set)
-  origin = signal<google.maps.LatLng | null>(null);
+  originLngLtd = signal<google.maps.LatLng | null>(null);
   // Signal to store the destination location (LatLng or null if not set)
-  destiny = signal<google.maps.LatLng | null>(null);
+  destinyLngLtd = signal<google.maps.LatLng | null>(null);
+
+  originLiteral = signal<string>("");
+  destinyLiteral = signal<string>("");
 
   constructor() {} // Constructor for the service
 }
