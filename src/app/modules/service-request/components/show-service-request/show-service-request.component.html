@@ -55,7 +55,7 @@
         </h1>
         <div class="flex flex-col gap-2 bg-white rounded-xl">
           <p class="text-gray-800">Fecha: {{ travel().date }}</p>
-          <p class="text-gray-800">Precio: {{ travel().tariff?.price }} $</p>
+          <p class="text-gray-800">Precio: {{ travel().tariffs?.[0]?.price }} $</p>
         </div>
         <p class="text-lg font-semibold text-gray-800">
           Proveedor de Transporte

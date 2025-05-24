@@ -24,14 +24,21 @@ export class ShowServiceRequestComponent implements OnInit {
     id: 1,
     nameReference: 'Viaje 1',
     status: ServiceStatus.ACCEPTED,
-    pin: '1234',
     originAddress: 'Aeropuerto El Dorado, Bogotá',
     destinationAddress: 'Universidad Nacional de Colombia, Bogotá',
     numberOfPassengers: 3,
     vehicleType: VehicleType.BUS,
     date: '2023-10-01',
     rating: 4,
-    transportProviderId: 1,
+    time: '08:00 AM',
+    tariffs: [
+      {
+        providerId: 1,
+        destinationAddress: 'Universidad Nacional de Colombia, Bogotá',
+        originAddress: 'Aeropuerto El Dorado, Bogotá',
+        price: 50000,
+      }
+    ]
   });
 
   transporterProvider = signal<ITransportProvider | undefined>(undefined);
@@ -39,7 +46,7 @@ export class ShowServiceRequestComponent implements OnInit {
   ngOnInit(): void {
     this.transporterProvider.set(
       this.transportProvicerService.getTransporterProvider(
-        this.travel().transportProviderId || 0
+        this.travel().tariffs?.[0].providerId || 0
       )
     );
   }

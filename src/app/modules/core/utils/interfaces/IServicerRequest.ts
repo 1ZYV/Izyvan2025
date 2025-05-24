@@ -7,18 +7,18 @@ export interface IServiceRequest {
   id: number;
   nameReference: string;
   status: ServiceStatus;
-  pin: string;
+  pin?: string;
   originAddress: string;
   destinationAddress: string;
   numberOfPassengers: number;
   vehicleType: VehicleType;
   date: string;
+  time: string;
+  includeTouristGuide?: boolean;
 
   rating?: number;
 
-  tariff?: ITariff;
-  tourismProviderId?: number;
-  transportProviderId?: number;
+  tariffs?: ITariff[];
 
   routeEvents?: IRouteEvent[];
 }
