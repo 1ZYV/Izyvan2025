@@ -7,40 +7,28 @@ import { Router } from '@angular/router';
 })
 export class BookingServiceService {
 
-  // Signal to store the selected vehicle type (number or null if not set)
-  selectedVehicleType = signal<number | null>(null);
-  // Signal to store the origin location (LatLng or null if not set)
-  originLngLtd = signal<google.maps.LatLng | null>(null);
-  // Signal to store the destination location (LatLng or null if not set)
-  destinyLngLtd = signal<google.maps.LatLng | null>(null);
+  bookingForm = signal({
+    selectedVehicleType: null as number | null,
+    originLngLtd: null as google.maps.LatLngLiteral | null,
+    destinyLngLtd: null as google.maps.LatLngLiteral | null,
+    originLiteral: "",
+    destinyLiteral: "",
+    includeTourismGuide: false,
+    nameReference: "",
+    passengerNumber: 0,
+    description: "",
+    date: "",
+    time: ""
+  });
 
-  originLiteral = signal<string>("");
-  destinyLiteral = signal<string>("");
+  originLatLng = signal<google.maps.LatLngLiteral | null>(null);
+  destinyLatLng = signal<google.maps.LatLngLiteral | null>(null);
 
-  includeTourismGuide = signal<boolean>(false);
-
-  nameReference = signal<string>("");
-  passengerNumber = signal<number>(0);
-  description = signal<string>("");
-
-  date = signal<string>("");
-  time = signal<string>("");
-
-  constructor(private http : HttpClient, private router: Router) {} // Constructor for the service
+  constructor(private http: HttpClient, private router: Router) { } // Constructor for the service
 
   public bookingServiceRequest() {
-    const request = {
-      origin: this.originLngLtd(),
-      destiny: this.destinyLngLtd(),
-      includeTourismGuide: this.includeTourismGuide(),
-      nameReference: this.nameReference(),
-      passengerNumber: this.passengerNumber(),
-      description: this.description(),
-      date: this.date(),
-      time: this.time(),
-    };
 
-    this.http.post('http://localhost:8080/api/v1/service-request', request).subscribe({
+    this.http.post('http://localhost:8080/api/v1/service-request', this.bookingForm()).subscribe({
       next: (response) => {
         console.log('Service request booked successfully:', response);
         this.router.navigate(['/dashboard/services/tariffs']);

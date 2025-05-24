@@ -22,8 +22,8 @@ export class PlaceAutocompleteComponent implements AfterViewInit {
 
   // Output event emitter for when both origin and destination are selected
   ubicacionesSeleccionadas = output<{
-    origen: google.maps.LatLng;
-    destino: google.maps.LatLng;
+    origen: google.maps.LatLngLiteral;
+    destino: google.maps.LatLngLiteral;
   }>();
 
   /**
@@ -34,7 +34,7 @@ export class PlaceAutocompleteComponent implements AfterViewInit {
   constructor(
     private ngZone: NgZone,
     protected bookingService: BookingServiceService
-  ) {}
+  ) { }
 
   /**
    * Lifecycle hook called after the component's view has been initialized.
@@ -44,24 +44,38 @@ export class PlaceAutocompleteComponent implements AfterViewInit {
     // Initialize autocomplete for the 'origen' input
     this.initAutocomplete('origen', (location) => {
       this.ngZone.run(() => {
-        // Run inside Angular's zone to ensure UI updates
         this.origen = location?.geometry?.location || null;
-        console.log('Origen:', location); // Log the selected origin
-        this.bookingService.originLngLtd.set(location?.geometry?.location || null); // Update origin in booking service
-        this.bookingService.originLiteral.set(location?.name ?? "");
-        this.checkAndEmitUbicaciones(); // Check if both locations are selected and emit
+        console.log('Origen:', location);
+        this.bookingService.bookingForm().originLngLtd =
+          location && location.geometry && location.geometry.location
+            ? location.geometry.location.toJSON() // CONVERT TO LatLngLiteral
+            : null;
+        this.bookingService.bookingForm().originLiteral = location?.name ?? "";
+        this.bookingService.originLatLng.set(
+          location && location.geometry && location.geometry.location
+            ? location.geometry.location.toJSON()
+            : null
+        );
+        this.checkAndEmitUbicaciones();
       });
     });
 
     // Initialize autocomplete for the 'destino' input
     this.initAutocomplete('destino', (location) => {
       this.ngZone.run(() => {
-        // Run inside Angular's zone
         this.destino = location?.geometry?.location || null;
-        console.log('Destino:', location); // Log the selected destination
-        this.bookingService.destinyLngLtd.set(location?.geometry?.location || null); // Update destination in booking service
-        this.bookingService.destinyLiteral.set(location?.name ?? "");
-        this.checkAndEmitUbicaciones(); // Check if both locations are selected and emit
+        console.log('Destino:', location);
+        this.bookingService.bookingForm().destinyLngLtd =
+          location && location.geometry && location.geometry.location
+            ? location.geometry.location.toJSON() // CONVERT TO LatLngLiteral
+            : null;
+        this.bookingService.bookingForm().destinyLiteral = location?.name ?? "";
+        this.bookingService.destinyLatLng.set(
+          location && location.geometry && location.geometry.location
+            ? location.geometry.location.toJSON()
+            : null
+        );
+        this.checkAndEmitUbicaciones();
       });
     });
   }
@@ -70,8 +84,8 @@ export class PlaceAutocompleteComponent implements AfterViewInit {
    * Checks if both origin and destination are selected and emits an event.
    */
   private checkAndEmitUbicaciones() {
-    const currentOrigin = this.bookingService.originLngLtd(); // Get current origin from service
-    const currentDestiny = this.bookingService.destinyLngLtd(); // Get current destination from service
+    const currentOrigin = this.bookingService.bookingForm().originLngLtd; // Get current origin from service
+    const currentDestiny = this.bookingService.bookingForm().destinyLngLtd; // Get current destination from service
     if (currentOrigin && currentDestiny) {
       // If both are selected
       // Emit the selected locations
@@ -79,6 +93,11 @@ export class PlaceAutocompleteComponent implements AfterViewInit {
         origen: currentOrigin,
         destino: currentDestiny,
       });
+
+      console.log('Ubicaciones seleccionadas:', {
+        origen: currentOrigin,
+        destino: currentDestiny,
+      }); // Log the selected locations
     }
   }
 
