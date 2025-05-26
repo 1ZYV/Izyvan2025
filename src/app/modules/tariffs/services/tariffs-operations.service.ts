@@ -1,24 +1,26 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ITariff } from '../../core/utils/interfaces/ITariff';
+import { Observable, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TariffsOperationsService {
-  tariffs: ITariff[] = [];
+  private tariffs: ITariff[] = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  getTariffs(): ITariff[] {
-    this.http.get<ITariff[]>('http://localhost:3000/tariffs').subscribe({
-      next: (response) => {
+  getTariffs(): Observable<ITariff[]> {
+    return this.http.get<ITariff[]>('http://localhost:3000/tariffs').pipe(
+      tap((response) => {
         console.log('Tariffs fetched successfully:', response);
         this.tariffs = response;
-      },
-      error: (error) => {
+      }),
+      catchError((error) => {
         console.error('Error fetching tariffs:', error);
-        this.tariffs = [
+        const fallbackTariffs: ITariff[] = [
           {
             price: 10,
             originAddress: 'Unknown',
@@ -38,13 +40,13 @@ export class TariffsOperationsService {
             providerId: 0
           }
         ];
-      }
-    });
-
-    return this.tariffs;
+        this.tariffs = fallbackTariffs;
+        return of(fallbackTariffs);
+      })
+    );
   }
 
-  getTariffById(id: number) {
+  getTariffById(id: number): Observable<ITariff> {
     return this.http.get<ITariff>(`http://localhost:3000/tariffs/${id}`);
   }
 }

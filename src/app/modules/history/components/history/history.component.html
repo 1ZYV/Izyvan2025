@@ -1,14 +1,9 @@
 <div class="grid grid-cols-2 h-full">
-  <div
-    class="w-full px-10 max-h-full border-r overflow-y-auto flex flex-col gap-5"
-  >
-    <h2
-      class="text-4xl justify-between font-semibold flex gap-3.5 items-center"
-    >
+  <div class="w-full px-10 max-h-full border-r overflow-y-auto flex flex-col gap-5">
+    <h2 class="text-4xl justify-between font-semibold flex gap-3.5 items-center">
       <span> Historial de Servicios </span>
       <button
-        class="ml-2 hover:scale-105 px-3 py-2 rounded-lg transition duration-300 ease-in-out gap-3 bg-gradient-to-tl from-black to-[200%] to-white text-white flex items-center cursor-pointer"
-      >
+        class="ml-2 hover:scale-105 px-3 py-2 rounded-lg transition duration-300 ease-in-out gap-3 bg-gradient-to-tl from-black to-[200%] to-white text-white flex items-center cursor-pointer">
         <span class="text-base">Actualizar</span>
         <span>
           <app-refresh-icon></app-refresh-icon>
@@ -16,12 +11,8 @@
       </button>
     </h2>
     <div class="flex items-center border-b rounded-lg rounded-b-none">
-      <input
-        type="text"
-        placeholder="Buscar..."
-        class="px-4 py-2 w-full focus:outline-none"
-        (keyup)="handleSearch($event)"
-      />
+      <input type="text" placeholder="Buscar..." class="px-4 py-2 w-full focus:outline-none"
+        (keyup)="handleSearch($event)" />
       <span class="px-2 w-10">
         <app-search-icon></app-search-icon>
       </span>
@@ -29,30 +20,19 @@
     <div class="flex max-w-full w-full h-full overflow-x-auto justify-center">
       <div class="mt-5 bg-white rounded-xl divide-y divide-gray-200">
         @for (travel of travels(); track travel.id) {
-        <div
-          class="p-4 group cursor-pointer group hover:bg-gray-100 transition duration-300 ease-in-out"
-          (click)="handleTravelClick(travel)"
-        >
+        <div class="p-4 group cursor-pointer group hover:bg-gray-100 transition duration-300 ease-in-out"
+          (click)="handleTravelClick(travel)">
           <div class="flex items-center gap-4">
             <div class="bg-radial from-gray-400/90 rounded-lg">
               @if (travel.vehicleType === "VAN"){
-              <img
-                class="scale-150 transition mx-auto w-20 object-contain h-16 aspect-square group-hover:translate-1.5"
-                src="renders/van-render.png"
-                alt=""
-              />
+              <img class="scale-150 transition mx-auto w-20 object-contain h-16 aspect-square group-hover:translate-1.5"
+                src="renders/van-render.png" alt="" />
               } @if (travel.vehicleType === "BUS"){
-              <img
-                class="scale-150 transition mx-auto w-20 object-contain h-16 aspect-square group-hover:translate-1.5"
-                src="renders/bus-render.png"
-                alt=""
-              />
+              <img class="scale-150 transition mx-auto w-20 object-contain h-16 aspect-square group-hover:translate-1.5"
+                src="renders/bus-render.png" alt="" />
               } @if (travel.vehicleType === "AUTOMOVIL"){
-              <img
-                class="scale-150 transition mx-auto w-20 object-contain h-16 aspect-square group-hover:translate-1.5"
-                src="renders/automovil-render.png"
-                alt=""
-              />
+              <img class="scale-150 transition mx-auto w-20 object-contain h-16 aspect-square group-hover:translate-1.5"
+                src="renders/automovil-render.png" alt="" />
               }
             </div>
             <div class="flex-1">
@@ -63,7 +43,7 @@
             </div>
             <div class="text-right">
               <p class="text-gray-800 font-semibold">
-                {{ travel.tariff?.price }} $
+                {{ travel.tariffs?.[0]?.price?.toString() }} $
               </p>
             </div>
           </div>
@@ -73,10 +53,5 @@
     </div>
   </div>
 
-  <app-service-request-map-direction
-    [center]="center()"
-    [width]="'100%'"
-    [height]="'100%'"
-    [travel]="travels()[0]"
-  />
+  <app-service-request-map-direction [center]="center()" [width]="'100%'" [height]="'100%'" [travel]="travels()[0]" />
 </div>
