@@ -1,61 +1,51 @@
-<div
-  class="w-full px-10 h-full grid grid-cols-2 grid-rows-2 gap-y-3.5 gap-x-14"
->
+<div class="w-full px-10 h-full grid grid-cols-2 grid-rows-2 gap-y-3.5 gap-x-14">
   <div class="flex flex-col row-span-1 gap-3 h-fit">
     <h1 class="text-4xl font-semibold">Detalles de la solicitud</h1>
-    <app-service-request-map-direction
-      [travel]="travel()"
-      [height]="'400px'"
-      [width]="'100%'"
-    />
+    <app-service-request-map-direction [travel]="travel()" [height]="'400px'" [width]="'100%'" />
   </div>
 
   <div class="flex flex-col col-start-2 gap-4">
     <div
-      class="flex flex-row items-center justify-between row-start-1 px-6 py-2 mt-12 bg-white border h-fit rounded-xl"
-    >
+      class="flex flex-row items-center justify-between row-start-1 px-6 py-2 mt-12 bg-white border h-fit rounded-xl">
       <div class="flex flex-col w-[50%] gap-3">
+        @if (travel()) {
         <h1 class="flex items-center justify-between text-2xl font-semibold">
           Detalles del viaje
-
-          <span
-            class="px-3 py-1 mt-2 text-sm font-semibold text-white rounded-full"
-            [ngClass]="{
-              'bg-blue-500': travel().status === 'PROCESSING',
-              'bg-green-500': travel().status === 'ACCEPTED',
-              'bg-yellow-500': travel().status === 'ARRIVING',
-              'bg-orange-500': travel().status === 'IN_PROGRESS',
-              'bg-teal-500': travel().status === 'COMPLETED',
-              'bg-red-500': travel().status === 'AGENCY_CANCELED',
-              'bg-red-400': travel().status === 'PROVIDER_CANCELED',
-              'bg-gray-500': travel().status === 'NO_PROVIDER_AVAILABLE',
-              'bg-gray-300': !travel().status
-            }"
-          >
+          <span class="px-3 py-1 mt-2 text-sm font-semibold text-white rounded-full" [ngClass]="{
+              'bg-blue-500': travel()?.status === 'PROCESSING',
+              'bg-green-500': travel()?.status === 'ACCEPTED',
+              'bg-yellow-500': travel()?.status === 'ARRIVING',
+              'bg-orange-500': travel()?.status === 'IN_PROGRESS',
+              'bg-teal-500': travel()?.status === 'COMPLETED',
+              'bg-red-500': travel()?.status === 'AGENCY_CANCELED',
+              'bg-red-400': travel()?.status === 'PROVIDER_CANCELED',
+              'bg-gray-500': travel()?.status === 'NO_PROVIDER_AVAILABLE',
+              'bg-gray-300': !travel()?.status
+            }">
             {{
-              travel().status === "PROCESSING"
-                ? "En Proceso"
-                : travel().status === "ACCEPTED"
-                ? "Aceptado"
-                : travel().status === "ARRIVING"
-                ? "En Camino"
-                : travel().status === "IN_PROGRESS"
-                ? "En Progreso"
-                : travel().status === "COMPLETED"
-                ? "Completado"
-                : travel().status === "AGENCY_CANCELED"
-                ? "Cancelado por Agencia"
-                : travel().status === "PROVIDER_CANCELED"
-                ? "Cancelado por Proveedor"
-                : travel().status === "NO_PROVIDER_AVAILABLE"
-                ? "Sin Proveedor"
-                : "Estado Desconocido"
+            travel()?.status === "PROCESSING"
+            ? "En Proceso"
+            : travel()?.status === "ACCEPTED"
+            ? "Aceptado"
+            : travel()?.status === "ARRIVING"
+            ? "En Camino"
+            : travel()?.status === "IN_PROGRESS"
+            ? "En Progreso"
+            : travel()?.status === "COMPLETED"
+            ? "Completado"
+            : travel()?.status === "AGENCY_CANCELED"
+            ? "Cancelado por Agencia"
+            : travel()?.status === "PROVIDER_CANCELED"
+            ? "Cancelado por Proveedor"
+            : travel()?.status === "NO_PROVIDER_AVAILABLE"
+            ? "Sin Proveedor"
+            : "Estado Desconocido"
             }}
           </span>
         </h1>
         <div class="flex flex-col gap-2 bg-white rounded-xl">
-          <p class="text-gray-800">Fecha: {{ travel().date }}</p>
-          <p class="text-gray-800">Precio: {{ travel().tariffs?.[0]?.price }} $</p>
+          <p class="text-gray-800">Fecha: {{ travel()?.date }}</p>
+          <p class="text-gray-800">Precio: {{ getTotalTariffs(travel()) }} $</p>
         </div>
         <p class="text-lg font-semibold text-gray-800">
           Proveedor de Transporte
@@ -64,6 +54,7 @@
             {{ transporterProvider()?.name }}
           </span>
         </p>
+        }
         <!-- <div class="flex flex-col gap-2 py-4">
           <p class="text-lg font-semibold text-gray-800">Calificación</p>
           <div class="w-full max-w-1/2 -ml-3.5">
@@ -72,42 +63,32 @@
         </div> -->
       </div>
       <div class="p-10 rounded-lg bg-radial from-gray-400/90">
-        @if (travel().vehicleType === "VAN"){
-        <img
-          class="object-contain h-40 mx-auto transition scale-150 aspect-square"
-          src="renders/van-render.png"
-          alt=""
-        />
-        } @if (travel().vehicleType === "BUS"){
-        <img
-          class="object-contain h-40 mx-auto transition scale-150 aspect-square"
-          src="renders/bus-render.png"
-          alt=""
-        />
-        } @if (travel().vehicleType === "AUTOMOVIL"){
-        <img
-          class="object-contain h-40 mx-auto transition scale-150 aspect-square"
-          src="renders/automovil-render.png"
-          alt=""
-        />
+        @if (travel() && travel()?.vehicleType === "VAN"){
+        <img class="object-contain h-40 mx-auto transition scale-150 aspect-square" src="renders/van-render.png"
+          alt="" />
+        } @if (travel() && travel()?.vehicleType === "BUS"){
+        <img class="object-contain h-40 mx-auto transition scale-150 aspect-square" src="renders/bus-render.png"
+          alt="" />
+        } @if (travel() && travel()?.vehicleType === "AUTOMOVIL"){
+        <img class="object-contain h-40 mx-auto transition scale-150 aspect-square" src="renders/automovil-render.png"
+          alt="" />
         }
       </div>
     </div>
 
     <div class="flex flex-col w-full max-w-xs gap-6">
       <div class="">
-        @if (travel().status === 'COMPLETED' || travel().status ===
-        'AGENCY_CANCELED' || travel().status === 'PROVIDER_CANCELED') {
+        @if (travel() && (travel()?.status === 'COMPLETED' || travel()?.status === 'AGENCY_CANCELED' || travel()?.status
+        === 'PROVIDER_CANCELED')) {
         <button
           class="w-full px-5 py-2 text-base font-semibold text-white bg-gray-500 rounded-lg shadow cursor-not-allowed"
-          disabled
-        >
-          {{ travel().status === "COMPLETED" ? "Completado" : "Cancelado" }}
+          disabled>
+          {{ travel()?.status === "COMPLETED" ? "Completado" : "Cancelado" }}
         </button>
         } @else {
         <button
           class="w-full px-5 py-2 text-base font-semibold text-white transition bg-black rounded-lg shadow cursor-pointer outline hover:bg-black hover:opacity-80"
-        >
+          (click)="handleCancelServiceRequest()">
           Cancelar
         </button>
         }
@@ -120,31 +101,26 @@
 
     <br />
     <ol class="relative px-5 border-black border-s-8 mx-7">
+      @if (travel()) {
       <li class="mb-10 ms-6">
-        <span
-          class="absolute flex items-center justify-center w-6 h-6 bg-black -start-4 ring-8 ring-white"
-        >
+        <span class="absolute flex items-center justify-center w-6 h-6 bg-black -start-4 ring-8 ring-white">
         </span>
         <h3 class="flex items-center mb-1 text-lg font-semibold text-gray-900">
-          {{ travel().originAddress }}
+          {{ travel()?.originAddress }}
         </h3>
-        <time class="block mb-2 text-sm font-normal leading-none text-gray-400"
-          >Released on January 13th, 2022</time
-        >
+        <time class="block mb-2 text-sm font-normal leading-none text-gray-400">Released on January 13th, 2022</time>
       </li>
 
       <li class="ms-6">
         <span
-          class="absolute bottom-0 flex items-center justify-center w-6 h-6 bg-black rounded-full -start-4 ring-8 ring-white"
-        >
+          class="absolute bottom-0 flex items-center justify-center w-6 h-6 bg-black rounded-full -start-4 ring-8 ring-white">
         </span>
         <h3 class="mb-1 text-lg font-semibold text-gray-900">
-          {{ travel().destinationAddress }}
+          {{ travel()?.destinationAddress }}
         </h3>
-        <time class="block mb-2 text-sm font-normal leading-none text-gray-400"
-          >Released on December 2nd, 2021</time
-        >
+        <time class="block mb-2 text-sm font-normal leading-none text-gray-400">Released on December 2nd, 2021</time>
       </li>
+      }
     </ol>
   </div>
 

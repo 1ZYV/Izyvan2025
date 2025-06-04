@@ -30,7 +30,12 @@ import {
   tap,
 } from 'rxjs';
 import { ServiceRequestMapDirectionComponent } from '../../../service-request/utils/service-request-map-direction/service-request-map-direction.component';
+import { ServiceRequestOperationService } from '../../../service-request/services/service-request-operation.service';
 
+/**
+ * Componente para mostrar el historial de viajes del usuario.
+ * Permite buscar, refrescar y visualizar detalles de cada viaje.
+ */
 @Component({
   selector: 'app-history',
   imports: [
@@ -42,66 +47,42 @@ import { ServiceRequestMapDirectionComponent } from '../../../service-request/ut
   styleUrl: './history.component.css',
 })
 export class HistoryComponent implements OnInit {
-  travels = signal<IServiceRequest[]>([
-    {
-      id: 1,
-      nameReference: 'Viaje 1',
-      status: ServiceStatus.COMPLETED,
-      originAddress: 'Aeropuerto El Dorado, Bogotá',
-      destinationAddress: 'Universidad Nacional de Colombia, Bogotá',
-      numberOfPassengers: 3,
-      vehicleType: VehicleType.BUS,
-      date: '2023-10-01',
-      time: '08:00 AM',
-      tariffs: [
-        {
-          destinationAddress: 'Universidad Nacional de Colombia, Bogotá',
-          originAddress: 'Aeropuerto El Dorado, Bogotá',
-          price: 50000,
-          providerId: 1,
-        }
-      ]
-    },
-    {
-      id: 2,
-      nameReference: 'Viaje 2',
-      status: ServiceStatus.ACCEPTED,
-      originAddress: 'Chicago, IL',
-      destinationAddress: 'New York, NY',
-      numberOfPassengers: 2,
-      vehicleType: VehicleType.AUTOMOVIL,
-      date: '2023-10-02',
-      time: '09:00 AM',
-    },
-    {
-      id: 3,
-      nameReference: 'Viaje 3',
-      status: ServiceStatus.IN_PROGRESS,
-      originAddress: 'White House, Washington, D.C.',
-      destinationAddress: 'Capitol Hill, Washington, D.C.',
-      numberOfPassengers: 4,
-      vehicleType: VehicleType.VAN,
-      date: '2023-10-03',
-      time: '10:00 AM',
-    },
-  ]);
+  /** Referencia al servicio de operaciones de solicitudes de servicio */
+  serviceRequestOperationService = inject(ServiceRequestOperationService);
 
+  /** Lista reactiva de viajes (mock, ahora provista por el servicio) */
+  travels = this.serviceRequestOperationService.getMockServiceRequests();
+
+  /** Referencia al componente de mapa para mostrar direcciones */
   private serviceRequestMapDirectionComponent = viewChild(
     ServiceRequestMapDirectionComponent
   );
 
+  /** Centro y zoom del mapa */
   center = signal<google.maps.LatLngLiteral>({ lat: 0, lng: 0 });
   zoom = signal<number>(5);
 
   constructor() { }
+
+  /**
+   * Inicializa el historial refrescando los datos.
+   */
   ngOnInit(): void {
     this.handleRefresh();
   }
 
+  /**
+   * Calcula el total de tarifas de un viaje de forma recursiva (si hay tarifas anidadas en el futuro).
+   * @param travel Viaje a calcular
+   */
   getTotalTariffs(travel: IServiceRequest): number {
-    return travel.tariffs?.reduce((sum, t) => sum + (t.price ?? 0), 0) || 0;
+    return this.serviceRequestOperationService.getTotalTariffs(travel);
   }
 
+  /**
+   * Al hacer click en un viaje, solicita direcciones en el mapa.
+   * @param travel Viaje seleccionado
+   */
   handleTravelClick(travel: IServiceRequest) {
     this.serviceRequestMapDirectionComponent()?.handleRequestDirections(
       travel.originAddress,
@@ -109,6 +90,10 @@ export class HistoryComponent implements OnInit {
     );
   }
 
+  /**
+   * Filtra los viajes por dirección de origen o destino.
+   * @param event Evento de input de búsqueda
+   */
   handleSearch(event: Event) {
     const input = (event.target as HTMLInputElement)?.value
       .trim()
@@ -132,52 +117,11 @@ export class HistoryComponent implements OnInit {
     }
   }
 
+  /**
+   * Refresca la lista de viajes (mock, en producción debe obtenerse del backend).
+   */
   handleRefresh() {
-    this.travels.set([
-      {
-        id: 1,
-        nameReference: 'Viaje 1',
-        status: ServiceStatus.COMPLETED,
-        pin: '1234',
-        originAddress: 'Aeropuerto El Dorado, Bogotá',
-        destinationAddress: 'Universidad Nacional de Colombia, Bogotá',
-        numberOfPassengers: 3,
-        vehicleType: VehicleType.BUS,
-        date: '2023-10-01',
-        time: '08:00 AM',
-        tariffs: [
-          {
-            destinationAddress: 'Universidad Nacional de Colombia, Bogotá',
-            originAddress: 'Aeropuerto El Dorado, Bogotá',
-            price: 50000,
-            providerId: 1,
-          }
-        ]
-      },
-      {
-        id: 2,
-        nameReference: 'Viaje 2',
-        status: ServiceStatus.ACCEPTED,
-        pin: '5678',
-        originAddress: 'Chicago, IL',
-        destinationAddress: 'New York, NY',
-        numberOfPassengers: 2,
-        vehicleType: VehicleType.AUTOMOVIL,
-        date: '2023-10-02',
-        time: '09:00 AM',
-      },
-      {
-        id: 3,
-        nameReference: 'Viaje 3',
-        status: ServiceStatus.IN_PROGRESS,
-        pin: '91011',
-        originAddress: 'White House, Washington, D.C.',
-        destinationAddress: 'Capitol Hill, Washington, D.C.',
-        numberOfPassengers: 4,
-        vehicleType: VehicleType.VAN,
-        date: '2023-10-03',
-        time: '10:00 AM',
-      },
-    ]);
+    // Simplemente resetea la señal a los datos mock originales
+    this.travels.set(this.serviceRequestOperationService.getMockServiceRequests()());
   }
 }
