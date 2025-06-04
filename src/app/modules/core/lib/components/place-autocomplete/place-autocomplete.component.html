@@ -4,7 +4,7 @@
       <span class="w-2 absolute  rounded-full -left-6 h-2 block bg-black p-2"></span>
       <div class="flex flex-col gap-2">
         <label for="origen" class="font-medium">Origen</label>
-        <input id="origen" type="text" [value]="bookingService.bookingForm().originLiteral" placeholder="Origen"
+        <input id="origen" type="text" [value]="bookingService.bookingForm().originAddress" placeholder="Origen"
           class="border-2 ring-2 ring-black border-black rounded px-4 bg-white py-2 w-full" />
       </div>
     </li>
@@ -12,7 +12,7 @@
       <span class="w-2 absolute bottom-0  -left-6 h-2 block bg-black p-2"></span>
       <div class="flex flex-col gap-2">
         <label for="destino" class="font-medium">Destino</label>
-        <input id="destino" type="text" [value]="bookingService.bookingForm().destinyLiteral" placeholder="Destino"
+        <input id="destino" type="text" [value]="bookingService.bookingForm().destinationAddress" placeholder="Destino"
           class="border-2 ring-2 ring-black border-black rounded px-4 bg-white py-2 w-full" />
       </div>
     </li>

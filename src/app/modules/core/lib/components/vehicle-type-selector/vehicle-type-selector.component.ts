@@ -14,7 +14,7 @@ export class VehicleTypeSelectorComponent {
   bookingService = inject(BookingServiceService);
 
   constructor() {
-    this.selectedVehicleType = this.bookingService.bookingForm().selectedVehicleType;
+    this.selectedVehicleType = this.bookingService.selectedVehicleType();
   }
 
   vehicleTypes = [
@@ -43,7 +43,6 @@ export class VehicleTypeSelectorComponent {
 
   selectVehicleType(type: number) {
     this.selectedVehicleType = type;
-    this.bookingService.bookingForm().selectedVehicleType = type;
-
+    this.bookingService.selectedVehicleType.set(type);
   }
 }

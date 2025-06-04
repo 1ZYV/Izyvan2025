@@ -5,6 +5,7 @@ import {
   Output,
   EventEmitter,
   WritableSignal,
+  output,
 } from '@angular/core';
 import { BookingServiceService } from '../../../../service-request/services/booking-service.service';
 
