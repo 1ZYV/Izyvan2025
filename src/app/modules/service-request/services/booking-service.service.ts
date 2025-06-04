@@ -55,4 +55,39 @@ export class BookingServiceService {
       },
     });
   }
+
+  /**
+   * Devuelve las coordenadas de origen como LatLngLiteral, si están disponibles.
+   */
+  originLatLng(): google.maps.LatLngLiteral | undefined {
+    const origin = this.originLngLtd();
+    return origin ? { lat: origin.lat(), lng: origin.lng() } : undefined;
+  }
+
+  /**
+   * Devuelve las coordenadas de destino como LatLngLiteral, si están disponibles.
+   */
+  destinyLatLng(): google.maps.LatLngLiteral | undefined {
+    const destination = this.destinyLngLtd();
+    return destination ? { lat: destination.lat(), lng: destination.lng() } : undefined;
+  }
+
+  /**
+   * Construye y retorna el objeto de datos para la reserva de servicio.
+   */
+  bookingForm() {
+    return {
+      origin: this.originLatLng(),
+      destination: this.destinyLatLng(),
+      originAddress: this.originLiteral(),
+      destinationAddress: this.destinyLiteral(),
+      vehicleType: this.selectedVehicleType(),
+      includeTourismGuide: this.includeTourismGuide(),
+      nameReference: this.nameReference(),
+      passengerNumber: this.passengerNumber(),
+      description: this.description(),
+      date: this.date(),
+      time: this.time(),
+    };
+  }
 }
