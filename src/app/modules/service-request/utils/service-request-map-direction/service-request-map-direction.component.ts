@@ -66,16 +66,14 @@ export class ServiceRequestMapDirectionComponent implements OnInit {
    * @param bookingService Service to manage booking origin and destination coordinates.
    */
   constructor(private bookingService: BookingServiceService) {
-    // Effect that runs when `coords` or booking service signals change
     effect(() => {
       if (this.coords()) {
-        // Check if directions should be fetched by coordinates
-        const origin = this.bookingService.originLngLtd(); // Get origin from booking service
-        const destination = this.bookingService.destinyLngLtd(); // Get destination from booking service
+        const origin = this.bookingService.originLatLng();
+        const destination = this.bookingService.destinyLatLng();
         if (origin && destination) {
-          // If both origin and destination are available
-          // Request directions using coordinates
           this.handleRequestDirectionsByCoords(origin, destination);
+        } else {
+          this.directionsResults.set(undefined);
         }
       }
     });
@@ -163,30 +161,20 @@ export class ServiceRequestMapDirectionComponent implements OnInit {
    * @param destination The destination google.maps.LatLng object.
    */
   handleRequestDirectionsByCoords(
-    origin: google.maps.LatLng,
-    destination: google.maps.LatLng
+    origin: google.maps.LatLngLiteral,
+    destination: google.maps.LatLngLiteral
   ) {
-    // Convert LatLng objects to LatLngLiteral for the request
-    const originLiteral = { lat: origin.lat(), lng: origin.lng() };
-    const destinationLiteral = {
-      lat: destination.lat(),
-      lng: destination.lng(),
-    };
-
-    // Update the request signal with the new coordinates
+    // Use LatLngLiteral directly
     this.request.set({
-      origin: originLiteral,
-      destination: destinationLiteral,
+      origin,
+      destination,
       travelMode: google.maps.TravelMode.DRIVING,
     });
 
-    // Request the route from the map directions service
     this.mapDirectionsService.route(this.request()).subscribe({
-      // Set the directionsResults signal with the fetched route
       next: (result) => {
         this.directionsResults.set(result.result || undefined);
       },
-      // Log any errors
       error: (err) => console.warn(err.message),
     });
   }

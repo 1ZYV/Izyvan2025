@@ -1,12 +1,12 @@
 import {
   Component,
-  NgZone, // Service to run work inside or outside Angular's zone
-  AfterViewInit, // Lifecycle hook
-  Output, // Decorator for output properties
+  NgZone,
+  AfterViewInit,
+  Output,
   EventEmitter,
-  output, // Class to emit custom events
+  WritableSignal,
 } from '@angular/core';
-import { BookingServiceService } from '../../../../service-request/services/booking-service.service'; // Service to manage booking state
+import { BookingServiceService } from '../../../../service-request/services/booking-service.service';
 
 /**
  * Componente para autocompletar lugares usando Google Places API.
@@ -14,7 +14,7 @@ import { BookingServiceService } from '../../../../service-request/services/book
  */
 @Component({
   selector: 'app-place-autocomplete',
-  standalone: true, // Indicates that the component is standalone
+  standalone: true,
   templateUrl: './place-autocomplete.component.html',
   styleUrls: ['./place-autocomplete.component.css'],
 })
@@ -35,6 +35,7 @@ export class PlaceAutocompleteComponent implements AfterViewInit {
    * @param ngZone Servicio de Angular para ejecutar código dentro o fuera de la zona.
    * @param bookingService Servicio para gestionar el estado de la reserva.
    */
+
   constructor(
     private ngZone: NgZone,
     protected bookingService: BookingServiceService
@@ -59,6 +60,7 @@ export class PlaceAutocompleteComponent implements AfterViewInit {
         this.destino = location?.geometry?.location || null;
         this.bookingService.destinyLngLtd.set(location?.geometry?.location || null);
         this.bookingService.destinyLiteral.set(location?.name ?? "");
+
         this.checkAndEmitUbicaciones();
       });
     });
@@ -83,9 +85,10 @@ export class PlaceAutocompleteComponent implements AfterViewInit {
    * @param inputId ID del input HTML.
    * @param callback Función a ejecutar cuando se selecciona un lugar.
    */
+
   private initAutocomplete(
     inputId: string,
-    callback: (location: google.maps.places.PlaceResult | null) => void,
+    callback: (location: google.maps.places.PlaceResult | null) => void
   ) {
     const input = document.getElementById(inputId) as HTMLInputElement;
     const autocomplete = new google.maps.places.Autocomplete(input, {

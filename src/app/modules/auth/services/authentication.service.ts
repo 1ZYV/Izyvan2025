@@ -16,7 +16,7 @@ export class AuthenticationService {
   /** Observable del usuario actual */
   currentUser$ = this._currentUser.asObservable();
   router = inject(Router);
-
+  
   /**
    * Usuarios hardcodeados para demo. En producción, usar backend seguro.
    */

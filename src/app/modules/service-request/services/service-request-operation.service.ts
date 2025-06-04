@@ -1,5 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
+import { ServiceStatus } from '../../core/utils/enums/EnumServiceStatus';
+import { IServiceRequest } from '../../core/utils/interfaces/IServicerRequest';
+import { VehicleType } from '../../core/utils/enums/EnumVehicleTyoe';
 
 /**
  * Servicio para operaciones relacionadas con solicitudes de servicio.
@@ -42,6 +45,13 @@ export class ServiceRequestOperationService {
    * Obtiene todas las solicitudes de servicio.
    */
   getAllServiceRequests() {
-    return this.http.get(`http://localhost:8080/api/v1/service-request`);
+    this.http.get<IServiceRequest[]>(`http://localhost:8080/api/v1/service-request`).subscribe({
+      next: (response) => {
+        this.travels.set(response);
+      },
+      error: (error) => {
+        console.error('Error fetching service requests:', error);
+      }
+    })
   }
 }
