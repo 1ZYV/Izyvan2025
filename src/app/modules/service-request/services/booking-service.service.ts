@@ -43,11 +43,11 @@ export class BookingServiceService {
     this.http.post('http://localhost:8080/api/v1/service-request', request).subscribe({
       next: (response) => {
         console.log('Service request booked successfully:', response);
-        this.router.navigate(['/dashboard/tariffs/create']);
+        this.router.navigate(['/dashboard/services/tariffs']);
       },
       error: (error) => {
         console.error('Error booking service request:', error);
-        this.router.navigate(['/dashboard/tariffs/create']);
+        this.router.navigate(['/dashboard/services/tariffs']);
       }
     });
   }
