@@ -12,7 +12,10 @@ export class AuthenticationService {
   currentUser$ = this._currentUser.asObservable();
 
   router = inject(Router);
-  
+
+  constructor() {
+    console.log('decodeToken:', this.decodeToken());
+  }
 
   // Hardcoded users for demonstration purposes
 
@@ -69,8 +72,10 @@ export class AuthenticationService {
   }
 
   private decodeToken() {
-    const userData = localStorage.getItem('userData');
-
-    return userData ? JSON.parse(userData) : null;
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const userData = localStorage.getItem('userData');
+      return userData ? JSON.parse(userData) : null;
+    }
+    return null;
   }
 }

@@ -25,9 +25,9 @@ export class ServiceRequestComponent {
   // Signal for the map's zoom level, default to 5
   zoom = signal<number>(5);
 
-  constructor(private bookingService: BookingServiceService) {}
+  constructor(private bookingService: BookingServiceService) { }
 
-  serviceRequestForm : FormGroup = new FormGroup<{
+  serviceRequestForm: FormGroup = new FormGroup<{
     includeTourismGuide: FormControl<boolean>,
     nameReference: FormControl<string>,
     passengerNumber: FormControl<number>,
@@ -43,16 +43,16 @@ export class ServiceRequestComponent {
     time: new FormControl<string>("", { nonNullable: true }),
   });
 
-  handleSubmitServiceRequest(){
+  handleSubmitServiceRequest() {
     if (this.serviceRequestForm.valid) {
       const formData = this.serviceRequestForm.value;
-      
-      this.bookingService.date.set(formData.date || "");
-      this.bookingService.time.set(formData.time || "");
-      this.bookingService.includeTourismGuide.set(formData.includeTourismGuide || false);
-      this.bookingService.nameReference.set(formData.nameReference || "");
-      this.bookingService.passengerNumber.set(formData.passengerNumber || 0);
-      this.bookingService.description.set(formData.description || "");
+
+      this.bookingService.bookingForm().date = formData.date || "";
+      this.bookingService.bookingForm().time = formData.time || "";
+      this.bookingService.bookingForm().includeTourismGuide = formData.includeTourismGuide || false;
+      this.bookingService.bookingForm().nameReference = formData.nameReference || "";
+      this.bookingService.bookingForm().passengerNumber = formData.passengerNumber || 0;
+      this.bookingService.bookingForm().description = formData.description || "";
       this.bookingService.bookingServiceRequest(); // Call the service to book the request
     } else {
       console.log('Form is invalid');
