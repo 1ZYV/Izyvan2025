@@ -23,8 +23,49 @@ import { ServiceRequestOperationService } from '../../../service-request/service
   styleUrl: './history.component.css',
 })
 export class HistoryComponent implements OnInit {
-  serviceRequestOperation = inject(ServiceRequestOperationService);
-  travels = signal<IServiceRequest[]>([]);
+  travels = signal<IServiceRequest[]>([
+    {
+      id: 1,
+      nameReference: 'Viaje 1',
+      status: ServiceStatus.COMPLETED,
+      originAddress: 'Aeropuerto El Dorado, Bogotá',
+      destinationAddress: 'Universidad Nacional de Colombia, Bogotá',
+      numberOfPassengers: 3,
+      vehicleType: VehicleType.BUS,
+      date: '2023-10-01',
+      time: '08:00 AM',
+      tariffs: [
+        {
+          destinationAddress: 'Universidad Nacional de Colombia, Bogotá',
+          originAddress: 'Aeropuerto El Dorado, Bogotá',
+          price: 50000,
+          providerId: 1,
+        }
+      ]
+    },
+    {
+      id: 2,
+      nameReference: 'Viaje 2',
+      status: ServiceStatus.ACCEPTED,
+      originAddress: 'Chicago, IL',
+      destinationAddress: 'New York, NY',
+      numberOfPassengers: 2,
+      vehicleType: VehicleType.AUTOMOVIL,
+      date: '2023-10-02',
+      time: '09:00 AM',
+    },
+    {
+      id: 3,
+      nameReference: 'Viaje 3',
+      status: ServiceStatus.IN_PROGRESS,
+      originAddress: 'White House, Washington, D.C.',
+      destinationAddress: 'Capitol Hill, Washington, D.C.',
+      numberOfPassengers: 4,
+      vehicleType: VehicleType.VAN,
+      date: '2023-10-03',
+      time: '10:00 AM',
+    },
+  ]);
 
   private serviceRequestMapDirectionComponent = viewChild(
     ServiceRequestMapDirectionComponent
@@ -36,6 +77,10 @@ export class HistoryComponent implements OnInit {
   constructor() { }
   ngOnInit(): void {
     this.handleRefresh();
+  }
+
+  getTotalTariffs(travel: IServiceRequest): number {
+    return travel.tariffs?.reduce((sum, t) => sum + (t.price ?? 0), 0) || 0;
   }
 
   handleTravelClick(travel: IServiceRequest) {
@@ -69,7 +114,51 @@ export class HistoryComponent implements OnInit {
   }
 
   handleRefresh() {
-    this.serviceRequestOperation.getAllServiceRequests();
-    this.travels.set(this.serviceRequestOperation.travels());
+    this.travels.set([
+      {
+        id: 1,
+        nameReference: 'Viaje 1',
+        status: ServiceStatus.COMPLETED,
+        pin: '1234',
+        originAddress: 'Aeropuerto El Dorado, Bogotá',
+        destinationAddress: 'Universidad Nacional de Colombia, Bogotá',
+        numberOfPassengers: 3,
+        vehicleType: VehicleType.BUS,
+        date: '2023-10-01',
+        time: '08:00 AM',
+        tariffs: [
+          {
+            destinationAddress: 'Universidad Nacional de Colombia, Bogotá',
+            originAddress: 'Aeropuerto El Dorado, Bogotá',
+            price: 50000,
+            providerId: 1,
+          }
+        ]
+      },
+      {
+        id: 2,
+        nameReference: 'Viaje 2',
+        status: ServiceStatus.ACCEPTED,
+        pin: '5678',
+        originAddress: 'Chicago, IL',
+        destinationAddress: 'New York, NY',
+        numberOfPassengers: 2,
+        vehicleType: VehicleType.AUTOMOVIL,
+        date: '2023-10-02',
+        time: '09:00 AM',
+      },
+      {
+        id: 3,
+        nameReference: 'Viaje 3',
+        status: ServiceStatus.IN_PROGRESS,
+        pin: '91011',
+        originAddress: 'White House, Washington, D.C.',
+        destinationAddress: 'Capitol Hill, Washington, D.C.',
+        numberOfPassengers: 4,
+        vehicleType: VehicleType.VAN,
+        date: '2023-10-03',
+        time: '10:00 AM',
+      },
+    ]);
   }
 }

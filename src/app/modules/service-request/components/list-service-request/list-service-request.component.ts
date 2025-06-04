@@ -21,18 +21,32 @@ import { AuthenticationService } from '../../../auth/services/authentication.ser
   templateUrl: './list-service-request.component.html',
   styleUrl: './list-service-request.component.css',
 })
+/**
+ * Componente para mostrar la lista de solicitudes de servicio.
+ * Permite visualizar detalles de cada solicitud y adapta la vista según el rol del usuario.
+ */
 export class ListServiceRequestComponent {
+  /** Servicio de autenticación inyectado para obtener información del usuario actual */
   authenticationService = inject(AuthenticationService);
 
+  /** Rol del usuario autenticado */
   userRole: string | undefined;
-
+  /** Tipo de proveedor del usuario autenticado */
   providerType: string | undefined;
 
-  currentUser = this.authenticationService.currentUser$.subscribe((user) => {
+  /**
+   * Suscripción al observable del usuario actual para actualizar el rol y tipo de proveedor.
+   * Se recomienda desuscribirse en ngOnDestroy para evitar fugas de memoria.
+   */
+  private userSubscription = this.authenticationService.currentUser$.subscribe((user) => {
     this.userRole = user?.role;
     this.providerType = user?.providerType ? user.providerType : undefined;
   });
 
+  /**
+   * Lista reactiva de solicitudes de servicio (simulada para demo).
+   * En producción, debe obtenerse desde un servicio backend.
+   */
   serviceRequests = signal<IServiceRequest[]>([
     {
       id: 1,
@@ -68,4 +82,11 @@ export class ListServiceRequestComponent {
       time: '11:00 AM',
     },
   ]);
+
+  /**
+   * Limpia la suscripción al destruir el componente para evitar memory leaks.
+   */
+  ngOnDestroy() {
+    this.userSubscription.unsubscribe();
+  }
 }

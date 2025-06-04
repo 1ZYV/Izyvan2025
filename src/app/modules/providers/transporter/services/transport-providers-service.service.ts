@@ -4,30 +4,31 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ITransportProvider } from '../../../core/utils/interfaces/ITransportProvider';
 import { map } from 'rxjs';
 
+/**
+ * Servicio para gestionar proveedores de transporte.
+ * Permite obtener la lista de proveedores y buscar uno por ID.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class TransportProvidersServiceService {
+  /** URL base de la API (debe configurarse para producción) */
   apiUrl = '';
   http = inject(HttpClient);
 
-  constructor() {}
+  constructor() { }
 
+  /**
+   * Obtiene la lista de proveedores de transporte.
+   * Actualmente retorna datos mock, en producción debe usarse la API.
+   */
   getTransportProviders() {
+    // Para producción, descomentar y configurar la llamada HTTP:
     // return toSignal(
     //   this.http.get<ITransportProvider[]>(this.apiUrl).pipe(
-    //     map((response) => {
-    //       return response.map((provider) => ({
-    //         id: provider.id,
-    //         name: provider.name,
-    //         phone: provider.phone,
-    //         email: provider.email,
-    //         rating: provider.rating,
-    //       }));
-    //     })
+    //     map((response) => response.map((provider) => ({ ...provider })))
     //   )
     // );
-
     return signal<ITransportProvider[]>([
       {
         id: 1,
@@ -45,6 +46,11 @@ export class TransportProvidersServiceService {
       },
     ]);
   }
+
+  /**
+   * Busca un proveedor de transporte por su ID.
+   * @param id ID del proveedor
+   */
   getTransporterProvider(id: number): ITransportProvider | undefined {
     return this.getTransportProviders()().find(
       (provider) => provider.id === id

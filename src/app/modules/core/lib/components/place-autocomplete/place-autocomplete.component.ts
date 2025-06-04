@@ -8,6 +8,10 @@ import {
 } from '@angular/core';
 import { BookingServiceService } from '../../../../service-request/services/booking-service.service';
 
+/**
+ * Componente para autocompletar lugares usando Google Places API.
+ * Permite seleccionar origen y destino, emitiendo un evento cuando ambas ubicaciones están listas.
+ */
 @Component({
   selector: 'app-place-autocomplete',
   standalone: true,
@@ -15,55 +19,59 @@ import { BookingServiceService } from '../../../../service-request/services/book
   styleUrls: ['./place-autocomplete.component.css'],
 })
 export class PlaceAutocompleteComponent implements AfterViewInit {
+  /** Ubicación de origen seleccionada */
   origen: google.maps.LatLng | null = null;
+  /** Ubicación de destino seleccionada */
   destino: google.maps.LatLng | null = null;
 
-  @Output()
-  ubicacionesSeleccionadas = new EventEmitter<{
-    origen: google.maps.LatLngLiteral;
-    destino: google.maps.LatLngLiteral;
+  /** Evento emitido cuando ambas ubicaciones están seleccionadas */
+  ubicacionesSeleccionadas = output<{
+    origen: google.maps.LatLng;
+    destino: google.maps.LatLng;
   }>();
+
+  /**
+   * Constructor del componente.
+   * @param ngZone Servicio de Angular para ejecutar código dentro o fuera de la zona.
+   * @param bookingService Servicio para gestionar el estado de la reserva.
+   */
 
   constructor(
     private ngZone: NgZone,
     protected bookingService: BookingServiceService
   ) { }
 
+  /**
+   * Hook de ciclo de vida que inicializa los autocompletados de origen y destino.
+   */
   ngAfterViewInit(): void {
+    // Inicializa el autocompletado para el input de origen
     this.initAutocomplete('origen', (location) => {
       this.ngZone.run(() => {
         this.origen = location?.geometry?.location || null;
-        this.setBookingOrigin(location);
+        this.bookingService.originLngLtd.set(location?.geometry?.location || null);
+        this.bookingService.originLiteral.set(location?.name ?? "");
         this.checkAndEmitUbicaciones();
       });
     });
-
+    // Inicializa el autocompletado para el input de destino
     this.initAutocomplete('destino', (location) => {
       this.ngZone.run(() => {
         this.destino = location?.geometry?.location || null;
-        this.setBookingDestiny(location);
+        this.bookingService.destinyLngLtd.set(location?.geometry?.location || null);
+        this.bookingService.destinyLiteral.set(location?.name ?? "");
+
         this.checkAndEmitUbicaciones();
       });
     });
   }
 
-  private setBookingOrigin(location: google.maps.places.PlaceResult | null) {
-    const loc = location?.geometry?.location?.toJSON() ?? null;
-    this.bookingService.bookingForm().originLngLtd = loc;
-    this.bookingService.bookingForm().originLiteral = location?.name ?? '';
-    this.bookingService.originLatLng.set(loc);
-  }
-
-  private setBookingDestiny(location: google.maps.places.PlaceResult | null) {
-    const loc = location?.geometry?.location?.toJSON() ?? null;
-    this.bookingService.bookingForm().destinyLngLtd = loc;
-    this.bookingService.bookingForm().destinyLiteral = location?.name ?? '';
-    this.bookingService.destinyLatLng.set(loc);
-  }
-
+  /**
+   * Verifica si ambas ubicaciones están seleccionadas y emite el evento.
+   */
   private checkAndEmitUbicaciones() {
-    const currentOrigin = this.bookingService.bookingForm().originLngLtd;
-    const currentDestiny = this.bookingService.bookingForm().destinyLngLtd;
+    const currentOrigin = this.bookingService.originLngLtd();
+    const currentDestiny = this.bookingService.destinyLngLtd();
     if (currentOrigin && currentDestiny) {
       this.ubicacionesSeleccionadas.emit({
         origen: currentOrigin,
@@ -71,6 +79,12 @@ export class PlaceAutocompleteComponent implements AfterViewInit {
       });
     }
   }
+
+  /**
+   * Inicializa Google Places Autocomplete en un input dado.
+   * @param inputId ID del input HTML.
+   * @param callback Función a ejecutar cuando se selecciona un lugar.
+   */
 
   private initAutocomplete(
     inputId: string,
@@ -81,10 +95,10 @@ export class PlaceAutocompleteComponent implements AfterViewInit {
       componentRestrictions: { country: 'COL' },
       fields: ['geometry', 'name'],
     });
-
     autocomplete.addListener('place_changed', () => {
       const place = autocomplete.getPlace();
-      callback(place || null);
+      const location = place || null;
+      callback(location);
     });
   }
 }

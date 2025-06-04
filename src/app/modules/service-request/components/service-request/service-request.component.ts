@@ -19,14 +19,25 @@ import { BookingServiceService } from '../../services/booking-service.service';
   templateUrl: './service-request.component.html', // Path to the HTML template
   styleUrl: './service-request.component.css', // Path to the CSS styles
 })
+/**
+ * Componente para la creación de solicitudes de servicio.
+ * Permite al usuario ingresar datos y enviar una nueva solicitud.
+ */
 export class ServiceRequestComponent {
-  // Signal for the map's center coordinates, default to (0,0)
+  /** Señal para el centro del mapa (por defecto 0,0) */
   center = signal<google.maps.LatLngLiteral>({ lat: 0, lng: 0 });
-  // Signal for the map's zoom level, default to 5
+  /** Señal para el nivel de zoom del mapa */
   zoom = signal<number>(5);
 
+  /**
+   * Constructor que inyecta el servicio de reservas.
+   * @param bookingService Servicio para gestionar la reserva.
+   */
   constructor(private bookingService: BookingServiceService) { }
 
+  /**
+   * Formulario reactivo para la solicitud de servicio.
+   */
   serviceRequestForm: FormGroup = new FormGroup<{
     includeTourismGuide: FormControl<boolean>,
     nameReference: FormControl<string>,
@@ -43,18 +54,22 @@ export class ServiceRequestComponent {
     time: new FormControl<string>("", { nonNullable: true }),
   });
 
+  /**
+   * Maneja el envío del formulario de solicitud de servicio.
+   * Valida el formulario y actualiza el estado global mediante el servicio.
+   */
   handleSubmitServiceRequest() {
     if (this.serviceRequestForm.valid) {
       const formData = this.serviceRequestForm.value;
-
-      this.bookingService.bookingForm().date = formData.date || "";
-      this.bookingService.bookingForm().time = formData.time || "";
-      this.bookingService.bookingForm().includeTourismGuide = formData.includeTourismGuide || false;
-      this.bookingService.bookingForm().nameReference = formData.nameReference || "";
-      this.bookingService.bookingForm().passengerNumber = formData.passengerNumber || 0;
-      this.bookingService.bookingForm().description = formData.description || "";
-      this.bookingService.bookingServiceRequest(); // Call the service to book the request
+      this.bookingService.date.set(formData.date || "");
+      this.bookingService.time.set(formData.time || "");
+      this.bookingService.includeTourismGuide.set(formData.includeTourismGuide || false);
+      this.bookingService.nameReference.set(formData.nameReference || "");
+      this.bookingService.passengerNumber.set(formData.passengerNumber || 0);
+      this.bookingService.description.set(formData.description || "");
+      this.bookingService.bookingServiceRequest(); // Llama al servicio para registrar la solicitud
     } else {
+      // Se recomienda mostrar feedback visual al usuario
       console.log('Form is invalid');
     }
   }
