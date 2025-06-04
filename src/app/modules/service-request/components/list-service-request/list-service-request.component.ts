@@ -8,6 +8,7 @@ import { VehicleType } from '../../../core/utils/enums/EnumVehicleTyoe';
 import { IServiceRequest } from '../../../core/utils/interfaces/IServicerRequest';
 import { NgClass } from '@angular/common';
 import { AuthenticationService } from '../../../auth/services/authentication.service';
+import { ServiceRequestOperationService } from '../../services/service-request-operation.service';
 
 @Component({
   selector: 'app-list-service-request',
@@ -28,6 +29,7 @@ import { AuthenticationService } from '../../../auth/services/authentication.ser
 export class ListServiceRequestComponent {
   /** Servicio de autenticación inyectado para obtener información del usuario actual */
   authenticationService = inject(AuthenticationService);
+  serviceRequestOperationService = inject(ServiceRequestOperationService);
 
   /** Rol del usuario autenticado */
   userRole: string | undefined;
@@ -44,49 +46,24 @@ export class ListServiceRequestComponent {
   });
 
   /**
-   * Lista reactiva de solicitudes de servicio (simulada para demo).
-   * En producción, debe obtenerse desde un servicio backend.
+   * Lista reactiva de solicitudes de servicio (mock, ahora provista por el servicio).
    */
-  serviceRequests = signal<IServiceRequest[]>([
-    {
-      id: 1,
-      nameReference: 'Viaje 1',
-      status: ServiceStatus.COMPLETED,
-      originAddress: 'Aeropuerto El Dorado, Bogotá',
-      destinationAddress: 'Universidad Nacional de Colombia, Bogotá',
-      numberOfPassengers: 3,
-      vehicleType: VehicleType.BUS,
-      date: '2023-10-01',
-      time: '08:00 AM',
-    },
-    {
-      id: 2,
-      nameReference: 'Viaje 2',
-      status: ServiceStatus.ACCEPTED,
-      originAddress: 'Chicago, IL',
-      destinationAddress: 'New York, NY',
-      numberOfPassengers: 2,
-      vehicleType: VehicleType.AUTOMOVIL,
-      date: '2023-10-02',
-      time: '10:30 AM',
-    },
-    {
-      id: 3,
-      nameReference: 'Viaje 3',
-      status: ServiceStatus.IN_PROGRESS,
-      originAddress: 'White House, Washington, D.C.',
-      destinationAddress: 'Capitol Hill, Washington, D.C.',
-      numberOfPassengers: 4,
-      vehicleType: VehicleType.VAN,
-      date: '2023-10-03',
-      time: '11:00 AM',
-    },
-  ]);
+  serviceRequests = this.serviceRequestOperationService.getMockServiceRequests();
 
   /**
    * Limpia la suscripción al destruir el componente para evitar memory leaks.
    */
   ngOnDestroy() {
     this.userSubscription.unsubscribe();
+  }
+
+  /**
+   * Simula la cancelación de una solicitud de servicio (mock/demo) por id.
+   */
+  handleCancelServiceRequest(id: number) {
+    const current = this.serviceRequests();
+    this.serviceRequests.set(
+      current.map(req => req.id === id ? { ...req, status: ServiceStatus.AGENCY_CANCELED } : req)
+    );
   }
 }
