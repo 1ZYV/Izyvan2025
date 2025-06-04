@@ -53,6 +53,14 @@ export class HistoryComponent implements OnInit {
       vehicleType: VehicleType.BUS,
       date: '2023-10-01',
       time: '08:00 AM',
+      tariffs: [
+        {
+          destinationAddress: 'Universidad Nacional de Colombia, Bogotá',
+          originAddress: 'Aeropuerto El Dorado, Bogotá',
+          price: 50000,
+          providerId: 1,
+        }
+      ]
     },
     {
       id: 2,
@@ -85,9 +93,13 @@ export class HistoryComponent implements OnInit {
   center = signal<google.maps.LatLngLiteral>({ lat: 0, lng: 0 });
   zoom = signal<number>(5);
 
-  constructor() {}
+  constructor() { }
   ngOnInit(): void {
     this.handleRefresh();
+  }
+
+  getTotalTariffs(travel: IServiceRequest): number {
+    return travel.tariffs?.reduce((sum, t) => sum + (t.price ?? 0), 0) || 0;
   }
 
   handleTravelClick(travel: IServiceRequest) {
@@ -133,6 +145,14 @@ export class HistoryComponent implements OnInit {
         vehicleType: VehicleType.BUS,
         date: '2023-10-01',
         time: '08:00 AM',
+        tariffs: [
+          {
+            destinationAddress: 'Universidad Nacional de Colombia, Bogotá',
+            originAddress: 'Aeropuerto El Dorado, Bogotá',
+            price: 50000,
+            providerId: 1,
+          }
+        ]
       },
       {
         id: 2,
