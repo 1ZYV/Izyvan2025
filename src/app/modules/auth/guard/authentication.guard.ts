@@ -12,11 +12,12 @@ export const authenticationGuard: CanMatchFn = (
 
   return inject(AuthenticationService).currentUser$.pipe(
     map((user) => {
+      console.log('Guard user:', user);
       if (user) {
         return true;
       }
 
-      return router.createUrlTree(['/auth/login']);
+      return router.createUrlTree(['/auth/sign-in']);
     }),
   );
 };

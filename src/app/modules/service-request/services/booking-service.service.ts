@@ -43,18 +43,8 @@ export class BookingServiceService {
    * Maneja la navegación y errores tras la respuesta.
    */
   public bookingServiceRequest() {
-    const request = {
-      origin: this.originLngLtd(),
-      destiny: this.destinyLngLtd(),
-      includeTourismGuide: this.includeTourismGuide(),
-      nameReference: this.nameReference(),
-      passengerNumber: this.passengerNumber(),
-      description: this.description(),
-      date: this.date(),
-      time: this.time(),
-    };
 
-    this.http.post('http://localhost:8080/api/v1/service-request', request).subscribe({
+    this.http.post('http://localhost:8080/api/v1/service-request', this.bookingForm()).subscribe({
       next: (response) => {
         console.log('Service request booked successfully:', response);
         this.router.navigate(['/dashboard/services/tariffs']);

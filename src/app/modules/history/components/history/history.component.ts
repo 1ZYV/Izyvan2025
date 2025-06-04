@@ -1,7 +1,5 @@
 import {
   Component,
-  computed,
-  effect,
   inject,
   OnInit,
   signal,
@@ -10,25 +8,7 @@ import {
 import { RefreshIconComponent } from '../../../core/utils/icons/refresh-icon/refresh-icon.component';
 import { SearchIconComponent } from '../../../core/utils/icons/search-icon/search-icon.component';
 
-import {
-  GoogleMap,
-  GoogleMapsModule,
-  MapDirectionsRenderer,
-  MapDirectionsService,
-} from '@angular/google-maps';
 import { IServiceRequest } from '../../../core/utils/interfaces/IServicerRequest';
-import { VehicleType } from '../../../core/utils/enums/EnumVehicleTyoe';
-import { ServiceStatus } from '../../../core/utils/enums/EnumServiceStatus';
-import { GeocodingService } from '../../../core/services/google-maps/geocoding/geocoding.service';
-import { toSignal } from '@angular/core/rxjs-interop';
-import {
-  firstValueFrom,
-  forkJoin,
-  map,
-  Observable,
-  switchMap,
-  tap,
-} from 'rxjs';
 import { ServiceRequestMapDirectionComponent } from '../../../service-request/utils/service-request-map-direction/service-request-map-direction.component';
 import { ServiceRequestOperationService } from '../../../service-request/services/service-request-operation.service';
 
