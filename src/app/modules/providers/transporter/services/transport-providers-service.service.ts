@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ITransportProvider } from '../../../core/utils/interfaces/ITransportProvider';
 import { map } from 'rxjs';
+import { IProvider } from '../../../core/utils/interfaces/IProvider';
 
 /**
  * Servicio para gestionar proveedores de transporte.
@@ -29,7 +29,7 @@ export class TransportProvidersServiceService {
     //     map((response) => response.map((provider) => ({ ...provider })))
     //   )
     // );
-    return signal<ITransportProvider[]>([
+    return signal<IProvider[]>([
       {
         id: 1,
         name: 'Mock Transport Provider',
@@ -51,7 +51,7 @@ export class TransportProvidersServiceService {
    * Busca un proveedor de transporte por su ID.
    * @param id ID del proveedor
    */
-  getTransporterProvider(id: number): ITransportProvider | undefined {
+  getTransporterProvider(id: number): IProvider | undefined {
     return this.getTransportProviders()().find(
       (provider) => provider.id === id
     );

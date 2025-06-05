@@ -1,14 +1,13 @@
 import { Component, effect, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ServiceStatus } from '../../../core/utils/enums/EnumServiceStatus';
-import { VehicleType } from '../../../core/utils/enums/EnumVehicleTyoe';
 import { IServiceRequest } from '../../../core/utils/interfaces/IServicerRequest';
 import { ServiceRequestMapDirectionComponent } from '../../utils/service-request-map-direction/service-request-map-direction.component';
 import { TransportProvidersServiceService } from '../../../providers/transporter/services/transport-providers-service.service';
-import { ITransportProvider } from '../../../core/utils/interfaces/ITransportProvider';
 import { ServiceRequestRatingComponent } from '../../utils/service-request-rating/service-request-rating.component';
 import { NgClass } from '@angular/common';
 import { ServiceRequestOperationService } from '../../services/service-request-operation.service';
+import { IProvider } from '../../../core/utils/interfaces/IProvider';
 
 @Component({
   selector: 'app-show-service-request',
@@ -33,7 +32,7 @@ export class ShowServiceRequestComponent implements OnInit {
   travel = signal<IServiceRequest | undefined>(undefined);
 
   /** Señal con el proveedor de transporte asociado al viaje */
-  transporterProvider = signal<ITransportProvider | undefined>(undefined);
+  transporterProvider = signal<IProvider | undefined>(undefined);
 
   constructor() {
     // Usar effect en el constructor para cumplir con el contexto de inyección
@@ -44,7 +43,9 @@ export class ShowServiceRequestComponent implements OnInit {
           this.travel.set(req);
           if (req?.tariffs?.[0]?.providerId) {
             this.transporterProvider.set(
-              this.transportProvicerService.getTransporterProvider(req.tariffs[0].providerId)
+              this.transportProvicerService.getTransporterProvider(
+                req.tariffs[0].providerId
+              )
             );
           }
         });
