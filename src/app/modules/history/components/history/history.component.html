@@ -39,11 +39,11 @@
               <p class="text-sm text-pretty font-semibold">
                 {{ travel.originAddress }} - {{ travel.destinationAddress }}
               </p>
-              <p class="text-gray-600 text-sm">{{ travel.date }}</p>
+              <p class="text-gray-600 text-sm">{{ travel.date | date:'mediumDate' }}</p>
             </div>
             <div class="text-right">
               <p class="text-gray-800 font-semibold">
-                {{ getTotalTariffs(travel) }} $
+                {{ getTotalTariffs(travel) | currency }}
               </p>
             </div>
           </div>
