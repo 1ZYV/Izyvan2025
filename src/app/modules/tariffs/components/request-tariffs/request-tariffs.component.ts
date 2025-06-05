@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { BookingServiceTariffsService } from '../../services/booking-service-tariffs.service';
 import { ITariff } from '../../../core/utils/interfaces/ITariff';
 import { TariffsOperationsService } from '../../services/tariffs-operations.service';
@@ -15,7 +15,7 @@ export class RequestTariffsComponent {
   selectedTariffs: Set<ITariff> = new Set();
   tariffsRequest: ITariff[] | null = [];
 
-  constructor(private bookingServiceTariffs: BookingServiceTariffsService, private tariffOperations: TariffsOperationsService) {
+  constructor(private bookingServiceTariffs: BookingServiceTariffsService, public tariffOperations: TariffsOperationsService) {
     this.tariffOperations.getTariffs().pipe(
       tap((response) => {
         this.tariffsRequest = response;

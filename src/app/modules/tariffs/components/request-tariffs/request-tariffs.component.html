@@ -12,7 +12,8 @@
                     peer-checked:bg-black peer-checked:text-white">
                     <div class="flex-1">
                         <h3 class="font-semibold text-lg mb-1">Tarifa {{ $index + 1 }}</h3>
-                        <p class="text-gray-600">Proveedor: <span class="font-medium">{{ tariff.providerId }}</span></p>
+                        <p class="text-gray-600">Proveedor: <span class="font-medium">{{
+                                tariffOperations.getTariffProviderId(tariff)?.name }}</span></p>
                         <p class="text-gray-700">Precio: <span class="font-semibold">{{ tariff.price | currency
                                 }}</span></p>
                     </div>
