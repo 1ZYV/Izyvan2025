@@ -53,6 +53,14 @@ export class ServiceRequestOperationService {
       vehicleType: VehicleType.AUTOMOVIL,
       date: '2023-10-02',
       time: '10:30 AM',
+      tariffs: [
+        {
+          destinationAddress: 'New York, NY',
+          originAddress: 'Chicago, IL',
+          price: 150000,
+          providerId: 2,
+        }
+      ]
     },
     {
       id: 3,
@@ -64,7 +72,45 @@ export class ServiceRequestOperationService {
       vehicleType: VehicleType.VAN,
       date: '2023-10-03',
       time: '11:00 AM',
+      tariffs: [
+        {
+          destinationAddress: 'Capitol Hill, Washington, D.C.',
+          originAddress: 'White House, Washington, D.C.',
+          price: 20000,
+          providerId: 2,
+        }
+      ]
     },
+    {
+      id: 4,
+      nameReference: 'Viaje 4',
+      status: ServiceStatus.AGENCY_CANCELED,
+      originAddress: 'Los Angeles, CA',
+      destinationAddress: 'San Francisco, CA',
+      numberOfPassengers: 1,
+      vehicleType: VehicleType.AUTOMOVIL,
+      date: '2023-10-04',
+      time: '09:00 AM',
+      tariffs: [
+        {
+          destinationAddress: 'San Francisco, CA',
+          originAddress: 'Los Angeles, CA',
+          price: 80000,
+          providerId: 4,
+        }
+      ]
+    },
+    {
+      id: 5,
+      nameReference: 'Viaje 5',
+      status: ServiceStatus.PROCESSING,
+      originAddress: 'Madrid, España',
+      destinationAddress: 'Barcelona, España',
+      numberOfPassengers: 5,
+      vehicleType: VehicleType.BUS,
+      date: '2023-10-05',
+      time: '07:00 AM',
+    }
   ];
 
   /**

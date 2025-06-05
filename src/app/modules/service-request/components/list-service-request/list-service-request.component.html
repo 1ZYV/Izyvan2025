@@ -37,7 +37,6 @@
           <tr>
             <th class="px-6 py-3 text-center"></th>
             <th class="px-6 py-3 text-center">Referencia</th>
-            <th class="px-6 py-3 text-center">Estado</th>
             <th class="px-6 py-3 text-center">Fecha</th>
             <th class="px-6 py-3 text-center">Acciones</th>
           </tr>
@@ -66,40 +65,7 @@
             <td class="px-6 py-4 whitespace-nowrap">
               {{ serviceRequest?.nameReference }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="px-3 py-1 text-sm font-semibold text-white rounded-full" [ngClass]="{
-                  'bg-blue-500': serviceRequest?.status === 'PROCESSING',
-                  'bg-green-500': serviceRequest?.status === 'ACCEPTED',
-                  'bg-yellow-500': serviceRequest?.status === 'ARRIVING',
-                  'bg-orange-500': serviceRequest?.status === 'IN_PROGRESS',
-                  'bg-teal-500': serviceRequest?.status === 'COMPLETED',
-                  'bg-red-500': serviceRequest?.status === 'AGENCY_CANCELED',
-                  'bg-red-400': serviceRequest?.status === 'PROVIDER_CANCELED',
-                  'bg-gray-500':
-                    serviceRequest?.status === 'NO_PROVIDER_AVAILABLE',
-                  'bg-gray-300': !serviceRequest?.status
-                }">
-                {{
-                serviceRequest?.status === "PROCESSING"
-                ? "En Proceso"
-                : serviceRequest?.status === "ACCEPTED"
-                ? "Aceptado"
-                : serviceRequest?.status === "ARRIVING"
-                ? "En Camino"
-                : serviceRequest?.status === "IN_PROGRESS"
-                ? "En Progreso"
-                : serviceRequest?.status === "COMPLETED"
-                ? "Completado"
-                : serviceRequest?.status === "AGENCY_CANCELED"
-                ? "Cancelado por Agencia"
-                : serviceRequest?.status === "PROVIDER_CANCELED"
-                ? "Cancelado por Proveedor"
-                : serviceRequest?.status === "NO_PROVIDER_AVAILABLE"
-                ? "Sin Proveedor"
-                : "Estado Desconocido"
-                }}
-              </span>
-            </td>
+
             <td class="px-6 py-4 whitespace-nowrap">
               {{ serviceRequest?.date | date:'mediumDate' }}
             </td>
@@ -108,22 +74,34 @@
                 class="w-full px-5 py-2 text-base font-semibold text-white transition bg-black rounded-lg shadow cursor-pointer hover:bg-black/80">
                 Revisar
               </a>
-              @if (serviceRequest?.status === 'COMPLETED' ||
-              serviceRequest?.status === 'AGENCY_CANCELED' ||
-              serviceRequest?.status === 'PROVIDER_CANCELED') {
+              @if (
+              serviceRequest?.status === 'COMPLETED'
+              || serviceRequest?.status === 'AGENCY_CANCELED'
+              || serviceRequest?.status === 'PROVIDER_CANCELED'
+              || serviceRequest?.status === 'ARRIVING'
+              || serviceRequest?.status === 'IN_PROGRESS'
+              ) {
               <button
                 class="w-full px-5 py-2 text-base font-semibold text-white bg-gray-500 rounded-lg shadow cursor-not-allowed"
                 disabled>
                 {{
                 serviceRequest?.status === "COMPLETED"
                 ? "Completado"
-                : "Cancelado"
+                : serviceRequest?.status === "AGENCY_CANCELED"
+                ? "Cancelado"
+                : serviceRequest?.status === "PROVIDER_CANCELED"
+                ? "Cancelado"
+                : serviceRequest?.status === "ARRIVING"
+                ? "En Camino"
+                : serviceRequest?.status === "IN_PROGRESS"
+                ? "En Progreso"
+                : "Estado Desconocido"
                 }}
               </button>
               } @else {
               <button
-                class="w-full px-5 py-2 text-base font-semibold text-black transition bg-white rounded-lg shadow cursor-pointer outline hover:bg-black/30"
-                (click)="handleCancelServiceRequest(serviceRequest!.id)">
+                class="w-full px-5 py-2 text-base font-semibold text-black transition bg-white rounded-lg shadow cursor-pointer outline hover:bg-black/10"
+                (click)="handleCancelServiceRequest(serviceRequest.id)">
                 Cancelar
               </button>
               }
