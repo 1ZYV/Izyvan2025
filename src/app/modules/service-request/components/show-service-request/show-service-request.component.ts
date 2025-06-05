@@ -5,7 +5,7 @@ import { IServiceRequest } from '../../../core/utils/interfaces/IServicerRequest
 import { ServiceRequestMapDirectionComponent } from '../../utils/service-request-map-direction/service-request-map-direction.component';
 import { TransportProvidersServiceService } from '../../../providers/transporter/services/transport-providers-service.service';
 import { ServiceRequestRatingComponent } from '../../utils/service-request-rating/service-request-rating.component';
-import { NgClass } from '@angular/common';
+import { CurrencyPipe, NgClass, DatePipe } from '@angular/common';
 import { ServiceRequestOperationService } from '../../services/service-request-operation.service';
 import { IProvider } from '../../../core/utils/interfaces/IProvider';
 
@@ -14,7 +14,9 @@ import { IProvider } from '../../../core/utils/interfaces/IProvider';
   imports: [
     ServiceRequestMapDirectionComponent,
     ServiceRequestRatingComponent,
+    CurrencyPipe,
     NgClass,
+    DatePipe
   ],
   templateUrl: './show-service-request.component.html',
   styleUrl: './show-service-request.component.css',

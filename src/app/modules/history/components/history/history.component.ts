@@ -11,6 +11,7 @@ import { SearchIconComponent } from '../../../core/utils/icons/search-icon/searc
 import { IServiceRequest } from '../../../core/utils/interfaces/IServicerRequest';
 import { ServiceRequestMapDirectionComponent } from '../../../service-request/utils/service-request-map-direction/service-request-map-direction.component';
 import { ServiceRequestOperationService } from '../../../service-request/services/service-request-operation.service';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 
 /**
  * Componente para mostrar el historial de viajes del usuario.
@@ -22,6 +23,8 @@ import { ServiceRequestOperationService } from '../../../service-request/service
     RefreshIconComponent,
     SearchIconComponent,
     ServiceRequestMapDirectionComponent,
+    CurrencyPipe,
+    DatePipe
   ],
   templateUrl: './history.component.html',
   styleUrl: './history.component.css',

@@ -6,7 +6,7 @@ import { SearchIconComponent } from '../../../core/utils/icons/search-icon/searc
 import { ServiceStatus } from '../../../core/utils/enums/EnumServiceStatus';
 import { VehicleType } from '../../../core/utils/enums/EnumVehicleTyoe';
 import { IServiceRequest } from '../../../core/utils/interfaces/IServicerRequest';
-import { NgClass } from '@angular/common';
+import { NgClass, DatePipe } from '@angular/common';
 import { AuthenticationService } from '../../../auth/services/authentication.service';
 import { ServiceRequestOperationService } from '../../services/service-request-operation.service';
 
@@ -18,6 +18,7 @@ import { ServiceRequestOperationService } from '../../services/service-request-o
     RefreshIconComponent,
     SearchIconComponent,
     NgClass,
+    DatePipe
   ],
   templateUrl: './list-service-request.component.html',
   styleUrl: './list-service-request.component.css',
