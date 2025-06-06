@@ -3,7 +3,6 @@ import {
   effect, // Angular's effect for reactive side effects
   inject, // Dependency injection function
   input, // Input decorator for component properties
-  OnInit, // Lifecycle hook
   signal, // Signal for reactive state management
 } from '@angular/core';
 import {
@@ -13,7 +12,6 @@ import {
   MapDirectionsService, // Service to fetch directions
 } from '@angular/google-maps'; // Service for geocoding addresses
 import {
-  firstValueFrom, // RxJS utility to get the first emitted value as a Promise
   forkJoin, // RxJS operator to combine multiple Observables
   map, // RxJS operator to transform emitted values
   Observable, // RxJS Observable
@@ -30,7 +28,7 @@ import { GeocodingService } from '../../../core/services/google-maps/geocoding/g
   templateUrl: './service-request-map-direction.component.html',
   styleUrl: './service-request-map-direction.component.css',
 })
-export class ServiceRequestMapDirectionComponent implements OnInit {
+export class ServiceRequestMapDirectionComponent {
   // Input property for service request details (optional)
   travel = input<IServiceRequest | undefined>();
   // Input property to determine if directions should be fetched by coordinates (default: false)
@@ -76,19 +74,19 @@ export class ServiceRequestMapDirectionComponent implements OnInit {
           this.directionsResults.set(undefined);
         }
       }
+
+      this.handleRequestDirections(
+        this.travel()?.originAddress,
+        this.travel()?.destinationAddress
+      );
     });
+
   }
 
   /**
    * Lifecycle hook called after component initialization.
    */
-  ngOnInit(): void {
-    // Request directions using addresses from the `travel` input if available
-    this.handleRequestDirections(
-      this.travel()?.originAddress,
-      this.travel()?.destinationAddress
-    );
-  }
+
 
   /**
    * Fetches coordinates for given origin and destination addresses.
