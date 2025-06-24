@@ -1,0 +1,45 @@
+<div class="travel-show-container">
+    <!-- Header con navegación -->
+    <cp-travel-show-header [travelNameReference]="travelNameReference()" [travelId]="travelId()"
+        [isLoading]="isLoading()" (backToTravels)="onBackToTravels()">
+    </cp-travel-show-header> <!-- Loading State -->
+    @if (isLoading()) {
+    <cp-loader message="Cargando información del viaje..." size="large" variant="primary" [centered]="true">
+    </cp-loader>
+    }
+
+    <!-- Content -->
+    @if (!isLoading()) {
+    <div class="travel-show-content">
+
+        <!-- Mapa Simple del Viaje -->
+        <cp-travel-map-section [mapData]="travelMapData()!" [height]="'300px'"
+            (locationClick)="onMapLocationClick($event)" (mapClick)="onMapClick()" (routeClick)="onRouteClick()">
+        </cp-travel-map-section>
+
+        <!-- Grid con información del viaje y desglose de precio -->
+        <div class="travel-info-grid"> <!-- Información del Viaje -->
+            <cp-travel-info-section [travelData]="travelMapData()!" [currentDate]="currentDate"
+                [travelStatus]="travelStatus()">
+            </cp-travel-info-section>
+
+            <!-- Desglose de Precio -->
+            <cp-price-breakdown-section [priceData]="priceData()!">
+            </cp-price-breakdown-section>
+        </div>
+
+        <!-- Grid con información de ruta e información del conductor -->
+        <div class="travel-details-grid">
+            <!-- Información Detallada de la Ruta -->
+            <cp-travel-route-section [routeInfo]="routeData()!" [maxUpdates]="10"
+                (locationClick)="onLocationClick($event)" (updateClick)="onUpdateClick($event)">
+            </cp-travel-route-section>
+
+            <!-- Información del Conductor -->
+            <cp-driver-info-section [driverData]="driverData()!">
+            </cp-driver-info-section>
+        </div>
+
+    </div>
+    }
+</div>

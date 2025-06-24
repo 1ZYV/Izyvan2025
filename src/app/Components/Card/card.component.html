@@ -1,0 +1,58 @@
+<div [ngClass]="cardClasses()" (click)="onCardClick()" [attr.tabindex]="clickable() ? 0 : null">
+    @if (showHeader() && (title() || subtitle() || headerTemplate())) {
+    <header class="card-header">
+        @if (headerTemplate()) {
+        <ng-container [ngTemplateOutlet]="headerTemplate()!" [ngTemplateOutletContext]="{ 
+                $implicit: title(), 
+                title: title(), 
+                subtitle: subtitle(),
+                loading: loading(),
+                disabled: disabled()
+            }"></ng-container>
+        } @else {
+        <div class="header-content">
+            @if (title()) {
+            <h2 class="card-title">{{ title() }}</h2>
+            }
+            @if (subtitle()) {
+            <p class="subtitle">{{ subtitle() }}</p>
+            }
+        </div>
+        }
+    </header>
+    }
+
+    <div class="card-body">
+        <ng-content></ng-content>
+
+        @if (loading()) {
+        <div class="loading-overlay">
+            <div class="loading-spinner"></div>
+        </div>
+        }
+    </div>
+
+    @if (showFooter() && (footerTemplate() || actionLabel())) {
+    <footer [ngClass]="footerClasses()">
+        @if (footerTemplate()) {
+        <ng-container [ngTemplateOutlet]="footerTemplate()!" [ngTemplateOutletContext]="{ 
+                $implicit: actionLabel(), 
+                actionLabel: actionLabel(),
+                disabled: isProcessing() || disabled(),
+                loading: loading(),
+                handleAction: handleAction.bind(this)
+            }"></ng-container>
+        } @else {
+
+        @if (hasActions()) {
+        <button class="btn btn-primary" [disabled]="isProcessing() || disabled() || loading()" (click)="handleAction()">
+            @if (isProcessing()) {
+            <span class="loading-spinner"></span>
+            } @else {
+            {{ actionLabel() }}
+            }
+        </button>
+        }}
+    </footer>
+    }
+</div>

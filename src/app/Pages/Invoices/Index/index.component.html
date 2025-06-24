@@ -1,0 +1,70 @@
+<cp-invoice-header></cp-invoice-header>
+
+<div class="mt-4">
+    <!-- Header with title and actions -->
+    <div class="flex flex-col items-start justify-between gap-4 mb-6 sm:flex-row sm:items-center">
+        <div>
+            <p class="text-2xl font-semibold">{{ getSelectedFilterLabel() }}</p>
+            <p class="mt-1 text-sm text-gray-600">
+                {{ filteredInvoices().length }} {{ filteredInvoices().length === 1 ? 'factura' : 'facturas' }}
+                @if (selectedStatus() !== 'all') {
+                de {{ invoicesList().length }} total
+                }
+            </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <!-- Filter dropdown -->
+            <select
+                class="px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                [value]="selectedStatus()" (change)="onStatusFilterChange($any($event.target).value)">
+                @for (option of statusOptions; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+                }
+            </select> <!-- Create invoice button -->
+            @if (canCreateInvoices()) {
+            <button
+                class="flex items-center gap-2 px-6 py-2 font-medium text-white transition-colors bg-black rounded-lg hover:bg-gray-800"
+                (click)="onCreateInvoice()" type="button">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                Crear factura
+            </button>
+            }
+        </div>
+    </div>
+
+    <!-- Loading state -->
+    @if (isLoading()) {
+    <cp-loader message="Cargando facturas..." size="medium" variant="primary" [centered]="true">
+    </cp-loader>
+    }
+
+    <!-- Lista de facturas -->
+    @if (!isLoading() && filteredInvoices().length > 0) {
+    <div class="my-2 space-y-4">
+        @for (invoice of filteredInvoices(); track invoice.id) {
+        <div class="flex flex-col items-stretch gap-4">
+
+            <cp-invoice-card [invoice]="invoice" (detailsClick)="onViewDetails($event)"
+                (cardClick)="onCardClick($event)">
+            </cp-invoice-card>
+        </div>
+        }
+    </div>
+    } <!-- Estado vacío -->
+    @if (!isLoading() && filteredInvoices().length === 0) {
+    @if (selectedStatus() === 'all') {
+    <cp-empty-state icon="📄" title="No tienes facturas" description="Cuando generes facturas aparecerán aquí."
+        [actionText]="canCreateInvoices() ? 'Crear factura' : ''" [showAction]="canCreateInvoices()"
+        [onActionClick]="onCreateInvoice">
+    </cp-empty-state> } @else {
+    <cp-empty-state icon="🔍" title="No hay facturas con este estado"
+        [description]="'No se encontraron facturas con el estado seleccionado.'" actionText="Ver todas las facturas"
+        [showAction]="true" [onActionClick]="onShowAllInvoices">
+    </cp-empty-state>
+    }
+    }
+</div>

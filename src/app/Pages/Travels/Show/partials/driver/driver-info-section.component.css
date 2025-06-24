@@ -1,0 +1,309 @@
+/* Driver Info Section */
+.driver-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Header del conductor */
+.driver-header {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.driver-avatar-container {
+  flex-shrink: 0;
+}
+
+.driver-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e5e7eb;
+}
+
+.driver-avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #e5e7eb;
+}
+
+.driver-initials {
+  color: white;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.driver-basic-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.driver-name-status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.driver-name {
+  color: #111827;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.driver-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.rating-stars {
+  display: flex;
+  gap: 0.125rem;
+}
+
+.star {
+  width: 16px;
+  height: 16px;
+  color: #fbbf24;
+}
+
+.star-filled {
+  opacity: 1;
+}
+
+.star-partial {
+  opacity: 0.5;
+}
+
+.rating-text {
+  font-weight: 600;
+  color: #111827;
+  font-size: 0.875rem;
+}
+
+.rating-trips {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Información del vehículo */
+.vehicle-info {
+  background-color: #f9fafb;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #f3f4f6;
+}
+
+.vehicle-title {
+  color: #111827;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem 0;
+}
+
+.vehicle-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.vehicle-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vehicle-label {
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.vehicle-value {
+  color: #111827;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.vehicle-plate {
+  background-color: #111827;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-family: "Courier New", monospace;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+}
+
+/* Información adicional */
+.additional-info {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.info-label {
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.info-value {
+  color: #111827;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Acciones del conductor */
+.driver-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding-top: 1rem;
+}
+
+.action-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  border: none;
+}
+
+.action-button.primary {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.action-button.primary:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.action-button.secondary {
+  background-color: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.action-button.secondary:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.button-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .driver-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .driver-name-status {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .driver-rating {
+    justify-content: center;
+  }
+
+  .vehicle-details {
+    gap: 0.75rem;
+  }
+
+  .vehicle-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .driver-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .driver-avatar,
+  .driver-avatar-placeholder {
+    width: 60px;
+    height: 60px;
+  }
+
+  .driver-initials {
+    font-size: 1.25rem;
+  }
+
+  .driver-name {
+    font-size: 1.125rem;
+  }
+
+  .vehicle-info {
+    padding: 0.75rem;
+  }
+}
+
+/* Animaciones */
+.driver-info {
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.action-button:active {
+  transform: translateY(0);
+}
