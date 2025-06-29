@@ -584,4 +584,60 @@ export class TravelsService {
     clearLoading(): void {
         this.isLoadingSubject.next(false);
     }
+
+    /**
+     * Obtiene los viajes en estado de solicitud de servicio (disponibles para asignar guía)
+     */
+    getAvailableServiceRequests(): Observable<TravelListItem[]> {
+        this.isLoadingSubject.next(true);
+
+        const availableRequests = this.travelsListSubject.value
+            .filter(travel => travel.status === 'solicitud-servicio');
+
+        return of(availableRequests).pipe(
+            delay(600)
+        );
+    }
+
+    /**
+     * Asigna un guía a un viaje en estado de solicitud de servicio
+     */
+    assignGuideToTravel(travelId: string, guideId: string): Observable<boolean> {
+        this.isLoadingSubject.next(true);
+
+        const travelIndex = this.mockTravels.findIndex(t => t.id === travelId);
+
+        if (travelIndex !== -1 && this.mockTravels[travelIndex].status === 'solicitud-servicio') {
+            // Cambiar el estado del viaje a siguiente estado en el flujo
+            this.mockTravels[travelIndex].status = 'eleccion-tarifas';
+
+            // Actualizar la lista reactiva
+            this.initializeMockData();
+
+            return of(true).pipe(delay(800));
+        }
+
+        return of(false).pipe(delay(800));
+    }
+
+    /**
+     * Elimina un viaje por su ID
+     */
+    deleteTravel(travelId: string): Observable<boolean> {
+        this.isLoadingSubject.next(true);
+
+        const travelIndex = this.mockTravels.findIndex(t => t.id === travelId);
+
+        if (travelIndex !== -1) {
+            // Eliminar el viaje del array
+            this.mockTravels.splice(travelIndex, 1);
+
+            // Actualizar la lista reactiva
+            this.initializeMockData();
+
+            return of(true).pipe(delay(500));
+        }
+
+        return of(false).pipe(delay(500));
+    }
 }

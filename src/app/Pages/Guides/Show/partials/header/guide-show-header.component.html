@@ -1,0 +1,9 @@
+<div class="guide-show-header">
+    <button class="back-button" (click)="onBackClick()" type="button">
+        ← Volver a Guías
+    </button>
+    <h1 class="guide-show-title">{{ guideName() }}</h1>
+    @if (guideId()) {
+    <p class="guide-show-subtitle">ID: {{ guideId() }}</p>
+    }
+</div>

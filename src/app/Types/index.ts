@@ -1,7 +1,7 @@
 /**
  * Índice de tipos centralizados
  * 
- * Este archivo exporta todos los tipos relacionados con viajes
+ * Este archivo exporta todos los tipos relacionados con viajes y guías
  * de manera organizada para facilitar las importaciones
  */
 
@@ -16,6 +16,34 @@ export {
     VehicleTypeInfo,
     VEHICLE_TYPES
 } from './travel.types';
+
+// Tipos principales de guías
+export {
+    GuideStatus,
+    GuideSpecialty,
+    GuideLanguage,
+    GuideInfo,
+    GuideDetails,
+    GuideReview,
+    TourHistory,
+    GuideStatusConfig,
+    GuideStatusMap,
+    GuideSpecialtyInfo,
+    GuideLanguageInfo,
+    GuideStatusUtils,
+    GUIDE_SPECIALTIES,
+    GUIDE_LANGUAGES,
+    ALL_GUIDE_STATUSES,
+    ACTIVE_GUIDE_STATUSES,
+    AVAILABLE_GUIDE_STATUSES
+} from './guide.types';
+
+// Tipos de servicios de turismo
+export {
+    TourismServiceStatus,
+    TourismService,
+    GuideAssignment
+} from './tourism-service.types';
 
 // Tipos de Badge (re-exportados desde el componente Badge)
 export {

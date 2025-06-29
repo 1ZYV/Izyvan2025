@@ -1,0 +1,38 @@
+<div class="mt-4">
+    <div class="flex justify-between items-center mb-6">
+        <p class="text-2xl font-semibold">Todos los guías turísticos</p>
+        <button
+            class="bg-black text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors flex items-center gap-2"
+            (click)="onAddGuide()" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+            Añadir guía turístico
+        </button>
+    </div>
+
+    <!-- Loading state -->
+    @if (isLoading()) {
+    <cp-loader message="Cargando guías..." size="medium" variant="primary" [centered]="true">
+    </cp-loader>
+    }
+
+    <!-- Lista de guías -->
+    @if (!isLoading() && guidesList().length > 0) {
+    <div class="space-y-4">
+        @for (guide of guidesList(); track guide.id) {
+        <cp-guide-card [guide]="guide" (detailsClick)="onViewDetails($event)" (cardClick)="onCardClick($event)">
+        </cp-guide-card>
+        }
+    </div>
+    }
+
+    <!-- Estado vacío -->
+    @if (!isLoading() && guidesList().length === 0) {
+    <cp-empty-state icon="🗺️" title="No tienes guías turísticos"
+        description="Cuando tengas guías registrados aparecerán aquí." actionText="Añadir guía turístico"
+        [showAction]="true" [onActionClick]="onAddGuide">
+    </cp-empty-state>
+    }
+</div>

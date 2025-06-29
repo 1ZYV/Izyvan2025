@@ -11,6 +11,7 @@ import { InvoicesShowComponent } from "../Invoices/Show/show.component";
 import { ServicesIndexComponent } from "../Services/Index/index.component";
 import { DriversIndexComponent } from "../Drivers/Index/index.component";
 import { GuidesIndexComponent } from "../Guides/Index/index.component";
+import { GuidesShowComponent } from "../Guides/Show/show.component";
 import { TariffsIndexComponent } from "../Tariffs/Index/index.component";
 import { VehiclesIndexComponent } from "../Vehicles/Index/index.component";
 import { ProviderGuard } from "@/Guards/Auth/provider.guard";
@@ -96,6 +97,20 @@ export const ADMIN_ROUTES: Routes = [
                 loadComponent: () => GuidesIndexComponent,
                 canActivate: [ProviderGuard],
                 data: { title: 'Tus Guías', subtitle: 'Consulta y gestiona tus guías', role: 'admin', providerType: 'tourism' },
+            },
+
+            {
+                path: 'guides/create',
+                loadComponent: () => import('../Guides/Create/create.component').then(c => c.GuidesCreateComponent),
+                canActivate: [ProviderGuard],
+                data: { title: 'Nuevo Guía', subtitle: 'Añadir un nuevo guía turístico', role: 'admin', providerType: 'tourism' },
+            },
+
+            {
+                path: 'guides/:id',
+                loadComponent: () => GuidesShowComponent,
+                canActivate: [ProviderGuard],
+                data: { title: 'Detalle del Guía', subtitle: 'Información detallada del guía turístico', role: 'admin', providerType: 'tourism' },
             },
 
             {
