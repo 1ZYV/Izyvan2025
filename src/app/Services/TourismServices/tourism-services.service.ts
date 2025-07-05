@@ -108,41 +108,6 @@ export class TourismServicesService {
     }
 
     /**
-     * Obtiene los servicios disponibles (en estado de solicitud)
-     */
-    getAvailableServices(): Observable<TourismService[]> {
-        this.isLoadingSubject.next(true);
-        const availableServices = this.servicesListSubject.value
-            .filter(service => service.status === 'solicitud-servicio');
-
-        return of(availableServices).pipe(
-            delay(600)
-        );
-    }
-
-    /**
-     * Asigna un servicio a un guía
-     */
-    assignServiceToGuide(serviceId: string, guideId: string): Observable<boolean> {
-        this.isLoadingSubject.next(true);
-
-        const serviceIndex = this.mockServices.findIndex(s => s.id === serviceId);
-
-        if (serviceIndex !== -1 && this.mockServices[serviceIndex].status === 'solicitud-servicio') {
-            // Cambiar el estado del servicio
-            this.mockServices[serviceIndex].status = 'asignado';
-            this.mockServices[serviceIndex].notes = `${this.mockServices[serviceIndex].notes || ''} - Asignado a guía ${guideId}`;
-
-            // Actualizar la lista reactiva
-            this.initializeMockData();
-
-            return of(true).pipe(delay(800));
-        }
-
-        return of(false).pipe(delay(800));
-    }
-
-    /**
      * Obtiene servicios por estado
      */
     getServicesByStatus(status: TourismServiceStatus): Observable<TourismService[]> {

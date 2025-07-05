@@ -16,7 +16,6 @@ export class GuideInfoSectionComponent {
     guideData = input.required<GuideDetails>();
 
     // Outputs
-    hireGuide = output<void>();
     completeService = output<void>();
     deleteGuide = output<void>();
 
@@ -24,11 +23,6 @@ export class GuideInfoSectionComponent {
     statusInfo = computed(() => {
         const guide = this.guideData();
         return GuideStatusUtils.getStatusConfig(guide.status);
-    });
-
-    canBeHired = computed(() => {
-        const guide = this.guideData();
-        return GuideStatusUtils.isAvailable(guide.status);
     });
 
     canCompleteService = computed(() => {
@@ -51,10 +45,6 @@ export class GuideInfoSectionComponent {
     });
 
     // Event handlers
-    onHireGuide(): void {
-        this.hireGuide.emit();
-    }
-
     onCompleteService(): void {
         this.completeService.emit();
     }

@@ -9,10 +9,10 @@
 export {
     TravelStatus,
     RouteStatus,
-    DriverStatus,
+    DriverStatus as TravelDriverStatus,
     AllTravelStatuses,
     TravelStatusUtils,
-    VehicleType,
+    VehicleType as TravelVehicleType,
     VehicleTypeInfo,
     VEHICLE_TYPES
 } from './travel.types';
@@ -44,6 +44,30 @@ export {
     TourismService,
     GuideAssignment
 } from './tourism-service.types';
+
+// Tipos de vehículos y conductores
+export {
+    VehicleStatus,
+    DriverStatus as VehicleDriverStatus,
+    VehicleType as VehicleTypeDetailed,
+    VehicleInfo,
+    VehicleDetails,
+    MaintenanceRecord,
+    DriverInfo,
+    DriverDetails,
+    DriverReview,
+    TransportAssignment,
+    VehicleStatusConfig,
+    DriverStatusConfig,
+    VehicleStatusMap,
+    DriverStatusMap,
+    ACTIVE_VEHICLE_STATUSES,
+    AVAILABLE_VEHICLE_STATUSES,
+    ACTIVE_DRIVER_STATUSES,
+    AVAILABLE_DRIVER_STATUSES,
+    VehicleUtils,
+    DriverUtils
+} from './vehicle.types';
 
 // Tipos de Badge (re-exportados desde el componente Badge)
 export {

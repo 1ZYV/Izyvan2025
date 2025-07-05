@@ -15,8 +15,7 @@
     <div class="guide-show-content">
         <!-- Grid con información del guía -->
         <div class="guide-info-grid">
-            <!-- Información principal del guía -->
-            <cp-guide-info-section [guideData]="guideDetails()!" (hireGuide)="onHireGuide()"
+            <!-- Información principal del guía --> <cp-guide-info-section [guideData]="guideDetails()!"
                 (completeService)="onCompleteService()" (deleteGuide)="onDeleteGuide()">
             </cp-guide-info-section>
 
@@ -34,10 +33,4 @@
         </cp-guide-portfolio-section>
     </div>
     }
-
-    <!-- Modal de asignación de servicios -->
-    <cp-guide-assignment-modal [isOpen]="showAssignmentModal()" [guide]="guideDetails()!"
-        [availableServices]="availableServices()" [isAssigning]="isAssigning()" (close)="onCloseAssignmentModal()"
-        (assignService)="onAssignService($event)" (deleteService)="onDeleteService($event)">
-    </cp-guide-assignment-modal>
 </div>

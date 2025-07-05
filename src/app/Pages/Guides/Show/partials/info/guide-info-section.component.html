@@ -7,14 +7,7 @@
                     [variant]="statusInfo().variant">
                 </cp-badge>
             </div>
-
             <div class="action-buttons">
-                @if (canBeHired()) {
-                <button class="action-button action-button-primary" (click)="onHireGuide()">
-                    Contratar Guía
-                </button>
-                }
-
                 @if (canCompleteService()) {
                 <button class="action-button action-button-success" (click)="onCompleteService()">
                     Finalizar Servicio

@@ -1,0 +1,136 @@
+<div class="services-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">{{ pageTitle() }}</h1>
+        <p class="page-description">{{ pageDescription() }}</p>
+    </div>
+
+    <!-- Loading state -->
+    @if (isLoading()) {
+    <div class="loading-container">
+        <cp-loader message="Cargando solicitudes de servicio..." size="large"></cp-loader>
+    </div>
+    } @else {
+    <div class="services-content">
+        <!-- Pending Requests Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">📋 Solicitudes Pendientes</h2>
+                <div class="section-actions">
+                    <span class="section-count">{{ pendingRequests().length }}</span>
+                    <button class="refresh-button" (click)="onRefresh()" [disabled]="isLoading()">
+                        🔄 Actualizar
+                    </button>
+                </div>
+            </div>
+
+            @if (pendingRequests().length > 0) {
+            <div class="requests-grid">
+                @for (request of pendingRequests(); track request.id) {
+                <cp-service-request-card [serviceRequest]="request" [showActions]="true"
+                    (accept)="onAcceptRequest($event)" (reject)="onRejectRequest($event)"
+                    (viewDetails)="onViewRequestDetails($event)">
+                </cp-service-request-card>
+                }
+            </div>
+            } @else {
+            <div class="empty-section">
+                <div class="empty-icon">📭</div>
+                <p class="empty-text">No hay solicitudes pendientes en este momento</p>
+            </div>
+            }
+        </div>
+
+        <!-- Accepted Requests Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">✅ Solicitudes Aceptadas</h2>
+                <span class="section-count">{{ acceptedRequests().length }}</span>
+            </div>
+
+            @if (acceptedRequests().length > 0) {
+            <div class="requests-grid">
+                @for (request of acceptedRequests(); track request.id) {
+                <cp-service-request-card [serviceRequest]="request" [showActions]="true"
+                    (assignResources)="onAssignResources($event)" (viewDetails)="onViewRequestDetails($event)">
+                </cp-service-request-card>
+                }
+            </div>
+            } @else {
+            <div class="empty-section">
+                <div class="empty-icon">📋</div>
+                <p class="empty-text">No has aceptado solicitudes aún</p>
+            </div>
+            }
+        </div>
+
+        <!-- Assigned Requests Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">👥 Recursos Asignados</h2>
+                <span class="section-count">{{ assignedRequests().length }}</span>
+            </div>
+
+            @if (assignedRequests().length > 0) {
+            <div class="requests-grid">
+                @for (request of assignedRequests(); track request.id) {
+                <cp-service-request-card [serviceRequest]="request" [showActions]="true"
+                    (viewDetails)="onViewRequestDetails($event)">
+                </cp-service-request-card>
+                }
+            </div>
+            } @else {
+            <div class="empty-section">
+                <div class="empty-icon">👥</div>
+                <p class="empty-text">No hay servicios con recursos asignados</p>
+            </div>
+            }
+        </div>
+
+        <!-- Completed Requests Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">🎉 Servicios Completados</h2>
+                <span class="section-count">{{ completedRequests().length }}</span>
+            </div>
+
+            @if (completedRequests().length > 0) {
+            <div class="requests-grid">
+                @for (request of completedRequests(); track request.id) {
+                <cp-service-request-card [serviceRequest]="request" [showActions]="false"
+                    (viewDetails)="onViewRequestDetails($event)">
+                </cp-service-request-card>
+                }
+            </div>
+            } @else {
+            <div class="empty-section">
+                <div class="empty-icon">🎉</div>
+                <p class="empty-text">No hay servicios completados todavía</p>
+            </div>
+            }
+        </div>
+    </div>
+    }
+
+    <!-- Assign Guide Modal -->
+    @if (selectedRequestForAssignment()) {
+    <cp-assign-guide-modal [isOpen]="showAssignGuideModal()" [serviceRequest]="selectedRequestForAssignment()!"
+        [isAssigning]="isAssigningGuide()" (close)="onCloseAssignGuideModal()" (assignGuide)="onAssignGuide($event)">
+    </cp-assign-guide-modal>
+    }
+
+    <!-- Assign Transport Modal -->
+    @if (selectedRequestForTransport()) {
+    <cp-assign-transport-modal [isOpen]="showAssignTransportModal()" [serviceRequest]="selectedRequestForTransport()!"
+        [isAssigning]="isAssigningTransport()" (close)="onCloseAssignTransportModal()"
+        (assignResources)="onAssignTransport($event)">
+    </cp-assign-transport-modal>
+    }
+
+    <!-- Service Details Modal -->
+    @if (selectedRequestForDetails()) {
+    <cp-service-details-modal [isOpen]="showServiceDetailsModal()" [serviceRequest]="selectedRequestForDetails()!"
+        [isLoading]="isCancellingService()" (close)="onCloseServiceDetailsModal()" (cancel)="onCancelService($event)">
+    </cp-service-details-modal>
+    }
+</div>

@@ -1,0 +1,259 @@
+@if (isOpen()) {
+<div class="modal-overlay" (click)="onClose()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+        <!-- Header -->
+        <div class="modal-header">
+            <div class="title-section">
+                <h2 class="modal-title">
+                    {{ getServiceTypeIcon(serviceRequest().type) }}
+                    Detalles del Servicio
+                </h2>
+                <cp-badge [variant]="statusConfig().variant" [style]="statusConfig().style"
+                    [label]="statusConfig().label">
+                </cp-badge>
+            </div>
+            <button class="close-button" (click)="onClose()" [disabled]="isLoading()">
+                ✕
+            </button>
+        </div>
+
+        <!-- Content -->
+        <div class="modal-content">
+            <!-- Basic Information -->
+            <div class="info-section">
+                <h3 class="section-title">Información General</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Título:</label>
+                        <span>{{ serviceRequest().title }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Tipo:</label>
+                        <span>{{ getServiceTypeLabel(serviceRequest().type) }}</span>
+                    </div>
+                    <div class="info-item full-width">
+                        <label>Descripción:</label>
+                        <span>{{ serviceRequest().description }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Precio:</label>
+                        <span class="price">{{ formatPrice(serviceRequest().price, serviceRequest().currency) }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Fecha programada:</label>
+                        <span>{{ formatDate(serviceRequest().scheduledDate) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Client Information -->
+            <div class="info-section">
+                <h3 class="section-title">Información del Cliente</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Nombre:</label>
+                        <span>{{ serviceRequest().clientName }}</span>
+                    </div>
+                    @if (serviceRequest().clientPhone) {
+                    <div class="info-item">
+                        <label>Teléfono:</label>
+                        <span class="contact-info">
+                            <a href="tel:{{ serviceRequest().clientPhone }}">{{ serviceRequest().clientPhone }}</a>
+                        </span>
+                    </div>
+                    }
+                    @if (serviceRequest().clientEmail) {
+                    <div class="info-item">
+                        <label>Email:</label>
+                        <span class="contact-info">
+                            <a href="mailto:{{ serviceRequest().clientEmail }}">{{ serviceRequest().clientEmail }}</a>
+                        </span>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Route Information -->
+            <div class="info-section">
+                <h3 class="section-title">Ruta</h3>
+                <div class="route-info">
+                    <div class="route-point">
+                        <div class="route-icon start">📍</div>
+                        <div class="route-details">
+                            <label>Origen:</label>
+                            <span>{{ serviceRequest().origin }}</span>
+                        </div>
+                    </div>
+                    <div class="route-connector">⬇️</div>
+                    <div class="route-point">
+                        <div class="route-icon end">🎯</div>
+                        <div class="route-details">
+                            <label>Destino:</label>
+                            <span>{{ serviceRequest().destination }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Specific Information -->
+            @if (serviceRequest().type === 'transport') {
+            <div class="info-section">
+                <h3 class="section-title">Información de Transporte</h3>
+                <div class="info-grid">
+                    @if (serviceRequest().vehicleType) {
+                    <div class="info-item">
+                        <label>Tipo de vehículo:</label>
+                        <span>{{ getVehicleTypeLabel(serviceRequest().vehicleType) }}</span>
+                    </div>
+                    }
+                    @if (serviceRequest().passengerCount) {
+                    <div class="info-item">
+                        <label>Pasajeros:</label>
+                        <span>{{ serviceRequest().passengerCount }}</span>
+                    </div>
+                    }
+                    @if (serviceRequest().estimatedDuration) {
+                    <div class="info-item">
+                        <label>Duración estimada:</label>
+                        <span>{{ formatDurationSafe(serviceRequest().estimatedDuration) }}</span>
+                    </div>
+                    }
+                    @if (serviceRequest().distance) {
+                    <div class="info-item">
+                        <label>Distancia:</label>
+                        <span>{{ formatDistanceSafe(serviceRequest().distance) }}</span>
+                    </div>
+                    }
+                </div>
+            </div>
+            } @else if (serviceRequest().type === 'tourism') {
+            <div class="info-section">
+                <h3 class="section-title">Información de Turismo</h3>
+                <div class="info-grid">
+                    @if (serviceRequest().groupSize) {
+                    <div class="info-item">
+                        <label>Tamaño del grupo:</label>
+                        <span>{{ serviceRequest().groupSize }} personas</span>
+                    </div>
+                    }
+                    @if (serviceRequest().duration) {
+                    <div class="info-item">
+                        <label>Duración:</label>
+                        <span>{{ serviceRequest().duration }} horas</span>
+                    </div>
+                    }
+                    @if (serviceRequest().specialRequirements) {
+                    <div class="info-item full-width">
+                        <label>Requerimientos especiales:</label>
+                        <span>{{ serviceRequest().specialRequirements }}</span>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+
+            <!-- Assigned Resources (if any) -->
+            @if (serviceRequest().assignedResources) {
+            <div class="info-section">
+                <h3 class="section-title">Recursos Asignados</h3>
+                <div class="info-grid">
+                    @if (serviceRequest().assignedResources!.guideName) {
+                    <div class="info-item">
+                        <label>Guía asignado:</label>
+                        <span>{{ serviceRequest().assignedResources!.guideName }}</span>
+                    </div>
+                    }
+                    @if (serviceRequest().assignedResources!.vehiclePlate) {
+                    <div class="info-item">
+                        <label>Vehículo:</label>
+                        <span>{{ serviceRequest().assignedResources!.vehiclePlate }}</span>
+                    </div>
+                    }
+                    @if (serviceRequest().assignedResources!.driverName) {
+                    <div class="info-item">
+                        <label>Conductor:</label>
+                        <span>{{ serviceRequest().assignedResources!.driverName }}</span>
+                    </div>
+                    }
+                    @if (serviceRequest().assignedResources!.assignedAt) {
+                    <div class="info-item">
+                        <label>Asignado el:</label>
+                        <span>{{ formatDateSafe(serviceRequest().assignedResources!.assignedAt) }}</span>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+
+            <!-- Additional Notes -->
+            @if (serviceRequest().notes) {
+            <div class="info-section">
+                <h3 class="section-title">Notas Adicionales</h3>
+                <div class="notes-content">
+                    {{ serviceRequest().notes }}
+                </div>
+            </div>
+            }
+
+            <!-- Cancellation Information (if cancelled) -->
+            @if (serviceRequest().status === 'cancelled') {
+            <div class="info-section cancellation-info">
+                <h3 class="section-title">Información de Cancelación</h3>
+                <div class="info-grid">
+                    @if (serviceRequest().cancellationReason) {
+                    <div class="info-item full-width">
+                        <label>Motivo:</label>
+                        <span>{{ serviceRequest().cancellationReason }}</span>
+                    </div>
+                    }
+                    @if (serviceRequest().cancelledAt) {
+                    <div class="info-item">
+                        <label>Fecha de cancelación:</label>
+                        <span>{{ formatDateSafe(serviceRequest().cancelledAt) }}</span>
+                    </div>
+                    }
+                    @if (serviceRequest().cancelledBy) {
+                    <div class="info-item">
+                        <label>Cancelado por:</label>
+                        <span>{{ serviceRequest().cancelledBy }}</span>
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+
+            <!-- Metadata -->
+            <div class="info-section metadata">
+                <h3 class="section-title">Información del Sistema</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>ID de solicitud:</label>
+                        <span class="monospace">{{ serviceRequest().id }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Creado el:</label>
+                        <span>{{ formatDate(serviceRequest().createdAt) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="onClose()" [disabled]="isLoading()">
+                Cerrar
+            </button>
+
+            @if (canBeCancelled()) {
+            <button class="btn btn-danger" (click)="onCancel()" [disabled]="isLoading()">
+                @if (isLoading()) {
+                Cancelando...
+                } @else {
+                Cancelar Servicio
+                }
+            </button>
+            }
+        </div>
+    </div>
+</div>
+}

@@ -50,7 +50,7 @@ export class AuthService {
         const provider: Provider | null = {
             id: '1',
             name: 'Provider Name',
-            type: 'tourism', // Tipo de proveedor, puede ser 'transport', 'tourism' o null si no es un proveedor
+            type: 'transport', // Tipo de proveedor, puede ser 'transport', 'tourism' o null si no es un proveedor
             contactInfo: {
                 email: 'provider@example.com',
                 phone: '123-456-7890'
@@ -128,7 +128,7 @@ export class AuthService {
         const provider: Provider | null = {
             id: '1',
             name: 'Provider Name',
-            type: 'tourism', // Tipo de proveedor, puede ser 'transport', 'tourism' o null si no es un proveedor
+            type: 'transport', // Tipo de proveedor, puede ser 'transport', 'tourism' o null si no es un proveedor
             contactInfo: {
                 email: 'provider@example.com',
                 phone: '123-456-7890'

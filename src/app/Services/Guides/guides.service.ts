@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, delay } from 'rxjs';
+import { BehaviorSubject, Observable, of, delay, tap } from 'rxjs';
 import {
     GuideInfo,
     GuideDetails,
@@ -230,6 +230,20 @@ export class GuidesService {
     }
 
     /**
+     * Obtiene un guía específico por ID
+     */
+    getGuideById(guideId: string): Observable<GuideDetails | null> {
+        this.isLoadingSubject.next(true);
+
+        const guide = this.mockGuides.find(g => g.id === guideId);
+
+        return of(guide || null).pipe(
+            delay(300),
+            tap(() => this.isLoadingSubject.next(false))
+        );
+    }
+
+    /**
      * Obtiene los guías disponibles
      */
     getAvailableGuides(): Observable<GuideListItem[]> {
@@ -361,6 +375,38 @@ export class GuidesService {
         }
 
         return of(false).pipe(delay(600));
+    }
+
+    /**
+     * Actualiza el estado de un guía
+     */
+    updateGuideStatus(guideId: string, status: GuideStatus): Observable<boolean> {
+        this.isLoadingSubject.next(true);
+
+        const guide = this.mockGuides.find(g => g.id === guideId);
+
+        if (guide) {
+            guide.status = status;
+            // Actualizar la lista reactiva
+            this.initializeMockData();
+
+            return of(true).pipe(
+                delay(400),
+                tap(() => this.isLoadingSubject.next(false))
+            );
+        }
+
+        return of(false).pipe(
+            delay(400),
+            tap(() => this.isLoadingSubject.next(false))
+        );
+    }
+
+    /**
+     * Libera un guía (marca como disponible)
+     */
+    releaseGuide(guideId: string): Observable<boolean> {
+        return this.updateGuideStatus(guideId, 'available');
     }
 
     /**
