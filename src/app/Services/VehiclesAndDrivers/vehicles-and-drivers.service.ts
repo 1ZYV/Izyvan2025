@@ -10,6 +10,7 @@ import {
     VehicleTypeDetailed as VehicleType,
     TransportAssignment
 } from '../../Types';
+import { generateUniqueId } from '../../Utils/form-validation.utils';
 
 @Injectable({
     providedIn: 'root'
@@ -319,7 +320,7 @@ export class VehiclesAndDriversService {
             setTimeout(() => {
                 const newVehicle: VehicleDetails = {
                     ...vehicleData,
-                    id: `vehicle-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                    id: generateUniqueId('vehicle')
                 };
 
                 this.mockVehicles.push(newVehicle);
@@ -336,7 +337,7 @@ export class VehiclesAndDriversService {
             setTimeout(() => {
                 const newDriver: DriverDetails = {
                     ...driverData,
-                    id: `driver-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                    id: generateUniqueId('driver')
                 };
 
                 this.mockDrivers.push(newDriver);

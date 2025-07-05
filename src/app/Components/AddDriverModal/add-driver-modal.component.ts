@@ -1,26 +1,25 @@
 import { Component, input, output, signal, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { DriverDetails, VehicleTypeDetailed as VehicleType, VehicleDriverStatus as DriverStatus } from '../../Types';
+import {
+    DriverDetails,
+    VehicleTypeDetailed as VehicleType,
+    VehicleDriverStatus as DriverStatus,
+    DriverFormData as IDriverFormData,
+    VEHICLE_TYPE_OPTIONS,
+    AVAILABLE_LANGUAGES,
+    RELATIONSHIP_TYPES,
+    FORM_VALIDATION_CONFIG
+} from '../../Types';
 import { VehiclesAndDriversService } from '../../Services/VehiclesAndDrivers/vehicles-and-drivers.service';
+import {
+    getFieldError,
+    isFieldInvalid,
+    CustomValidators,
+    generateUniqueId,
+    sanitizeFormData
+} from '../../Utils/form-validation.utils';
 
-export interface DriverFormData {
-    name: string;
-    licenseNumber: string;
-    licenseExpiry: Date;
-    phone: string;
-    email?: string;
-    address?: string;
-    dateOfBirth?: Date;
-    yearsExperience: number;
-    languages: string[];
-    vehicleTypes: VehicleType[];
-    emergencyContact?: {
-        name: string;
-        phone: string;
-        relationship: string;
-    };
-    photo?: string;
-}
+export type DriverFormData = IDriverFormData;
 
 @Component({
     selector: 'cp-add-driver-modal',
@@ -40,60 +39,35 @@ export class AddDriverModalComponent {
 
     // Outputs
     close = output<void>();
-    driverCreated = output<DriverDetails>();
-
-    // Signals
+    driverCreated = output<DriverDetails>();    // Signals
     isSubmitting = signal<boolean>(false);
-
-    availableLanguages = signal<string[]>([
-        'Español',
-        'Inglés',
-        'Francés',
-        'Portugués',
-        'Italiano',
-        'Alemán',
-        'Japonés',
-        'Chino',
-        'Quechua',
-        'Aimara'
-    ]);
+    availableLanguages = signal<string[]>(AVAILABLE_LANGUAGES);
 
     // Form
     driverForm: FormGroup;
 
-    // Form data options
-    vehicleTypes: { value: VehicleType; label: string }[] = [
-        { value: 'carro', label: 'Automóvil' },
-        { value: 'van', label: 'Van/Minivan' },
-        { value: 'bus', label: 'Bus/Ómnibus' }
-    ];
-
-    relationshipTypes: string[] = [
-        'Esposo/a',
-        'Padre/Madre',
-        'Hijo/a',
-        'Hermano/a',
-        'Amigo/a',
-        'Otro familiar'
-    ];
+    // Form data options (using imported constants)
+    vehicleTypes = VEHICLE_TYPE_OPTIONS;
+    relationshipTypes = RELATIONSHIP_TYPES;
 
     selectedLanguages = signal<string[]>(['Español']);
     selectedVehicleTypes = signal<VehicleType[]>(['carro']);
 
     constructor() {
+        const config = FORM_VALIDATION_CONFIG.driver;
         this.driverForm = this.fb.group({
-            name: ['', [Validators.required, Validators.minLength(3)]],
-            licenseNumber: ['', [Validators.required, Validators.pattern(/^LIC-[A-Z0-9]{5}$/)]],
+            name: ['', [Validators.required, Validators.minLength(config.name.minLength)]],
+            licenseNumber: ['', [Validators.required, CustomValidators.licenseNumber]],
             licenseExpiry: ['', Validators.required],
-            phone: ['', [Validators.required, Validators.pattern(/^\+?[0-9\s\-]{9,15}$/)]],
+            phone: ['', [Validators.required, CustomValidators.phone]],
             email: ['', [Validators.email]],
             address: [''],
             dateOfBirth: [''],
-            yearsExperience: [1, [Validators.required, Validators.min(0), Validators.max(50)]],
+            yearsExperience: [1, [Validators.required, Validators.min(config.yearsExperience.min), Validators.max(config.yearsExperience.max)]],
             photo: [''],
             // Emergency contact
             emergencyContactName: [''],
-            emergencyContactPhone: ['', [Validators.pattern(/^\+?[0-9\s\-]{9,15}$/)]],
+            emergencyContactPhone: ['', [CustomValidators.phone]],
             emergencyContactRelationship: ['']
         });
     }
@@ -139,42 +113,41 @@ export class AddDriverModalComponent {
 
     isVehicleTypeSelected(vehicleType: VehicleType): boolean {
         return this.selectedVehicleTypes().includes(vehicleType);
-    }
-
-    onSubmit(): void {
+    } onSubmit(): void {
         if (this.driverForm.valid && !this.isSubmitting()) {
             this.isSubmitting.set(true);
 
-            const formData = this.driverForm.value;
+            const rawData = this.driverForm.value;
+            const sanitizedData = sanitizeFormData(rawData);
 
             // Prepare emergency contact (only if name is provided)
             let emergencyContact = undefined;
-            if (formData.emergencyContactName?.trim()) {
+            if (sanitizedData.emergencyContactName?.trim()) {
                 emergencyContact = {
-                    name: formData.emergencyContactName.trim(),
-                    phone: formData.emergencyContactPhone || '',
-                    relationship: formData.emergencyContactRelationship || 'No especificado'
+                    name: sanitizedData.emergencyContactName.trim(),
+                    phone: sanitizedData.emergencyContactPhone || '',
+                    relationship: sanitizedData.emergencyContactRelationship || 'No especificado'
                 };
             }
 
             const driverData: DriverFormData = {
-                name: formData.name,
-                licenseNumber: formData.licenseNumber,
-                licenseExpiry: new Date(formData.licenseExpiry),
-                phone: formData.phone,
-                email: formData.email || undefined,
-                address: formData.address || undefined,
-                dateOfBirth: formData.dateOfBirth ? new Date(formData.dateOfBirth) : undefined,
-                yearsExperience: formData.yearsExperience,
+                name: sanitizedData.name,
+                licenseNumber: sanitizedData.licenseNumber,
+                licenseExpiry: new Date(sanitizedData.licenseExpiry),
+                phone: sanitizedData.phone,
+                email: sanitizedData.email || undefined,
+                address: sanitizedData.address || undefined,
+                dateOfBirth: sanitizedData.dateOfBirth ? new Date(sanitizedData.dateOfBirth) : undefined,
+                yearsExperience: sanitizedData.yearsExperience,
                 languages: this.selectedLanguages(),
                 vehicleTypes: this.selectedVehicleTypes(),
                 emergencyContact,
-                photo: formData.photo || undefined
+                photo: sanitizedData.photo || undefined
             };
 
             // Create new driver object
             const newDriver: DriverDetails = {
-                id: `driver-${Date.now()}`, // In real app, this would be generated by the backend
+                id: generateUniqueId('driver'),
                 ...driverData,
                 status: 'available' as DriverStatus,
                 rating: 0, // New drivers start with 0 rating
@@ -221,39 +194,14 @@ export class AddDriverModalComponent {
         this.isSubmitting.set(false);
     }
 
-    // Helper methods for form validation
+    // Helper methods for form validation (using shared utilities)
     getFieldError(fieldName: string): string | null {
         const field = this.driverForm.get(fieldName);
-        if (field && field.invalid && field.touched) {
-            if (field.errors?.['required']) {
-                return 'Este campo es obligatorio';
-            }
-            if (field.errors?.['pattern']) {
-                if (fieldName === 'licenseNumber') {
-                    return 'Formato inválido (ej: LIC-12345)';
-                } else if (fieldName.includes('Phone')) {
-                    return 'Formato de teléfono inválido';
-                }
-                return 'Formato inválido';
-            }
-            if (field.errors?.['email']) {
-                return 'Email inválido';
-            }
-            if (field.errors?.['minlength']) {
-                return `Mínimo ${field.errors['minlength'].requiredLength} caracteres`;
-            }
-            if (field.errors?.['min']) {
-                return `Valor mínimo: ${field.errors['min'].min}`;
-            }
-            if (field.errors?.['max']) {
-                return `Valor máximo: ${field.errors['max'].max}`;
-            }
-        }
-        return null;
+        return getFieldError(field, fieldName);
     }
 
     isFieldInvalid(fieldName: string): boolean {
         const field = this.driverForm.get(fieldName);
-        return !!(field && field.invalid && field.touched);
+        return isFieldInvalid(field);
     }
 }

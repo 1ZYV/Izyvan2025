@@ -75,6 +75,20 @@ export {
     BadgeStyle
 } from './travel.types';
 
+// Tipos de formularios
+export {
+    VehicleFormData,
+    DriverFormData,
+    FormFieldConfig,
+    SelectOption,
+    FORM_VALIDATION_CONFIG,
+    VEHICLE_TYPE_OPTIONS,
+    FUEL_TYPE_OPTIONS,
+    AVAILABLE_LANGUAGES,
+    RELATIONSHIP_TYPES,
+    AVAILABLE_VEHICLE_FEATURES
+} from './form.types';
+
 // Importar para uso interno
 import { TravelStatus, RouteStatus } from './travel.types';
 
