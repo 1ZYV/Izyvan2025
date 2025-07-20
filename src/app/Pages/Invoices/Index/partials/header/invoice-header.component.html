@@ -1,4 +1,18 @@
 <div class="mb-6">
+    <!-- Header con botón de crear factura -->
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900">Gestión de Facturas</h2>
+            <p class="text-gray-600">Administra tus facturas y pagos</p>
+        </div>
+        <button type="button"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+            (click)="onCreateInvoice()">
+            <span class="mr-2">+</span>
+            Crear Factura
+        </button>
+    </div>
+
     <!-- Estadísticas principales -->
     <div class="grid grid-cols-4 gap-4 mb-6">
         <cp-card variant="default" padding="md" [hoverable]="false">

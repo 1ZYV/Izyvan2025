@@ -116,6 +116,11 @@ export class InvoiceHeaderComponent implements OnInit, OnDestroy {
         this.router.navigate(['/dashboard/invoices', invoiceId]);
     }
 
+    // Método para navegar a crear nueva factura
+    onCreateInvoice(): void {
+        this.router.navigate(['/dashboard/invoices/create']);
+    }
+
     // Método para obtener información de estado usando utilidades centralizadas
     getStatusInfo(invoice: Invoice) {
         return {

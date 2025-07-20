@@ -59,8 +59,8 @@
     </div>
 
     <!-- Invoice details grid -->
-    <div class="invoice-grid"> <!-- Basic information card -->
-        <cp-card class="invoice-info-card">
+    <div class="flex flex-wrap items-center justify-between"> <!-- Basic information card -->
+        <cp-card class="w-full invoice-info-card" [size]="'full'">
             <h2 class="card-title">Información General</h2>
             <div class="info-grid">
                 <div class="info-item">
@@ -77,17 +77,6 @@
                 </div>
 
                 <div class="info-item">
-                    <label>Fecha de Vencimiento:</label>
-                    <span class="value" [class.overdue]="isOverdue()">
-                        {{ formatDate(invoice()?.dueDate || '') }}
-                        <span *ngIf="isOverdue()" class="overdue-text">(Vencida)</span>
-                        <span *ngIf="!isOverdue() && getDaysUntilDue() <= 7 && getDaysUntilDue() > 0"
-                            class="warning-text">
-                            ({{ getDaysUntilDue() }} días restantes)
-                        </span>
-                    </span>
-                </div>
-                <div class="info-item">
                     <label>Estado:</label>
                     <cp-badge [label]="statusInfo()?.description || ''" [variant]="statusInfo()?.variant || 'primary'">
                     </cp-badge>
@@ -101,7 +90,7 @@
         </cp-card>
 
         <!-- Client details card -->
-        <cp-card class="client-details-card">
+        <cp-card class="w-full client-details-card" [size]="'full'">
             <h2 class="card-title">Detalles del Cliente</h2>
             <div class="client-info">
                 <div class="client-avatar">
@@ -131,8 +120,93 @@
             </div>
         </cp-card>
 
+        <!-- Multi-service details card (if services exist) -->
+        <cp-card class="w-full services-details-card" [size]="'full'" *ngIf="hasServices()">
+            <h2 class="card-title">Servicios Incluidos en la Factura</h2>
+            <div class="services-list">
+                <div *ngFor="let service of invoice()?.services; let i = index" class="service-card">
+                    <div class="service-header">
+                        <div class="service-type">
+                            <span class="service-icon" [class.transport]="service.type === 'transport'"
+                                [class.tourism]="service.type === 'tourism'">
+                                {{ service.type === 'transport' ? '🚗' : '🏛️' }}
+                            </span>
+                            <cp-badge [label]="service.type === 'transport' ? 'Transporte' : 'Turismo'"
+                                [variant]="service.type === 'transport' ? 'info' : 'success'">
+                            </cp-badge>
+                        </div>
+                        <div class="service-amount">
+                            <span class="amount">{{ invoice()?.currency }} ${{ service.amount.toFixed(2) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="service-content">
+                        <h4 class="service-description">{{ service.description }}</h4>
+                        <div class="service-meta">
+                            <p class="completion-date">
+                                <strong>Completado:</strong> {{ formatDate(service.completedDate) }}
+                            </p>
+                        </div>
+
+                        <!-- Service specific details -->
+                        <div class="service-details" *ngIf="service.serviceDetails">
+                            <div *ngIf="service.type === 'transport'" class="transport-details">
+                                <div class="detail-grid">
+                                    <div class="detail-item" *ngIf="service.serviceDetails.origin">
+                                        <label>Origen:</label>
+                                        <span>{{ service.serviceDetails.origin }}</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="service.serviceDetails.destination">
+                                        <label>Destino:</label>
+                                        <span>{{ service.serviceDetails.destination }}</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="service.serviceDetails.distance">
+                                        <label>Distancia:</label>
+                                        <span>{{ service.serviceDetails.distance }} km</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="service.serviceDetails.duration">
+                                        <label>Duración:</label>
+                                        <span>{{ service.serviceDetails.duration }} min</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="service.serviceDetails.vehicleType">
+                                        <label>Vehículo:</label>
+                                        <span>{{ service.serviceDetails.vehicleType }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div *ngIf="service.type === 'tourism'" class="tourism-details">
+                                <div class="detail-grid">
+                                    <div class="detail-item" *ngIf="service.serviceDetails.tourDestination">
+                                        <label>Destino:</label>
+                                        <span>{{ service.serviceDetails.tourDestination }}</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="service.serviceDetails.tourDuration">
+                                        <label>Duración:</label>
+                                        <span>{{ service.serviceDetails.tourDuration }} horas</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="service.serviceDetails.groupSize">
+                                        <label>Tamaño del grupo:</label>
+                                        <span>{{ service.serviceDetails.groupSize }} personas</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="service.serviceDetails.specialtyRequired">
+                                        <label>Especialidad:</label>
+                                        <span>{{ service.serviceDetails.specialtyRequired }}</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="service.serviceDetails.languageRequired">
+                                        <label>Idioma:</label>
+                                        <span>{{ service.serviceDetails.languageRequired }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </cp-card>
+
         <!-- Items/Services card -->
-        <cp-card class="items-card full-width">
+        <cp-card class="w-full items-card" [size]="'full'">
             <h2 class="card-title">Conceptos Facturados</h2>
             <div class="items-table">
                 <div class="table-header">
@@ -171,7 +245,8 @@
         </cp-card>
 
         <!-- Payment details card (if applicable) -->
-        <cp-card class="payment-card" *ngIf="invoice()?.status === 'pago' && invoice()?.paymentDate">
+        <cp-card class="w-full payment-card" [size]="'full'"
+            *ngIf="invoice()?.status === 'pago' && invoice()?.paymentDate">
             <h2 class="card-title">Información de Pago</h2>
             <div class="payment-info">
                 <div class="info-item">
@@ -187,7 +262,41 @@
                     <span class="value">{{ invoice()?.paymentReference }}</span>
                 </div>
             </div>
-        </cp-card> <!-- Notes card -->
+        </cp-card>
+
+        <!-- Attachments card -->
+        <cp-card class="w-full attachments-card" [size]="'full'" *ngIf="hasAttachments()">
+            <h2 class="card-title">Archivos Adjuntos ({{ attachmentsCount() }})</h2>
+            <div class="attachments-list">
+                <div *ngFor="let attachment of invoice()?.attachments" class="attachment-item">
+                    <div class="attachment-info">
+                        <span class="attachment-icon">
+                            {{ attachment.fileType === 'image' ? '🖼️' : '📄' }}
+                        </span>
+                        <div class="attachment-details">
+                            <span class="attachment-name">{{ attachment.fileName }}</span>
+                            <div class="attachment-meta">
+                                <span class="attachment-size">{{ formatFileSize(attachment.fileSize) }}</span>
+                                <span class="attachment-date">{{ formatDate(attachment.uploadedAt) }}</span>
+                            </div>
+                            <span class="attachment-description" *ngIf="attachment.description">
+                                {{ attachment.description }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="attachment-actions">
+                        <button type="button" class="attachment-btn" title="Ver archivo">
+                            👁️ Ver
+                        </button>
+                        <button type="button" class="attachment-btn" title="Descargar archivo">
+                            💾 Descargar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </cp-card>
+
+        <!-- Notes card -->
         <cp-card class="notes-card" *ngIf="invoice()?.notes">
             <h2 class="card-title">Notas</h2>
             <p class="notes-text">{{ invoice()?.notes }}</p>

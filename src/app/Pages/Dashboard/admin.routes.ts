@@ -8,6 +8,7 @@ import { TravelsShowComponent } from "../Travels/Show/show.component";
 import { HistoryIndexComponent } from "../History/Index/index.component";
 import { InvoicesIndexComponent } from "../Invoices/Index/index.component";
 import { InvoicesShowComponent } from "../Invoices/Show/show.component";
+import { InvoiceCreateComponent } from "../Invoices/Create/create.component";
 import { ServicesIndexComponent } from "../Services/Index/index.component";
 import { DriversIndexComponent } from "../Drivers/Index/index.component";
 import { GuidesIndexComponent } from "../Guides/Index/index.component";
@@ -70,6 +71,12 @@ export const ADMIN_ROUTES: Routes = [
                 path: 'invoices',
                 loadComponent: () => InvoicesIndexComponent,
                 data: { title: 'Tus Facturas', subtitle: 'Consulta y gestiona tus facturas', role: 'admin' },
+            },
+
+            {
+                path: 'invoices/create',
+                loadComponent: () => InvoiceCreateComponent,
+                data: { title: 'Crear Factura', subtitle: 'Crear una nueva factura para servicios completados' },
             },
 
             {

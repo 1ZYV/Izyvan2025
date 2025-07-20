@@ -44,6 +44,21 @@ export class InvoicesShowComponent implements OnInit, OnDestroy {
         return inv ? `${inv.currency} $${inv.total.toFixed(2)}` : '';
     });
 
+    hasServices = computed(() => {
+        const inv = this.invoice();
+        return inv?.services && inv.services.length > 0;
+    });
+
+    hasAttachments = computed(() => {
+        const inv = this.invoice();
+        return inv?.attachments && inv.attachments.length > 0;
+    });
+
+    attachmentsCount = computed(() => {
+        const inv = this.invoice();
+        return inv?.attachments?.length || 0;
+    });
+
     constructor(
         private route: ActivatedRoute,
         private router: Router,
@@ -127,24 +142,11 @@ export class InvoicesShowComponent implements OnInit, OnDestroy {
         });
     }
 
-    // Verificar si la factura está vencida
-    isOverdue(): boolean {
-        const inv = this.invoice();
-        if (!inv || inv.status !== INVOICE_STATUS_CONSTANTS.PENDIENTE) return false;
-
-        const dueDate = new Date(inv.dueDate);
-        const today = new Date();
-        return dueDate < today;
-    }
-
-    // Obtener días hasta vencimiento
-    getDaysUntilDue(): number {
-        const inv = this.invoice();
-        if (!inv) return 0;
-
-        const dueDate = new Date(inv.dueDate);
-        const today = new Date();
-        const diffTime = dueDate.getTime() - today.getTime();
-        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    formatFileSize(bytes: number): string {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 }

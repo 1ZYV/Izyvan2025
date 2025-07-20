@@ -1,11 +1,11 @@
-<div class="invoice-card bg-white border border-gray-200 rounded-lg p-4 hover:border-gray-300 hover:shadow-md transition-all duration-200 cursor-pointer"
+<div class="p-4 transition-all duration-200 bg-white border border-gray-200 rounded-lg cursor-pointer invoice-card hover:border-gray-300 hover:shadow-md"
     (click)="onCardClick()">
 
     <!-- Header with invoice number and date -->
-    <div class="flex justify-between items-start mb-3">
+    <div class="flex items-start justify-between mb-3">
         <div>
-            <h3 class="font-semibold text-gray-900 text-sm">{{ invoice().number }}</h3>
-            <p class="text-xs text-gray-500 mt-1">{{ formattedDate() }}</p>
+            <h3 class="text-sm font-semibold text-gray-900">{{ invoice().number }}</h3>
+            <p class="mt-1 text-xs text-gray-500">{{ formattedDate() }}</p>
         </div> @if (showStatus()) {
         <cp-badge [label]="statusDescription()" [variant]="statusVariant()">
         </cp-badge>
@@ -15,32 +15,24 @@
     <!-- Customer and travel info -->
     <div class="mb-3">
         <p class="text-sm font-medium text-gray-800">{{ invoice().customer.name }}</p>
-        <p class="text-xs text-gray-600 mt-1">{{ getTruncatedDescription() }}</p>
-        <p class="text-xs text-gray-500 mt-1">
+        <p class="mt-1 text-xs text-gray-600">{{ getTruncatedDescription() }}</p>
+        <p class="mt-1 text-xs text-gray-500">
             {{ invoice().travel.origin }} → {{ invoice().travel.destination }}
         </p>
     </div>
 
     <!-- Amount and actions -->
-    <div class="flex justify-between items-center"> @if (showAmount()) {
-        <div class="text-right">
-            <p class="text-lg font-bold text-gray-900">{{ formattedAmount() }}</p>
-            @if (invoice().dueDate && isPendingStatus()) {
-            <p class="text-xs text-red-500">
-                Vence: {{ formattedDueDate() }}
-            </p>
-            }
-        </div>
-        }
+    <div class="flex items-center justify-between"> @if (showAmount()) {
 
-        <button class="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors ml-auto"
+        <button class="ml-auto text-sm font-medium text-blue-600 transition-colors hover:text-blue-800"
             (click)="onDetailsClick($event)" type="button">
             Ver detalles
         </button>
+        }
     </div>
 
     <!-- Status indicator bar -->
-    <div class="mt-3 pt-3 border-t border-gray-100">
+    <div class="pt-3 mt-3 border-t border-gray-100">
         <div class="flex items-center justify-between text-xs">
             <span class="text-gray-500">
                 @if (isPaidStatus()) {

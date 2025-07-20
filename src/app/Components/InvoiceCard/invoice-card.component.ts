@@ -64,11 +64,6 @@ export class InvoiceCardComponent {
     }); isPendingStatus = computed(() => {
         return InvoiceStatusUtils.isPendingStatus(this.invoice().status);
     });    // Computed para formatear fechas
-    formattedDueDate = computed(() => {
-        const invoice = this.invoice();
-        if (!invoice.dueDate) return '';
-        return new Date(invoice.dueDate).toLocaleDateString('es-ES');
-    });
 
     formattedTravelDate = computed(() => {
         const invoice = this.invoice();

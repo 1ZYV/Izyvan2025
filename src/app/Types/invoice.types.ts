@@ -14,7 +14,6 @@ export interface Invoice {
     id: string;
     number: string;
     date: string;
-    dueDate: string;
     issueDate: string;
     amount: number;
     currency: string;
@@ -34,6 +33,15 @@ export interface Invoice {
         destination: string;
         date: string;
     };
+    // Nueva propiedad para facturas multi-servicio
+    agency?: {
+        id: string;
+        name: string;
+        email: string;
+        phone?: string;
+    };
+    // Referencia a los servicios incluidos en la factura
+    services?: InvoiceService[];
     items: InvoiceItem[];
     tax?: number;
     taxes: number;
@@ -43,6 +51,14 @@ export interface Invoice {
     paymentMethod?: string;
     paymentReference?: string;
     notes?: string;
+    // Información del proveedor que emite la factura
+    provider?: {
+        id: string;
+        name: string;
+        type: 'transport' | 'tourism';
+    };
+    // Archivos adjuntos (imágenes y/o PDFs)
+    attachments?: InvoiceAttachment[];
 }
 
 // Elemento de factura
@@ -52,6 +68,43 @@ export interface InvoiceItem {
     quantity: number;
     unitPrice: number;
     total: number;
+}
+
+// Servicio incluido en la factura
+export interface InvoiceService {
+    id: string;
+    type: 'transport' | 'tourism';
+    description: string;
+    completedDate: string;
+    amount: number;
+    serviceDetails: {
+        // Para servicios de transporte
+        origin?: string;
+        destination?: string;
+        distance?: number;
+        duration?: number;
+        vehicleType?: string;
+        // Para servicios de turismo
+        tourDestination?: string;
+        tourDuration?: number;
+        groupSize?: number;
+        specialtyRequired?: string;
+        languageRequired?: string;
+    };
+    // Referencia al servicio original
+    originalServiceId: string;
+}
+
+// Archivo adjunto de factura
+export interface InvoiceAttachment {
+    id: string;
+    fileName: string;
+    fileType: 'image' | 'pdf';
+    fileSize: number; // en bytes
+    fileUrl?: string; // URL del archivo almacenado
+    fileData?: string; // Base64 data para vista previa
+    uploadedAt: string;
+    description?: string;
 }
 
 // Constantes para estados de factura

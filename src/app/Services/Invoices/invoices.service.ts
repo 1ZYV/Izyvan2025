@@ -18,7 +18,6 @@ export class InvoicesService {
         id: 'inv-001',
         number: 'FAC-2025-001',
         date: '2025-06-20',
-        dueDate: '2025-07-20',
         issueDate: '2025-06-20',
         amount: 45.50,
         currency: 'USD',
@@ -66,7 +65,6 @@ export class InvoicesService {
         id: 'inv-002',
         number: 'FAC-2025-002',
         date: '2025-06-19',
-        dueDate: '2025-07-19',
         issueDate: '2025-06-19',
         amount: 31.00,
         currency: 'USD',
@@ -104,7 +102,6 @@ export class InvoicesService {
         id: 'inv-003',
         number: 'FAC-2025-003',
         date: '2025-06-18',
-        dueDate: '2025-07-18',
         issueDate: '2025-06-18',
         amount: 40.00,
         currency: 'USD',
@@ -142,7 +139,6 @@ export class InvoicesService {
         id: 'inv-004',
         number: 'FAC-2025-004',
         date: '2025-06-17',
-        dueDate: '2025-07-17',
         issueDate: '2025-06-17',
         amount: 36.00,
         currency: 'USD',
@@ -183,7 +179,6 @@ export class InvoicesService {
         id: 'inv-005',
         number: 'FAC-2025-005',
         date: '2025-06-16',
-        dueDate: '2025-07-16',
         issueDate: '2025-06-16',
         amount: 25.50,
         currency: 'USD',
@@ -309,6 +304,81 @@ export class InvoicesService {
         };
 
         return of(stats).pipe(delay(300));
+    }
+
+    /**
+     * Crear una nueva factura multi-servicio
+     */
+    createMultiServiceInvoice(invoiceData: {
+        agencyId: string;
+        agency: any;
+        description: string;
+        notes?: string;
+        services: any[];
+        subtotal: number;
+        taxes: number;
+        total: number;
+        attachments?: any[];
+    }): Observable<Invoice> {
+        this.isLoadingSubject.next(true);
+
+        // Generar nuevo ID y número de factura
+        const newId = `inv-${Date.now()}`;
+        const invoiceNumber = `FAC-2025-${String(this.mockInvoices.length + 1).padStart(3, '0')}`;
+
+        const newInvoice: Invoice = {
+            id: newId,
+            number: invoiceNumber,
+            date: new Date().toISOString().split('T')[0],
+            issueDate: new Date().toISOString().split('T')[0],
+            amount: invoiceData.total,
+            currency: 'USD',
+            status: INVOICE_STATUS_CONSTANTS.PENDIENTE,
+            description: invoiceData.description,
+            customer: {
+                name: invoiceData.agency.name,
+                email: invoiceData.agency.email,
+                id: invoiceData.agency.id
+            },
+            clientName: invoiceData.agency.name,
+            clientEmail: invoiceData.agency.email,
+            clientPhone: invoiceData.agency.phone,
+            travel: {
+                // Para facturas multi-servicio, usar información del primer servicio o genérica
+                id: invoiceData.services[0]?.id || 'multi-service',
+                origin: 'Múltiples orígenes',
+                destination: 'Múltiples destinos',
+                date: new Date().toISOString().split('T')[0]
+            },
+            agency: invoiceData.agency,
+            services: invoiceData.services,
+            items: invoiceData.services.map((service, index) => ({
+                id: `item-${newId}-${index + 1}`,
+                description: service.description,
+                quantity: 1,
+                unitPrice: service.amount,
+                total: service.amount
+            })),
+            taxes: invoiceData.taxes,
+            subtotal: invoiceData.subtotal,
+            total: invoiceData.total,
+            notes: invoiceData.notes,
+            attachments: invoiceData.attachments || [],
+            provider: {
+                id: 'current-provider', // En implementación real, obtener del usuario actual
+                name: 'Proveedor de Servicios',
+                type: 'transport' // Debería determinarse dinámicamente
+            }
+        };
+
+        // Simular guardado en API
+        setTimeout(() => {
+            this.mockInvoices.push(newInvoice);
+            this.invoicesListSubject.next([...this.mockInvoices]);
+            this.isLoadingSubject.next(false);
+        }, 2000);
+
+        return of(newInvoice).pipe(delay(2000));
     }
 
     /**
