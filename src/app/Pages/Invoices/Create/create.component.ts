@@ -84,7 +84,7 @@ export class InvoiceCreateComponent implements OnInit {
     private initForm(): void {
         this.invoiceForm = this.formBuilder.group({
             agencyId: ['', Validators.required],
-            description: ['Factura por servicios completados', Validators.required],
+            description: ['Cargo por servicios completados', Validators.required],
             notes: ['']
         });
 
@@ -202,7 +202,7 @@ export class InvoiceCreateComponent implements OnInit {
 
         const selectedServicesForInvoice = this.selectedServices().filter(s => s.selected);
         if (selectedServicesForInvoice.length === 0) {
-            alert('Debe seleccionar al menos un servicio para la factura');
+            alert('Debe seleccionar al menos un servicio para el cargo');
             return;
         }
 
@@ -248,7 +248,7 @@ export class InvoiceCreateComponent implements OnInit {
             error: (error) => {
                 console.error('Error creating invoice:', error);
                 this.isCreating.set(false);
-                alert('Error al crear la factura. Por favor, inténtalo de nuevo.');
+                alert('Error al crear el cargo. Por favor, inténtalo de nuevo.');
             }
         });
     }

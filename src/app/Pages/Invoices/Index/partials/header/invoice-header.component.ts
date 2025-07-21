@@ -85,7 +85,7 @@ export class InvoiceHeaderComponent implements OnInit, OnDestroy {
                 this.invoiceStats.set(stats);
             },
             error: (error) => {
-                console.error('Error al cargar estadísticas de facturas:', error);
+                console.error('Error al cargar estadísticas de cargos:', error);
             }
         });
         this.subscriptions.push(statsSub);
@@ -101,7 +101,7 @@ export class InvoiceHeaderComponent implements OnInit, OnDestroy {
                 this.recentInvoices.set(recent);
             },
             error: (error) => {
-                console.error('Error al cargar facturas recientes:', error);
+                console.error('Error al cargar cargos recientes:', error);
             },
             complete: () => {
                 this.isLoading.set(false);
@@ -110,13 +110,13 @@ export class InvoiceHeaderComponent implements OnInit, OnDestroy {
         this.subscriptions.push(invoicesSub);
     }
 
-    // Método para navegar al detalle de una factura
+    // Método para navegar al detalle de un cargo
     onViewInvoiceDetails(invoiceId: string): void {
-        console.log('Ver detalles de factura:', invoiceId);
+        console.log('Ver detalles de cargo:', invoiceId);
         this.router.navigate(['/dashboard/invoices', invoiceId]);
     }
 
-    // Método para navegar a crear nueva factura
+    // Método para navegar a crear nuevo cargo
     onCreateInvoice(): void {
         this.router.navigate(['/dashboard/invoices/create']);
     }

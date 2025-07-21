@@ -38,7 +38,7 @@ export class InvoicesIndexComponent implements OnInit, OnDestroy {
 
     // Opciones de filtro
     statusOptions = [
-        { value: 'all' as const, label: 'Todas las facturas' },
+        { value: 'all' as const, label: 'Todas los cargos' },
         { value: INVOICE_STATUS_CONSTANTS.PENDIENTE, label: 'Pendientes' },
         { value: INVOICE_STATUS_CONSTANTS.PAGO, label: 'Pagadas' },
         { value: INVOICE_STATUS_CONSTANTS.REVISION, label: 'En Revisión' }
@@ -90,7 +90,7 @@ export class InvoicesIndexComponent implements OnInit, OnDestroy {
                 this.applyStatusFilter();
             },
             error: (error) => {
-                console.error('Error al cargar lista de facturas:', error);
+                console.error('Error al cargar lista de cargos:', error);
                 this.isLoading.set(false);
             },
             complete: () => {
@@ -120,30 +120,30 @@ export class InvoicesIndexComponent implements OnInit, OnDestroy {
 
     // Métodos para manejar eventos del InvoiceCard
     onViewDetails(invoice: Invoice): void {
-        console.log('Ver detalles de la factura:', invoice);
+        console.log('Ver detalles del cargo:', invoice);
         this.router.navigate(['/dashboard/invoices', invoice.id]);
     }
 
     onCardClick(invoice: Invoice): void {
-        console.log('Factura clickeada:', invoice);
+        console.log('Cargo clickeado:', invoice);
         this.router.navigate(['/dashboard/invoices', invoice.id]);
-    }    // Método para crear nueva factura (placeholder)
+    }    // Método para crear nuevo cargo (placeholder)
     onCreateInvoice = (): void => {
-        console.log('Crear nueva factura');
-        // TODO: Implementar navegación a página de creación de facturas
+        console.log('Crear nuevo cargo');
+        // TODO: Implementar navegación a página de creación de cargos
         this.router.navigate(['/dashboard/invoices/create']);
     }
 
-    // Método para mostrar todas las facturas
+    // Método para mostrar todos los cargos
     onShowAllInvoices = (): void => {
         this.onStatusFilterChange('all');
     }    // Obtener texto del filtro seleccionado
     getSelectedFilterLabel(): string {
         const option = this.statusOptions.find(opt => opt.value === this.selectedStatus());
-        return option ? option.label : 'Todas las facturas';
+        return option ? option.label : 'Todos los cargos';
     }
 
-    // Verificar si el usuario puede crear facturas (solo admin y provider)
+    // Verificar si el usuario puede crear cargos (solo admin y provider)
     canCreateInvoices(): boolean {
         const roles = this.userRoles();
         return roles.includes('admin') || roles.includes('provider');

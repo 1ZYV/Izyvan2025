@@ -12,10 +12,10 @@
                 <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                 </svg>
-                Volver a Facturas
+                Volver a Cargos
             </button>
             <div class="header-info">
-                <h1 class="invoice-title">Factura {{ invoice()?.number }}</h1>
+                <h1 class="invoice-title">Cargo {{ invoice()?.number }}</h1>
                 <div class="status-badge">
                     <cp-badge [label]="statusInfo()?.description || ''" [variant]="statusInfo()?.variant || 'primary'">
                     </cp-badge>
@@ -64,7 +64,7 @@
             <h2 class="card-title">Información General</h2>
             <div class="info-grid">
                 <div class="info-item">
-                    <label>Número de Factura:</label>
+                    <label>Número de Cargo:</label>
                     <span class="value">{{ invoice()?.number }}</span>
                 </div>
                 <div class="info-item">
@@ -122,7 +122,7 @@
 
         <!-- Multi-service details card (if services exist) -->
         <cp-card class="w-full services-details-card" [size]="'full'" *ngIf="hasServices()">
-            <h2 class="card-title">Servicios Incluidos en la Factura</h2>
+            <h2 class="card-title">Servicios Incluidos en el Cargo</h2>
             <div class="services-list">
                 <div *ngFor="let service of invoice()?.services; let i = index" class="service-card">
                     <div class="service-header">

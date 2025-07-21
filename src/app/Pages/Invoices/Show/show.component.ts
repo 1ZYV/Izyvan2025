@@ -91,7 +91,7 @@ export class InvoicesShowComponent implements OnInit, OnDestroy {
                 }
             },
             error: (error) => {
-                console.error('Error al cargar factura:', error);
+                console.error('Error al cargar cargo:', error);
                 this.router.navigate(['/dashboard/invoices']);
             },
             complete: () => {
@@ -127,9 +127,9 @@ export class InvoicesShowComponent implements OnInit, OnDestroy {
         this.subscriptions.push(invoiceSub);
     }
 
-    // Método para descargar/imprimir factura (placeholder)
+    // Método para descargar/imprimir cargo (placeholder)
     onDownloadInvoice(): void {
-        console.log('Descargar factura:', this.invoice()?.number);
+        console.log('Descargar cargo:', this.invoice()?.number);
         // TODO: Implementar descarga de PDF
     }
 

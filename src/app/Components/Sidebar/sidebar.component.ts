@@ -31,7 +31,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
         { label: 'Conductores', link: `${this.baseRoute}/drivers`, roles: ['admin', 'provider'] as Role[], providerType: 'transport' as 'transport' | 'tourism' },
         { label: 'Guías', link: `${this.baseRoute}/guides`, roles: ['provider', 'admin'] as Role[], providerType: 'tourism' as 'transport' | 'tourism' },
         { label: 'Tarifas', link: `${this.baseRoute}/tariffs`, roles: ['provider', 'admin'] as Role[] },
-        { label: 'Facturas', link: `${this.baseRoute}/invoices`, roles: ['admin', 'agency', 'provider'] as Role[] },
+        { label: 'Cargos', link: `${this.baseRoute}/invoices`, roles: ['admin', 'agency', 'provider'] as Role[] },
     ];
 
     constructor() { }

@@ -70,19 +70,19 @@ export const ADMIN_ROUTES: Routes = [
             }, {
                 path: 'invoices',
                 loadComponent: () => InvoicesIndexComponent,
-                data: { title: 'Tus Facturas', subtitle: 'Consulta y gestiona tus facturas', role: 'admin' },
+                data: { title: 'Tus Cargos', subtitle: 'Consulta y gestiona tus cargos', role: 'admin' },
             },
 
             {
                 path: 'invoices/create',
                 loadComponent: () => InvoiceCreateComponent,
-                data: { title: 'Crear Factura', subtitle: 'Crear una nueva factura para servicios completados' },
+                data: { title: 'Crear Cargo', subtitle: 'Crear un nuevo cargo para servicios completados' },
             },
 
             {
                 path: 'invoices/:id',
                 loadComponent: () => InvoicesShowComponent,
-                data: { title: 'Detalle de Factura', subtitle: 'Información detallada de la factura', role: 'admin' },
+                data: { title: 'Detalle de Cargo', subtitle: 'Información detallada del cargo', role: 'admin' },
             },
 
             {
