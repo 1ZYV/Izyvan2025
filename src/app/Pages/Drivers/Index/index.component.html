@@ -1,0 +1,211 @@
+<div class="drivers-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="header-content">
+            <h1 class="page-title">Gestión de Conductores</h1>
+            <p class="page-description">Administra y monitorea el estado de todos los conductores de la flota</p>
+        </div>
+        <button class="add-button" (click)="onAddDriver()">
+            <span class="add-icon">+</span>
+            Agregar Conductor
+        </button>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon available">
+                ✅
+            </div>
+            <div class="stat-content">
+                <h3>{{ availableDrivers().length }}</h3>
+                <p>Conductores Disponibles</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon busy">
+                🚙
+            </div>
+            <div class="stat-content">
+                <h3>{{ busyDrivers().length }}</h3>
+                <p>Conductores Ocupados</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon offline">
+                📴
+            </div>
+            <div class="stat-content">
+                <h3>{{ offlineDrivers().length }}</h3>
+                <p>Desconectados</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon inactive">
+                ⏸️
+            </div>
+            <div class="stat-content">
+                <h3>{{ inactiveDrivers().length }}</h3>
+                <p>Conductores Inactivos</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls Section -->
+    <div class="controls-section">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Buscar por nombre, licencia o teléfono..."
+                (input)="onSearch($event)" [value]="searchQuery()">
+        </div>
+
+        <div class="filter-container">
+            @for (option of statusOptions; track option.value) {
+            <button class="filter-button" [class.active]="selectedStatus() === option.value"
+                (click)="onStatusFilter(option.value)">
+                {{ option.label }}
+            </button>
+            }
+        </div>
+
+        <button class="refresh-button" (click)="onRefresh()" [disabled]="isLoading()">
+            🔄 Actualizar
+        </button>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+    <div class="loading-container">
+        <cp-loader message="Cargando conductores..." size="large"></cp-loader>
+    </div>
+    } @else {
+    <!-- Drivers Grid -->
+    @if (filteredDrivers().length > 0) {
+    <div class="drivers-grid">
+        @for (driver of filteredDrivers(); track driver.id) {
+        <div class="driver-card">
+            <!-- Driver Header -->
+            <div class="driver-header">
+                <div class="driver-avatar">
+                    @if (driver.photo) {
+                    <img [src]="driver.photo" [alt]="driver.name" class="driver-image">
+                    } @else {
+                    <div class="driver-placeholder">
+                        {{ driver.name.charAt(0).toUpperCase() }}
+                    </div>
+                    }
+                </div>
+                <div class="driver-info">
+                    <h3 class="driver-name">{{ driver.name }}</h3>
+                    <p class="driver-license">Licencia: {{ driver.licenseNumber }}</p>
+                    <p class="driver-contact">📞 {{ driver.phone }}</p>
+                    <div class="driver-status-container">
+                        <cp-badge [variant]="getDriverStatusConfig(driver.status).variant"
+                            [style]="getDriverStatusConfig(driver.status).style"
+                            [label]="getDriverStatusConfig(driver.status).label">
+                        </cp-badge>
+                        <span class="license-expiry" [class]="getLicenseExpiryStatus(driver.licenseExpiry).status">
+                            @if (getLicenseExpiryStatus(driver.licenseExpiry).status === 'expired') {
+                            Licencia Vencida
+                            } @else if (getLicenseExpiryStatus(driver.licenseExpiry).status === 'warning') {
+                            Vence en {{ getLicenseExpiryStatus(driver.licenseExpiry).daysUntilExpiry }} días
+                            } @else {
+                            Licencia Vigente
+                            }
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Driver Details -->
+            <div class="driver-details">
+                <div class="detail-item">
+                    <span class="detail-label">Calificación</span>
+                    <div class="detail-value">
+                        <div class="rating-container">
+                            <span class="rating-stars">⭐</span>
+                            <span>{{ driver.rating }}/5</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Experiencia</span>
+                    <span class="detail-value">{{ formatExperience(driver.yearsExperience) }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Viajes Completados</span>
+                    <span class="detail-value">{{ formatTrips(driver.totalTrips) }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Tipos de Vehículo</span>
+                    <div class="detail-value">
+                        <div class="vehicle-types">
+                            @for (type of driver.vehicleTypes; track type) {
+                            <span class="vehicle-type-tag">{{ type }}</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Driver Meta Information -->
+            <div class="driver-meta">
+                @if (driver.languages && driver.languages.length > 0) {
+                <div class="meta-row">
+                    <span class="meta-label">🗣️ Idiomas:</span>
+                    <span class="meta-value languages-list">{{ driver.languages.join(', ') }}</span>
+                </div>
+                }
+                @if (driver.email) {
+                <div class="meta-row">
+                    <span class="meta-label">✉️ Email:</span>
+                    <span class="meta-value">{{ driver.email }}</span>
+                </div>
+                }
+                <div class="meta-row">
+                    <span class="meta-label">📅 Fecha de contratación:</span>
+                    <span class="meta-value">{{ driver.hireDate.toLocaleDateString('es-ES') }}</span>
+                </div>
+                @if (driver.emergencyContact) {
+                <div class="meta-row">
+                    <span class="meta-label">🚨 Contacto de emergencia:</span>
+                    <span class="meta-value">{{ driver.emergencyContact.name }} ({{ driver.emergencyContact.phone
+                        }})</span>
+                </div>
+                }
+            </div>
+
+            <!-- Driver Actions -->
+            <div class="driver-actions">
+                @for (action of getStatusActions(driver.status); track action.status) {
+                <button class="action-button" [class]="action.variant"
+                    (click)="onUpdateDriverStatus(driver.id, action.status)">
+                    {{ action.label }}
+                </button>
+                }
+            </div>
+        </div>
+        }
+    </div>
+    } @else {
+    <!-- Empty State -->
+    <div class="empty-state">
+        <div class="empty-icon">👨‍✈️</div>
+        <h2 class="empty-title">No se encontraron conductores</h2>
+        <p class="empty-description">
+            @if (searchQuery() || selectedStatus() !== 'all') {
+            Intenta ajustar los filtros de búsqueda para encontrar conductores.
+            } @else {
+            No hay conductores registrados en el sistema.
+            }
+        </p>
+    </div>
+    }
+    }
+</div>
+
+<!-- Add Driver Modal -->
+<cp-add-driver-modal [isOpen]="showAddDriverModal()" (close)="onCloseAddDriverModal()"
+    (driverCreated)="onDriverCreated($event)"></cp-add-driver-modal>

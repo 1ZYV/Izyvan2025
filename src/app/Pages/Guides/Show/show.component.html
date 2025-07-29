@@ -1,0 +1,36 @@
+<div class="guide-show-container">
+    <!-- Header con navegación -->
+    <cp-guide-show-header [guideName]="guideName()" [guideId]="guideId()" [isLoading]="isLoading()"
+        (backToGuides)="onBackToGuides()">
+    </cp-guide-show-header>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+    <cp-loader message="Cargando información del guía..." size="large" variant="primary" [centered]="true">
+    </cp-loader>
+    }
+
+    <!-- Content -->
+    @if (!isLoading() && guideDetails()) {
+    <div class="guide-show-content">
+        <!-- Grid con información del guía -->
+        <div class="guide-info-grid">
+            <!-- Información principal del guía --> <cp-guide-info-section [guideData]="guideDetails()!"
+                (completeService)="onCompleteService()" (deleteGuide)="onDeleteGuide()">
+            </cp-guide-info-section>
+
+            <!-- Perfil y certificaciones -->
+            <cp-guide-profile-section [guideData]="guideDetails()!">
+            </cp-guide-profile-section>
+        </div>
+
+        <!-- Sección de reseñas -->
+        <cp-guide-reviews-section [guideData]="guideDetails()!">
+        </cp-guide-reviews-section>
+
+        <!-- Sección de portafolio -->
+        <cp-guide-portfolio-section [guideData]="guideDetails()!">
+        </cp-guide-portfolio-section>
+    </div>
+    }
+</div>

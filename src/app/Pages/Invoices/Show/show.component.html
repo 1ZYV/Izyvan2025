@@ -1,0 +1,305 @@
+<!-- Loading state -->
+<div *ngIf="isLoading()" class="loading-container">
+    <cp-loader></cp-loader>
+</div>
+
+<!-- Main content -->
+<div *ngIf="!isLoading() && invoice()" class="invoice-details">
+    <!-- Header with actions -->
+    <div class="invoice-header">
+        <div class="header-content">
+            <button class="back-button" (click)="onBackToInvoices()" type="button">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Volver a Cargos
+            </button>
+            <div class="header-info">
+                <h1 class="invoice-title">Cargo {{ invoice()?.number }}</h1>
+                <div class="status-badge">
+                    <cp-badge [label]="statusInfo()?.description || ''" [variant]="statusInfo()?.variant || 'primary'">
+                    </cp-badge>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <button class="action-button secondary" (click)="onDownloadInvoice()" type="button">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                </svg>
+                Descargar PDF
+            </button>
+
+            <!-- Status update dropdown -->
+            <div class="status-update-dropdown">
+                <button class="action-button primary dropdown-toggle" type="button">
+                    Cambiar Estado
+                    <svg class="icon-small" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="dropdown-menu">
+                    <button *ngIf="invoice()?.status !== 'pago'" class="dropdown-item" (click)="onUpdateStatus('pago')">
+                        Marcar como Pagada
+                    </button>
+                    <button *ngIf="invoice()?.status !== 'pendiente'" class="dropdown-item"
+                        (click)="onUpdateStatus('pendiente')">
+                        Marcar como Pendiente
+                    </button>
+                    <button *ngIf="invoice()?.status !== 'revision'" class="dropdown-item"
+                        (click)="onUpdateStatus('revision')">
+                        Marcar en Revisión
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice details grid -->
+    <div class="flex flex-wrap items-center justify-between"> <!-- Basic information card -->
+        <cp-card class="w-full invoice-info-card" [size]="'full'">
+            <h2 class="card-title">Información General</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Número de Cargo:</label>
+                    <span class="value">{{ invoice()?.number }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Cliente:</label>
+                    <span class="value">{{ invoice()?.customer?.name || invoice()?.clientName }}</span>
+                </div>
+                <div class="info-item">
+                    <label>Fecha de Emisión:</label>
+                    <span class="value">{{ formatDate(invoice()?.date || '') }}</span>
+                </div>
+
+                <div class="info-item">
+                    <label>Estado:</label>
+                    <cp-badge [label]="statusInfo()?.description || ''" [variant]="statusInfo()?.variant || 'primary'">
+                    </cp-badge>
+                </div>
+
+                <div class="info-item">
+                    <label>Total:</label>
+                    <span class="value total-amount">{{ formattedTotal() }}</span>
+                </div>
+            </div>
+        </cp-card>
+
+        <!-- Client details card -->
+        <cp-card class="w-full client-details-card" [size]="'full'">
+            <h2 class="card-title">Detalles del Cliente</h2>
+            <div class="client-info">
+                <div class="client-avatar">
+                    <div class="avatar-placeholder">
+                        {{ invoice()?.clientName?.charAt(0) || 'C' }}
+                    </div>
+                </div>
+                <div class="client-data">
+                    <h3 class="client-name">{{ invoice()?.clientName }}</h3>
+                    <p class="client-email" *ngIf="invoice()?.clientEmail">
+                        <svg class="icon-small" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 8l7.89 7.89a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        {{ invoice()?.clientEmail }}
+                    </p>
+                    <p class="client-phone" *ngIf="invoice()?.clientPhone">
+                        <svg class="icon-small" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
+                            </path>
+                        </svg>
+                        {{ invoice()?.clientPhone }}
+                    </p>
+                </div>
+            </div>
+        </cp-card>
+
+        <!-- Multi-service details card (if services exist) -->
+        <cp-card class="w-full services-details-card" [size]="'full'" *ngIf="hasServices()">
+            <h2 class="card-title">Servicios Incluidos en el Cargo</h2>
+            <div class="services-list">
+                <div *ngFor="let service of invoice()?.services; let i = index" class="service-card">
+                    <div class="service-header">
+                        <div class="service-type">
+                            <span class="service-icon" [class.transport]="service.type === 'transport'"
+                                [class.tourism]="service.type === 'tourism'">
+                                {{ service.type === 'transport' ? '🚗' : '🏛️' }}
+                            </span>
+                            <cp-badge [label]="service.type === 'transport' ? 'Transporte' : 'Turismo'"
+                                [variant]="service.type === 'transport' ? 'info' : 'success'">
+                            </cp-badge>
+                        </div>
+                        <div class="service-amount">
+                            <span class="amount">{{ invoice()?.currency }} ${{ service.amount.toFixed(2) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="service-content">
+                        <h4 class="service-description">{{ service.description }}</h4>
+                        <div class="service-meta">
+                            <p class="completion-date">
+                                <strong>Completado:</strong> {{ formatDate(service.completedDate) }}
+                            </p>
+                        </div>
+
+                        <!-- Service specific details -->
+                        <div class="service-details" *ngIf="service.serviceDetails">
+                            <div *ngIf="service.type === 'transport'" class="transport-details">
+                                <div class="detail-grid">
+                                    <div class="detail-item" *ngIf="service.serviceDetails.origin">
+                                        <label>Origen:</label>
+                                        <span>{{ service.serviceDetails.origin }}</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="service.serviceDetails.destination">
+                                        <label>Destino:</label>
+                                        <span>{{ service.serviceDetails.destination }}</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="service.serviceDetails.distance">
+                                        <label>Distancia:</label>
+                                        <span>{{ service.serviceDetails.distance }} km</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="service.serviceDetails.duration">
+                                        <label>Duración:</label>
+                                        <span>{{ service.serviceDetails.duration }} min</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="service.serviceDetails.vehicleType">
+                                        <label>Vehículo:</label>
+                                        <span>{{ service.serviceDetails.vehicleType }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div *ngIf="service.type === 'tourism'" class="tourism-details">
+                                <div class="detail-grid">
+                                    <div class="detail-item" *ngIf="service.serviceDetails.tourDestination">
+                                        <label>Destino:</label>
+                                        <span>{{ service.serviceDetails.tourDestination }}</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="service.serviceDetails.tourDuration">
+                                        <label>Duración:</label>
+                                        <span>{{ service.serviceDetails.tourDuration }} horas</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="service.serviceDetails.groupSize">
+                                        <label>Tamaño del grupo:</label>
+                                        <span>{{ service.serviceDetails.groupSize }} personas</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="service.serviceDetails.specialtyRequired">
+                                        <label>Especialidad:</label>
+                                        <span>{{ service.serviceDetails.specialtyRequired }}</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="service.serviceDetails.languageRequired">
+                                        <label>Idioma:</label>
+                                        <span>{{ service.serviceDetails.languageRequired }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </cp-card>
+
+        <!-- Items/Services card -->
+        <cp-card class="w-full items-card" [size]="'full'">
+            <h2 class="card-title">Conceptos Facturados</h2>
+            <div class="items-table">
+                <div class="table-header">
+                    <div class="header-cell">Descripción</div>
+                    <div class="header-cell">Cantidad</div>
+                    <div class="header-cell">Precio Unit.</div>
+                    <div class="header-cell">Total</div>
+                </div>
+                <div class="table-body">
+                    <div *ngFor="let item of invoice()?.items" class="table-row">
+                        <div class="table-cell description">{{ item.description }}</div>
+                        <div class="table-cell quantity">{{ item.quantity }}</div>
+                        <div class="table-cell unit-price">{{ invoice()?.currency }} ${{ item.unitPrice.toFixed(2) }}
+                        </div>
+                        <div class="table-cell total">{{ invoice()?.currency }} ${{ (item.quantity *
+                            item.unitPrice).toFixed(2) }}</div>
+                    </div>
+                </div>
+
+                <!-- Totals -->
+                <div class="table-footer">
+                    <div class="subtotal-row">
+                        <span class="label">Subtotal:</span>
+                        <span class="amount">{{ invoice()?.currency }} ${{ invoice()?.subtotal?.toFixed(2) }}</span>
+                    </div>
+                    <div class="tax-row" *ngIf="invoice()?.tax">
+                        <span class="label">Impuestos:</span>
+                        <span class="amount">{{ invoice()?.currency }} ${{ invoice()?.tax?.toFixed(2) }}</span>
+                    </div>
+                    <div class="total-row">
+                        <span class="label">Total:</span>
+                        <span class="amount">{{ formattedTotal() }}</span>
+                    </div>
+                </div>
+            </div>
+        </cp-card>
+
+        <!-- Payment details card (if applicable) -->
+        <cp-card class="w-full payment-card" [size]="'full'"
+            *ngIf="invoice()?.status === 'pago' && invoice()?.paymentDate">
+            <h2 class="card-title">Información de Pago</h2>
+            <div class="payment-info">
+                <div class="info-item">
+                    <label>Fecha de Pago:</label>
+                    <span class="value">{{ formatDate(invoice()?.paymentDate || '') }}</span>
+                </div>
+                <div class="info-item" *ngIf="invoice()?.paymentMethod">
+                    <label>Método de Pago:</label>
+                    <span class="value">{{ invoice()?.paymentMethod }}</span>
+                </div>
+                <div class="info-item" *ngIf="invoice()?.paymentReference">
+                    <label>Referencia:</label>
+                    <span class="value">{{ invoice()?.paymentReference }}</span>
+                </div>
+            </div>
+        </cp-card>
+
+        <!-- Attachments card -->
+        <cp-card class="w-full attachments-card" [size]="'full'" *ngIf="hasAttachments()">
+            <h2 class="card-title">Archivos Adjuntos ({{ attachmentsCount() }})</h2>
+            <div class="attachments-list">
+                <div *ngFor="let attachment of invoice()?.attachments" class="attachment-item">
+                    <div class="attachment-info">
+                        <span class="attachment-icon">
+                            {{ attachment.fileType === 'image' ? '🖼️' : '📄' }}
+                        </span>
+                        <div class="attachment-details">
+                            <span class="attachment-name">{{ attachment.fileName }}</span>
+                            <div class="attachment-meta">
+                                <span class="attachment-size">{{ formatFileSize(attachment.fileSize) }}</span>
+                                <span class="attachment-date">{{ formatDate(attachment.uploadedAt) }}</span>
+                            </div>
+                            <span class="attachment-description" *ngIf="attachment.description">
+                                {{ attachment.description }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="attachment-actions">
+                        <button type="button" class="attachment-btn" title="Ver archivo">
+                            👁️ Ver
+                        </button>
+                        <button type="button" class="attachment-btn" title="Descargar archivo">
+                            💾 Descargar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </cp-card>
+
+        <!-- Notes card -->
+        <cp-card class="notes-card" *ngIf="invoice()?.notes">
+            <h2 class="card-title">Notas</h2>
+            <p class="notes-text">{{ invoice()?.notes }}</p>
+        </cp-card>
+    </div>
+</div>

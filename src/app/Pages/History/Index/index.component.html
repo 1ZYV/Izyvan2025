@@ -1,0 +1,120 @@
+<div class="history-container">
+    <!-- Panel izquierdo - Lista de viajes -->
+    <div class="trips-panel">
+        <div class="trips-header">
+            <h2 class="trips-title">Lista de viajes</h2>
+            <p class="trips-subtitle">Revisa todos tus viajes anteriores</p>
+        </div>
+
+        <div class="trips-list">
+            <table class="trips-table">
+                <thead class="table-header">
+                    <tr>
+                        <th>Destino</th>
+                        <th>Fecha</th>
+                        <th>Precio</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (trip of trips(); track trip.id) {
+                    <tr class="table-row" [class.selected]="selectedTrip()?.id === trip.id" (click)="selectTrip(trip)">
+                        <td>
+                            <div class="destination-cell">
+                                <span class="destination-name">{{ trip.destination }}</span>
+                                <span class="destination-address">{{ trip.address }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="date-cell">
+                                <span class="date-value">{{ formatDate(trip.date) }}</span>
+                                <span class="time-value">{{ trip.time }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <cp-currency [label]="trip.price" />
+                        </td>
+                        <td>
+                            <span class="status-badge" [class]="'status-' + trip.status">
+                                {{ getStatusLabel(trip.status) }}
+                            </span>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Panel derecho - Mapa y detalles -->
+    <div class="map-panel">
+        <div class="map-header">
+            <h2 class="map-title">Ruta del viaje</h2>
+            @if (selectedTrip()) {
+            <p class="route-subtitle">{{ selectedTrip()!.route.origin }} → {{ selectedTrip()!.route.destination }}</p>
+            }
+        </div>
+
+        <div class="map-content">
+            @if (selectedTrip()) {
+            <!-- Mapa placeholder -->
+            <div class="map-placeholder">
+                <div class="map-visual">
+                    <div class="route-visualization">
+                        <!-- Visualización de ruta -->
+                        <div class="route-points">
+                            <div class="route-start">🟢</div>
+                            <div class="route-line"></div>
+                            <div class="route-end">🔴</div>
+                        </div>
+                        <!-- Información de ubicaciones -->
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; color: #6b7280;">
+                            <span>{{ selectedTrip()!.route.origin }}</span>
+                            <span>{{ selectedTrip()!.route.destination }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información del viaje -->
+                <div class="map-info">
+                    <div class="info-section">
+                        <h4>Conductor</h4>
+                        <div class="info-item">
+                            <span class="info-label">Nombre</span>
+                            <span class="info-value">{{ selectedTrip()!.driver.name }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Calificación</span>
+                            <div class="driver-rating">
+                                <span class="info-value">{{ selectedTrip()!.driver.rating }}</span>
+                                <span class="rating-star">★</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <h4>Fecha y hora</h4>
+                        <div class="info-item">
+                            <span class="info-label">Fecha</span>
+                            <span class="info-value">{{ formatDate(selectedTrip()?.date || '') }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Hora</span>
+                            <span class="info-value">{{ selectedTrip()?.time }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Total pagado</span>
+                            <cp-currency [label]="selectedTrip()?.price!" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            } @else {
+            <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #9ca3af;">
+                <span>Selecciona un viaje para ver los detalles</span>
+            </div>
+            }
+        </div>
+    </div>
+</div>

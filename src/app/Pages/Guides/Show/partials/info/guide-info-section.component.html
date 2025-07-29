@@ -1,0 +1,92 @@
+<cp-card title="Información del Guía" [variant]="'default'" [radius]="'lg'">
+    <div class="guide-info-content">
+        <!-- Estado y acciones -->
+        <div class="guide-status-section">
+            <div class="status-badge">
+                <cp-badge [label]="statusInfo().label" [shape]="'pill'" [size]="'md'" [style]="statusInfo().style"
+                    [variant]="statusInfo().variant">
+                </cp-badge>
+            </div>
+            <div class="action-buttons">
+                @if (canCompleteService()) {
+                <button class="action-button action-button-success" (click)="onCompleteService()">
+                    Finalizar Servicio
+                </button>
+                }
+
+                <button class="action-button action-button-danger" (click)="onDeleteGuide()" title="Eliminar guía">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 6H5H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        <path
+                            d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z"
+                            stroke="currentColor" stroke-width="2" />
+                        <path d="M10 11V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        <path d="M14 11V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    Eliminar Guía
+                </button>
+            </div>
+        </div>
+
+        <!-- Información básica -->
+        <div class="guide-basic-info">
+            <div class="info-row">
+                <span class="info-label">📧 Email:</span>
+                <span class="info-value">{{ guideData().email || 'No especificado' }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">📱 Teléfono:</span>
+                <span class="info-value">{{ guideData().phone }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">📍 Ubicación:</span>
+                <span class="info-value">{{ guideData().location || 'No especificado' }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">⭐ Rating:</span>
+                <span class="info-value">{{ guideData().rating.toFixed(1) }} ({{ guideData().totalTours }} tours)</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">🎓 Experiencia:</span>
+                <span class="info-value">{{ guideData().yearsExperience }} años</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">💰 Tarifa:</span>
+                <span class="info-value">${{ guideData().hourlyRate }}/hora</span>
+            </div>
+        </div>
+
+        <!-- Especialidades -->
+        <div class="guide-specialties-section">
+            <h4 class="section-title">🎯 Especialidades</h4>
+            <p class="specialties-text">{{ specialtiesText() }}</p>
+        </div>
+
+        <!-- Idiomas -->
+        <div class="guide-languages-section">
+            <h4 class="section-title">🗣️ Idiomas</h4>
+            <p class="languages-text">{{ languagesText() }}</p>
+        </div>
+
+        <!-- Horarios -->
+        @if (guideData().availableFrom && guideData().availableTo) {
+        <div class="guide-schedule-section">
+            <h4 class="section-title">🕐 Horarios de Disponibilidad</h4>
+            <p class="schedule-text">{{ guideData().availableFrom }} - {{ guideData().availableTo }}</p>
+        </div>
+        }
+
+        <!-- Descripción -->
+        @if (guideData().description) {
+        <div class="guide-description-section">
+            <h4 class="section-title">📝 Descripción</h4>
+            <p class="description-text">{{ guideData().description }}</p>
+        </div>
+        }
+    </div>
+</cp-card>

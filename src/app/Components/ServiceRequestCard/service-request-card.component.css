@@ -1,0 +1,287 @@
+.service-request-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.request-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.request-type {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.type-icon {
+  font-size: 1.125rem;
+}
+
+.type-label {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.text-blue-600 {
+  color: #2563eb;
+}
+
+.text-green-600 {
+  color: #16a34a;
+}
+
+.text-gray-600 {
+  color: #4b5563;
+}
+
+.request-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.request-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.request-description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.request-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.detail-item.special-requirements {
+  align-items: flex-start;
+}
+
+.detail-icon {
+  color: #6b7280;
+  margin-top: 0.125rem;
+  flex-shrink: 0;
+}
+
+.detail-text {
+  color: #374151;
+}
+
+.detail-text.price {
+  font-weight: 600;
+  color: #059669;
+}
+
+.request-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition: background-color 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.accept-btn {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.accept-btn:hover {
+  background-color: #bbf7d0;
+}
+
+.reject-btn {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.reject-btn:hover {
+  background-color: #fecaca;
+}
+
+.assign-btn {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.assign-btn:hover {
+  background-color: #bfdbfe;
+}
+
+.details-btn {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.details-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.btn-icon {
+  font-size: 0.75rem;
+}
+
+/* Assigned Resources Styles */
+.assigned-resources {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+}
+
+.resources-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 0.75rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.resources-title::before {
+  content: "👥";
+  font-size: 1rem;
+}
+
+.resources-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.resource-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0;
+}
+
+.resource-icon {
+  font-size: 1rem;
+  width: 1.25rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.resource-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.resource-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.resource-value {
+  font-size: 0.875rem;
+  color: #374151;
+  font-weight: 500;
+}
+
+/* Responsive resources */
+@media (min-width: 640px) {
+  .resources-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+}
+
+/* Dark mode styles (optional) */
+@media (prefers-color-scheme: dark) {
+  .request-title {
+    color: #f9fafb;
+  }
+
+  .request-description {
+    color: #9ca3af;
+  }
+
+  .detail-icon {
+    color: #9ca3af;
+  }
+
+  .detail-text {
+    color: #d1d5db;
+  }
+
+  .detail-text.price {
+    color: #10b981;
+  }
+
+  .request-actions {
+    border-top-color: #374151;
+  }
+
+  .assigned-resources {
+    background-color: #1f2937;
+    border-color: #374151;
+  }
+
+  .resources-title {
+    color: #f9fafb;
+  }
+
+  .resource-label {
+    color: #9ca3af;
+  }
+
+  .resource-value {
+    color: #e5e7eb;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .request-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .action-btn {
+    justify-content: center;
+  }
+}

@@ -1,0 +1,230 @@
+<div class="create-invoice-container">
+
+
+    @if (isLoading()) {
+    <div class="loading-container">
+        <cp-loader></cp-loader>
+        <p>Cargando servicios completados...</p>
+    </div>
+    } @else {
+    <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+            <!-- Selección de Agencia -->
+            <cp-card class="w-full" [size]="'full'">
+                <div class="card-header">
+                    <h3>Información de la Agencia</h3>
+                </div>
+                <div class="form-group">
+                    <label for="agencyId">Agencia Cliente *</label>
+                    <select id="agencyId" formControlName="agencyId" class="form-control"
+                        [class.error]="invoiceForm.get('agencyId')?.invalid && invoiceForm.get('agencyId')?.touched">
+                        <option value="">Seleccionar agencia...</option>
+                        @for (agency of agencies(); track agency.id) {
+                        <option [value]="agency.id">{{ agency.name }}</option>
+                        }
+                    </select>
+                    @if (invoiceForm.get('agencyId')?.invalid && invoiceForm.get('agencyId')?.touched) {
+                    <div class="error-message">La agencia es requerida</div>
+                    }
+                </div>
+
+                @if (selectedAgency()) {
+                <div class="agency-info">
+                    @for (agency of agencies(); track agency.id) {
+                    @if (agency.id === selectedAgency()) {
+                    <div class="agency-details">
+                        <p><strong>Email:</strong> {{ agency.email }}</p>
+                        @if (agency.phone) {
+                        <p><strong>Teléfono:</strong> {{ agency.phone }}</p>
+                        }
+                    </div>
+                    }
+                    }
+                </div>
+                }
+            </cp-card>
+
+            <!-- Servicios Disponibles -->
+            @if (selectedAgency()) {
+            <cp-card class="w-full" [size]="'full'">
+                <div class="card-header">
+                    <h3>Servicios Completados</h3>
+                    <p>Selecciona los servicios que deseas incluir en el cargo</p>
+                </div>
+
+                @if (selectedServices().length === 0) {
+                <div class="empty-services">
+                    <p>No hay servicios completados para esta agencia.</p>
+                </div>
+                } @else {
+                <div class="services-list">
+                    @for (service of selectedServices(); track service.id) {
+                    <div class="service-item" [class.selected]="service.selected">
+                        <div class="service-checkbox">
+                            <input type="checkbox" [checked]="service.selected"
+                                (change)="toggleServiceSelection(service)" [id]="'service-' + service.id">
+                            <label [for]="'service-' + service.id"></label>
+                        </div>
+
+                        <div class="service-content">
+                            <div class="service-header">
+                                <span class="service-icon">{{ getServiceIcon(service.type) }}</span>
+                                <div class="service-info">
+                                    <h4>{{ service.description }}</h4>
+                                    <cp-badge [label]="service.type === 'transport' ? 'Transporte' : 'Turismo'"
+                                        [variant]="service.type === 'transport' ? 'info' : 'success'">
+                                    </cp-badge>
+                                </div>
+                                <div class="service-amount">
+                                    <span class="amount">{{ formatCurrency(service.amount) }}</span>
+                                </div>
+                            </div>
+
+                            <div class="service-details">
+                                <div class="detail-row">
+                                    <span class="label">Fecha de completado:</span>
+                                    <span class="value">{{ service.completedDate }}</span>
+                                </div>
+
+                                @if (service.type === 'transport') {
+                                <div class="detail-row">
+                                    <span class="label">Ruta:</span>
+                                    <span class="value">{{ service.serviceDetails.origin }} → {{
+                                        service.serviceDetails.destination }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Vehículo:</span>
+                                    <span class="value">{{ service.serviceDetails.vehicleType }}</span>
+                                </div>
+                                } @else {
+                                <div class="detail-row">
+                                    <span class="label">Destino:</span>
+                                    <span class="value">{{ service.serviceDetails.tourDestination }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Duración:</span>
+                                    <span class="value">{{ service.serviceDetails.tourDuration }} horas</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Grupo:</span>
+                                    <span class="value">{{ service.serviceDetails.groupSize }} personas</span>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+                }
+            </cp-card>
+            }
+
+            <!-- Detalles de la Factura -->
+            <cp-card class="w-full" [size]="'full'">
+                <div class="card-header">
+                    <h3>Detalles del Cargo</h3>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Descripción *</label>
+                    <input type="text" id="description" formControlName="description" class="form-control"
+                        [class.error]="invoiceForm.get('description')?.invalid && invoiceForm.get('description')?.touched">
+                    @if (invoiceForm.get('description')?.invalid && invoiceForm.get('description')?.touched) {
+                    <div class="error-message">La descripción es requerida</div>
+                    }
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Notas adicionales</label>
+                    <textarea id="notes" formControlName="notes" class="form-control" rows="3"
+                        placeholder="Información adicional sobre el cargo..."></textarea>
+                </div>
+            </cp-card>
+
+            <!-- Archivos Adjuntos -->
+            <cp-card class="w-full" [size]="'full'">
+                <div class="card-header">
+                    <h3>Archivos Adjuntos</h3>
+                    <p>Sube imágenes (JPG, PNG, WEBP) o PDFs relacionados con el cargo (máximo 10MB por archivo)</p>
+                </div>
+
+                <div class="file-upload-section">
+                    <div class="file-input-wrapper">
+                        <input type="file" id="fileInput" multiple
+                            accept="image/jpeg,image/png,image/webp,application/pdf" (change)="onFileSelected($event)"
+                            class="file-input">
+                        <label for="fileInput" class="file-input-label">
+                            <span class="upload-icon">📎</span>
+                            <span class="upload-text">Seleccionar archivos</span>
+                            <span class="upload-subtitle">o arrastra los archivos aquí</span>
+                        </label>
+                    </div>
+
+                    @if (attachedFiles().length > 0) {
+                    <div class="attached-files">
+                        <h4>Archivos seleccionados ({{ attachedFiles().length }})</h4>
+                        <div class="files-list">
+                            @for (file of attachedFiles(); track $index) {
+                            <div class="file-item">
+                                <div class="file-info">
+                                    <span class="file-icon">{{ getFileIcon(file) }}</span>
+                                    <div class="file-details">
+                                        <span class="file-name">{{ file.name }}</span>
+                                        <span class="file-size">{{ formatFileSize(file.size) }}</span>
+                                    </div>
+                                </div>
+                                <button type="button" class="remove-file-btn" (click)="removeFile($index)"
+                                    title="Eliminar archivo">
+                                    ✕
+                                </button>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+            </cp-card>
+
+            <!-- Resumen de Totales -->
+            @if (hasSelectedServices()) {
+            <cp-card class="w-full" [size]="'full'">
+                <div class="card-header">
+                    <h3>Resumen de Totales</h3>
+                </div>
+
+                <div class="totals-summary">
+                    <div class="total-row">
+                        <span class="label">Subtotal:</span>
+                        <span class="value">{{ formatCurrency(subtotal()) }}</span>
+                    </div>
+                    <div class="total-row">
+                        <span class="label">Impuestos (12%):</span>
+                        <span class="value">{{ formatCurrency(taxes()) }}</span>
+                    </div>
+                    <div class="total-row final">
+                        <span class="label">Total:</span>
+                        <span class="value">{{ formatCurrency(totalAmount()) }}</span>
+                    </div>
+                </div>
+            </cp-card>
+            }
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="actions">
+            <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isCreating()">
+                Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary"
+                [disabled]="invoiceForm.invalid || isCreating() || !hasSelectedServices()">
+                @if (isCreating()) {
+                <cp-loader size="small"></cp-loader>
+                Creando Cargo...
+                } @else {
+                Crear Cargo
+                }
+            </button>
+        </div>
+    </form>
+    }
+</div>

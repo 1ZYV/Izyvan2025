@@ -1,0 +1,177 @@
+<div class="min-h-screen bg-gray-50 p-6">
+    <!-- Header con controles -->
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Panel de Control</h1>
+            <p class="text-gray-600 mt-1">Gestiona tus viajes y preferencias</p>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+            <!-- Botón de refresh -->
+            <button 
+                (click)="refreshData()"
+                [disabled]="isLoading"
+                class="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors">
+                <svg class="w-4 h-4 mr-2" [class.animate-spin]="isLoading" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                {{ isLoading ? 'Actualizando...' : 'Actualizar' }}
+            </button>
+            
+            <!-- Toggle auto-refresh -->
+            <button 
+                (click)="toggleAutoRefresh()"
+                [class.bg-green-600]="autoRefreshEnabled"
+                [class.bg-gray-400]="!autoRefreshEnabled"
+                class="flex items-center px-4 py-2 text-white rounded-lg hover:opacity-80 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ autoRefreshEnabled ? 'Auto-refresh ON' : 'Auto-refresh OFF' }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex items-center justify-center h-64">
+        <div class="text-center">
+            <svg class="animate-spin w-12 h-12 mx-auto mb-4 text-blue-600" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-gray-600">Cargando datos del dashboard...</p>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="hasError" class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+        <div class="flex items-center">
+            <svg class="w-6 h-6 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+                <h3 class="text-red-800 font-semibold">Error al cargar el dashboard</h3>
+                <p class="text-red-600">{{ errorMessage }}</p>
+            </div>
+        </div>
+        <button 
+            (click)="refreshData()"
+            class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+            Reintentar
+        </button>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div *ngIf="!isLoading && !hasError">
+        <!-- Overview Cards -->
+        <app-overview-cards [summary]="summary"></app-overview-cards>
+
+        <!-- Gráficas Principales -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+            <!-- Cargos por Estado -->
+            <app-pie-chart 
+                title="Cargos por Estado"
+                [data]="chargeChartData"
+                [height]="300">
+            </app-pie-chart>
+
+            <!-- Viajes por Estado -->
+            <app-pie-chart 
+                title="Viajes por Estado"
+                [data]="travelChartData"
+                [height]="300">
+            </app-pie-chart>
+
+            <!-- Servicios por Estado -->
+            <app-pie-chart 
+                title="Servicios por Estado"
+                [data]="serviceChartData"
+                [height]="300">
+            </app-pie-chart>
+        </div>
+
+        <!-- Gráficas de Tendencias -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Ingresos Mensuales -->
+            <app-line-chart 
+                title="Ingresos Mensuales"
+                [data]="monthlyIncomeData"
+                [height]="350"
+                chartType="line"
+                color="#10B981"
+                backgroundColor="rgba(16, 185, 129, 0.1)"
+                [isCurrency]="true">
+            </app-line-chart>
+
+            <!-- Viajes por Día -->
+            <app-line-chart 
+                title="Viajes por Día (Últimos 7 días)"
+                [data]="dailyTripsData"
+                [height]="350"
+                chartType="bar"
+                color="#3B82F6"
+                backgroundColor="#3B82F6">
+            </app-line-chart>
+        </div>
+
+        <!-- Top Conductores -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <app-top-drivers 
+                title="Top 5 Conductores"
+                [drivers]="topDrivers?.data || []">
+            </app-top-drivers>
+
+            <!-- Resumen Rápido -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-4">Resumen Rápido</h3>
+                
+                <div class="space-y-4">
+                    <!-- Total de Ingresos -->
+                    <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mr-3">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                </svg>
+                            </div>
+                            <span class="font-medium text-gray-700">Ingresos Totales</span>
+                        </div>
+                        <span class="text-xl font-bold text-green-600">
+                            ${{ (summary?.summary?.totalIncome || 0) | number:'1.0-0' }}
+                        </span>
+                    </div>
+
+                    <!-- Cargos Pendientes -->
+                    <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center mr-3">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <span class="font-medium text-gray-700">Cargos Pendientes</span>
+                        </div>
+                        <span class="text-xl font-bold text-yellow-600">
+                            {{ getPendingChargesCount() }}
+                        </span>
+                    </div>
+
+                    <!-- Viajes Hoy -->
+                    <div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <span class="font-medium text-gray-700">Viajes Hoy</span>
+                        </div>
+                        <span class="text-xl font-bold text-blue-600">
+                            {{ summary?.summary?.todayTravels || 0 }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

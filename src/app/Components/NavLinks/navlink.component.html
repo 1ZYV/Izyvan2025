@@ -1,0 +1,10 @@
+<a [routerLink]="link()" routerLinkActive="active-link" [ngClass]="combinedClassList">
+    {{ label() }}</a>
+
+<style>
+    .active-link {
+        background: white;
+        color: black;
+        font-weight: bold;
+    }
+</style>

@@ -1,0 +1,17 @@
+/* Guide Show Header Styles */
+
+.guide-show-header {
+  @apply flex flex-col gap-2 mb-6 p-4 bg-white rounded-lg shadow-sm border border-gray-200;
+}
+
+.back-button {
+  @apply self-start px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md transition-colors;
+}
+
+.guide-show-title {
+  @apply text-2xl font-bold text-gray-900;
+}
+
+.guide-show-subtitle {
+  @apply text-sm text-gray-500;
+}

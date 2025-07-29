@@ -1,0 +1,129 @@
+<!-- Modal Backdrop -->
+@if (isOpen()) {
+<div class="modal-backdrop" (click)="onClose()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <h2 class="modal-title">Asignar Guía Turístico</h2>
+            <button class="close-button" (click)="onClose()">
+                <span class="close-icon">✕</span>
+            </button>
+        </div>
+
+        <!-- Service Request Info -->
+        <div class="request-info">
+            <h3 class="request-title">{{ serviceRequest().title }}</h3>
+            <div class="request-details">
+                <div class="detail-item">
+                    <span class="detail-icon">👤</span>
+                    <span class="detail-text">{{ serviceRequest().clientName }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-icon">📍</span>
+                    <span class="detail-text">{{ serviceRequest().origin }} → {{ serviceRequest().destination }}</span>
+                </div>
+                @if (serviceRequest().groupSize) {
+                <div class="detail-item">
+                    <span class="detail-icon">👥</span>
+                    <span class="detail-text">{{ serviceRequest().groupSize }} personas</span>
+                </div>
+                }
+                @if (serviceRequest().duration) {
+                <div class="detail-item">
+                    <span class="detail-icon">🕐</span>
+                    <span class="detail-text">{{ serviceRequest().duration }} horas</span>
+                </div>
+                }
+            </div>
+        </div>
+
+        <!-- Modal Content -->
+        <div class="modal-content">
+            @if (isLoading()) {
+            <div class="loading-container">
+                <cp-loader message="Cargando guías disponibles..." size="medium"></cp-loader>
+            </div>
+            } @else if (availableGuides().length === 0) {
+            <div class="empty-state">
+                <div class="empty-icon">👥</div>
+                <p class="empty-text">No hay guías disponibles en este momento</p>
+            </div>
+            } @else {
+            <div class="guides-section">
+                <h4 class="section-title">Selecciona un guía disponible:</h4>
+                <div class="guides-list">
+                    @for (guide of availableGuides(); track guide.id) {
+                    <div class="guide-item" [class.selected]="selectedGuide()?.id === guide.id"
+                        (click)="onGuideSelect(guide)">
+                        <div class="guide-avatar">
+                            @if (guide.photo) {
+                            <img [src]="guide.photo" [alt]="guide.name" class="avatar-image">
+                            } @else {
+                            <div class="avatar-placeholder">
+                                {{ guide.name.charAt(0).toUpperCase() }}
+                            </div>
+                            }
+                        </div>
+
+                        <div class="guide-info">
+                            <div class="guide-header">
+                                <h5 class="guide-name">{{ guide.name }}</h5>
+                                <cp-badge [label]="getGuideStatusConfig(guide.status).label"
+                                    [variant]="getGuideStatusConfig(guide.status).variant"
+                                    [style]="getGuideStatusConfig(guide.status).style" [size]="'sm'">
+                                </cp-badge>
+                            </div>
+
+                            <div class="guide-details">
+                                <div class="detail-row">
+                                    <span class="detail-label">⭐ Calificación:</span>
+                                    <span class="detail-value">{{ guide.rating }}/5</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">📊 Experiencia:</span>
+                                    <span class="detail-value">{{ formatGuideExperience(guide.yearsExperience) }}</span>
+                                </div>
+                                @if (guide.languages && guide.languages.length > 0) {
+                                <div class="detail-row">
+                                    <span class="detail-label">🗣️ Idiomas:</span>
+                                    <span class="detail-value">{{ formatGuideLanguages(guide.languages) }}</span>
+                                </div>
+                                }
+                                @if (guide.specialties && guide.specialties.length > 0) {
+                                <div class="detail-row">
+                                    <span class="detail-label">🎯 Especialidades:</span>
+                                    <span class="detail-value">{{ guide.specialties.join(', ') }}</span>
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        @if (selectedGuide()?.id === guide.id) {
+                        <div class="selected-indicator">
+                            <span class="check-icon">✓</span>
+                        </div>
+                        }
+                    </div>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="modal-actions">
+            <button class="btn btn-secondary" (click)="onClose()" [disabled]="isAssigning()">
+                Cancelar
+            </button>
+            <button class="btn btn-primary" (click)="onAssign()" [disabled]="!canAssign()">
+                @if (isAssigning()) {
+                <span class="loading-spinner"></span>
+                Asignando...
+                } @else {
+                Asignar Guía
+                }
+            </button>
+        </div>
+    </div>
+</div>
+}

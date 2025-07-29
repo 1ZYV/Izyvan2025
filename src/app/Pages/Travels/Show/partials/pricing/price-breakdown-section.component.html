@@ -1,0 +1,61 @@
+<cp-card title="Desglose de Precio" [hasActions]="true" [actionLabel]="'Descargar cargos'" [variant]="'default'"
+    [radius]="'lg'" [size]="'full'">
+    <div class="price-breakdown">
+
+        <!-- Conceptos individuales -->
+        <div class="price-items">
+            <div class="price-item">
+                <span class="price-label">Tarifa base</span>
+                <cp-currency [label]="priceData().baseFare" />
+            </div>
+
+            <div class="price-item">
+                <span class="price-label">Por distancia</span>
+                <cp-currency [label]="priceData().distanceFee" />
+            </div>
+
+            <div class="price-item">
+                <span class="price-label">Por tiempo</span>
+                <cp-currency [label]="priceData().timeFee" />
+            </div>
+
+            <div class="price-item">
+                <span class="price-label">Tarifa de servicio</span>
+                <cp-currency [label]="priceData().serviceFee" />
+            </div>
+
+            <div class="price-item">
+                <span class="price-label">Impuestos</span>
+                <cp-currency [label]="priceData().taxes" />
+            </div>
+        </div>
+
+        <!-- Línea divisoria -->
+        <div class="price-divider"></div>
+
+        <!-- Subtotal -->
+        <div class="price-item subtotal">
+            <span class="price-label">Subtotal</span>
+            <cp-currency [label]="subtotal" />
+        </div>
+
+        <!-- Descuento (si aplica) -->
+        @if (hasDiscount) {
+        <div class="price-item discount">
+            <span class="price-label">Descuento</span>
+            <span class="price-value discount-value">-{{ formatCurrency(priceData().discount || 0) }}</span>
+        </div>
+        }
+
+        <!-- Total final -->
+        <div class="price-total">
+            <span class="total-label">Total</span>
+            <div class="total-value-container">
+                <cp-currency [label]="priceData().total" />
+                <cp-badge [label]="'Pagado'" [variant]="'success'" [style]="'filled'" [size]="'sm'" [shape]="'pill'">
+                </cp-badge>
+            </div>
+        </div>
+
+    </div>
+</cp-card>
