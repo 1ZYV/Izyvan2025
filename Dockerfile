@@ -28,11 +28,24 @@ FROM nginx:alpine AS production
 # Remover configuración por defecto de nginx
 RUN rm -rf /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/*
 
-# Copiar configuración personalizada de Nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+# Crear configuración simplificada de servidor para Angular
+RUN echo 'server {' > /etc/nginx/conf.d/default.conf && \
+    echo '    listen 8080;' >> /etc/nginx/conf.d/default.conf && \
+    echo '    server_name localhost;' >> /etc/nginx/conf.d/default.conf && \
+    echo '    root /usr/share/nginx/html;' >> /etc/nginx/conf.d/default.conf && \
+    echo '    index index.html;' >> /etc/nginx/conf.d/default.conf && \
+    echo '    location / {' >> /etc/nginx/conf.d/default.conf && \
+    echo '        try_files $uri $uri/ /index.html;' >> /etc/nginx/conf.d/default.conf && \
+    echo '    }' >> /etc/nginx/conf.d/default.conf && \
+    echo '    location /api/ {' >> /etc/nginx/conf.d/default.conf && \
+    echo '        proxy_pass https://izytracking-back.onrender.com;' >> /etc/nginx/conf.d/default.conf && \
+    echo '        proxy_set_header Host $host;' >> /etc/nginx/conf.d/default.conf && \
+    echo '        proxy_set_header X-Real-IP $remote_addr;' >> /etc/nginx/conf.d/default.conf && \
+    echo '    }' >> /etc/nginx/conf.d/default.conf && \
+    echo '}' >> /etc/nginx/conf.d/default.conf
 
 # Copiar archivos construidos desde builder (ruta debe coincidir con outputPath en angular.json)
-# Cache buster - v1.1
+# Cache buster - v1.2
 COPY --from=builder /app/dist/mvp-frontend /usr/share/nginx/html
 
 # Crear usuario no-root para seguridad (nginx group ya existe en base image)
