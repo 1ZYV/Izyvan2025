@@ -22,6 +22,10 @@ COPY . .
 # Construir aplicación para producción
 RUN ng build --configuration=production
 
+# Debug: Verificar qué archivos se generaron
+RUN ls -la /app/dist/
+RUN ls -la /app/dist/mvp-frontend/ || echo "mvp-frontend directory not found"
+
 # Etapa 2: Servidor web con Nginx
 FROM nginx:alpine AS production
 
@@ -45,8 +49,13 @@ RUN echo 'server {' > /etc/nginx/conf.d/default.conf && \
     echo '}' >> /etc/nginx/conf.d/default.conf
 
 # Copiar archivos construidos desde builder (ruta debe coincidir con outputPath en angular.json)
-# Cache buster - v1.2
+# Cache buster - v1.3
 COPY --from=builder /app/dist/mvp-frontend /usr/share/nginx/html
+
+# Debug: Verificar qué archivos se copiaron a nginx
+RUN ls -la /usr/share/nginx/html/
+RUN echo "=== Content of index.html (first 500 chars) ==="
+RUN head -c 500 /usr/share/nginx/html/index.html || echo "index.html not found"
 
 # Crear usuario no-root para seguridad (nginx group ya existe en base image)
 RUN adduser -S angular -u 1001 -G nginx
