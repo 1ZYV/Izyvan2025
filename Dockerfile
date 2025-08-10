@@ -48,8 +48,11 @@ RUN echo 'server {' > /etc/nginx/conf.d/default.conf && \
     echo '    }' >> /etc/nginx/conf.d/default.conf && \
     echo '}' >> /etc/nginx/conf.d/default.conf
 
+# LIMPIAR completamente directorio nginx para evitar conflictos con archivos default
+RUN rm -rf /usr/share/nginx/html/*
+
 # Copiar archivos construidos desde builder (ruta debe coincidir con outputPath en angular.json)
-# Cache buster - v1.3
+# Cache buster - v1.4
 COPY --from=builder /app/dist/mvp-frontend /usr/share/nginx/html
 
 # Debug: Verificar qué archivos se copiaron a nginx
