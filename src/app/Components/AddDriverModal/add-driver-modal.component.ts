@@ -145,9 +145,8 @@ export class AddDriverModalComponent {
                 photo: sanitizedData.photo || undefined
             };
 
-            // Create new driver object
-            const newDriver: DriverDetails = {
-                id: generateUniqueId('driver'),
+            // Create complete driver object for backend
+            const completeDriverData: Omit<DriverDetails, 'id'> = {
                 ...driverData,
                 status: 'available' as DriverStatus,
                 rating: 0, // New drivers start with 0 rating
@@ -162,12 +161,21 @@ export class AddDriverModalComponent {
                 }
             };
 
-            // Simulate API call
-            setTimeout(() => {
-                this.driverCreated.emit(newDriver);
-                this.isSubmitting.set(false);
-                this.onClose();
-            }, 1500);
+            // Create driver via real backend integration
+            this.vehiclesService.addDriver(completeDriverData)
+                .subscribe({
+                    next: (createdDriver) => {
+                        console.log('Conductor creado exitosamente:', createdDriver);
+                        this.driverCreated.emit(createdDriver);
+                        this.isSubmitting.set(false);
+                        this.onClose();
+                    },
+                    error: (error) => {
+                        console.error('Error creando conductor:', error);
+                        this.isSubmitting.set(false);
+                        // TODO: Agregar manejo de errores en UI (toast/mensaje)
+                    }
+                });
         } else {
             // Mark all fields as touched to show validation errors
             this.driverForm.markAllAsTouched();

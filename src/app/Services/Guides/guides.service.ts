@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, delay, tap } from 'rxjs';
+import { BehaviorSubject, Observable, of, delay, tap, map, catchError, throwError } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AuthService } from '../Auth/auth.service';
+import { environment } from '../../../environments/environment';
 import {
     GuideInfo,
     GuideDetails,
@@ -28,8 +31,23 @@ export class GuidesService {
     private guidesListSubject = new BehaviorSubject<GuideListItem[]>([]);
     public guidesList$ = this.guidesListSubject.asObservable();
 
-    constructor() {
-        this.initializeMockData();
+    // Backend integration
+    private readonly apiUrl = `${environment.apiUrl}/guides`;
+
+    constructor(
+        private http: HttpClient,
+        private authService: AuthService
+    ) {
+        // Eliminado initializeMockData() - ahora usa backend real
+    }
+
+    // Configuración de headers JWT
+    private getHeaders(): HttpHeaders {
+        const token = this.authService.getToken();
+        return new HttpHeaders({
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        });
     }
 
     // Datos mock para simular API
@@ -213,9 +231,21 @@ export class GuidesService {
      */
     getGuidesList(): Observable<GuideListItem[]> {
         this.isLoadingSubject.next(true);
-        return of(this.guidesListSubject.value).pipe(
-            delay(800), // Simular latencia de red
-        );
+        return this.http.get<any>(`${this.apiUrl}`, { headers: this.getHeaders() })
+            .pipe(
+                map(response => {
+                    console.log('Guías obtenidos exitosamente:', response.guides?.length || 0);
+                    const guides = this.mapBackendGuidesToFrontend(response.guides || []);
+                    this.guidesListSubject.next(guides);
+                    this.isLoadingSubject.next(false);
+                    return guides;
+                }),
+                catchError(error => {
+                    console.error('Error obteniendo guías:', error);
+                    this.isLoadingSubject.next(false);
+                    return throwError(() => error);
+                })
+            );
     }
 
     /**
@@ -223,24 +253,28 @@ export class GuidesService {
      */
     getGuideDetails(guideId: string): Observable<GuideDetails | null> {
         this.isLoadingSubject.next(true);
-        const guide = this.mockGuides.find(g => g.id === guideId);
-        return of(guide || null).pipe(
-            delay(600)
-        );
+        return this.http.get<GuideDetails>(`${this.apiUrl}/${guideId}`, { headers: this.getHeaders() })
+            .pipe(
+                map(guide => {
+                    console.log('Detalles de guía obtenidos:', guide.id);
+                    const mappedGuide = this.mapBackendGuideToFrontend(guide);
+                    this.isLoadingSubject.next(false);
+                    return mappedGuide;
+                }),
+                catchError(error => {
+                    console.error('Error obteniendo detalles de guía:', error);
+                    this.isLoadingSubject.next(false);
+                    return throwError(() => error);
+                })
+            );
     }
 
     /**
      * Obtiene un guía específico por ID
      */
     getGuideById(guideId: string): Observable<GuideDetails | null> {
-        this.isLoadingSubject.next(true);
-
-        const guide = this.mockGuides.find(g => g.id === guideId);
-
-        return of(guide || null).pipe(
-            delay(300),
-            tap(() => this.isLoadingSubject.next(false))
-        );
+        // Reutilizar getGuideDetails para evitar duplicación
+        return this.getGuideDetails(guideId);
     }
 
     /**
@@ -248,12 +282,20 @@ export class GuidesService {
      */
     getAvailableGuides(): Observable<GuideListItem[]> {
         this.isLoadingSubject.next(true);
-        const availableGuides = this.guidesListSubject.value
-            .filter(guide => GuideStatusUtils.isAvailable(guide.status));
-
-        return of(availableGuides).pipe(
-            delay(500)
-        );
+        return this.http.get<any>(`${this.apiUrl}/available`, { headers: this.getHeaders() })
+            .pipe(
+                map(response => {
+                    console.log('Guías disponibles obtenidos:', response.guides?.length || 0);
+                    const guides = this.mapBackendGuidesToFrontend(response.guides || []);
+                    this.isLoadingSubject.next(false);
+                    return guides;
+                }),
+                catchError(error => {
+                    console.error('Error obteniendo guías disponibles:', error);
+                    this.isLoadingSubject.next(false);
+                    return throwError(() => error);
+                })
+            );
     }
 
     /**
@@ -261,12 +303,20 @@ export class GuidesService {
      */
     getGuidesBySpecialty(specialty: GuideSpecialty): Observable<GuideListItem[]> {
         this.isLoadingSubject.next(true);
-        const specialtyGuides = this.guidesListSubject.value
-            .filter(guide => guide.specialties.includes(specialty));
-
-        return of(specialtyGuides).pipe(
-            delay(600)
-        );
+        return this.http.get<any>(`${this.apiUrl}/specialty/${specialty}`, { headers: this.getHeaders() })
+            .pipe(
+                map(response => {
+                    console.log(`Guías con especialidad ${specialty} obtenidos:`, response.guides?.length || 0);
+                    const guides = this.mapBackendGuidesToFrontend(response.guides || []);
+                    this.isLoadingSubject.next(false);
+                    return guides;
+                }),
+                catchError(error => {
+                    console.error(`Error obteniendo guías por especialidad ${specialty}:`, error);
+                    this.isLoadingSubject.next(false);
+                    return throwError(() => error);
+                })
+            );
     }
 
     /**
@@ -274,45 +324,34 @@ export class GuidesService {
      */
     getGuidesByLanguage(language: GuideLanguage): Observable<GuideListItem[]> {
         this.isLoadingSubject.next(true);
-        const languageGuides = this.guidesListSubject.value
-            .filter(guide => guide.languages.includes(language));
-
-        return of(languageGuides).pipe(
-            delay(600)
-        );
+        return this.http.get<any>(`${this.apiUrl}/language/${language}`, { headers: this.getHeaders() })
+            .pipe(
+                map(response => {
+                    console.log(`Guías con idioma ${language} obtenidos:`, response.guides?.length || 0);
+                    const guides = this.mapBackendGuidesToFrontend(response.guides || []);
+                    this.isLoadingSubject.next(false);
+                    return guides;
+                }),
+                catchError(error => {
+                    console.error(`Error obteniendo guías por idioma ${language}:`, error);
+                    this.isLoadingSubject.next(false);
+                    return throwError(() => error);
+                })
+            );
     }
 
     /**
-     * Simula la contratación de un guía
+     * Contrata un guía (actualiza estado a BUSY)
      */
     hireGuide(guideId: string): Observable<boolean> {
-        this.isLoadingSubject.next(true);
-        const guideIndex = this.mockGuides.findIndex(g => g.id === guideId);
-
-        if (guideIndex !== -1 && GuideStatusUtils.isAvailable(this.mockGuides[guideIndex].status)) {
-            this.mockGuides[guideIndex].status = 'busy';
-            this.initializeMockData(); // Actualizar la lista reactiva
-            return of(true).pipe(delay(800));
-        }
-
-        return of(false).pipe(delay(800));
+        return this.updateGuideStatus(guideId, 'busy');
     }
 
     /**
-     * Simula finalizar el servicio de un guía
+     * Finaliza el servicio de un guía (marca como disponible)
      */
     completeGuideService(guideId: string): Observable<boolean> {
-        this.isLoadingSubject.next(true);
-        const guideIndex = this.mockGuides.findIndex(g => g.id === guideId);
-
-        if (guideIndex !== -1 && this.mockGuides[guideIndex].status === 'busy') {
-            this.mockGuides[guideIndex].status = 'available';
-            this.mockGuides[guideIndex].totalTours += 1;
-            this.initializeMockData(); // Actualizar la lista reactiva
-            return of(true).pipe(delay(800));
-        }
-
-        return of(false).pipe(delay(800));
+        return this.updateGuideStatus(guideId, 'available');
     }
 
     /**
@@ -320,40 +359,36 @@ export class GuidesService {
      */
     createGuide(guideData: CreateGuideRequest): Observable<boolean> {
         this.isLoadingSubject.next(true);
-
-        // Generar un ID único para el nuevo guía
-        const newId = `guide-${Date.now().toString().slice(-6)}`;
-
-        // Crear el objeto GuideDetails completo
-        const newGuide: GuideDetails = {
-            id: newId,
-            name: guideData.name,
+        
+        const createPayload = {
+            fullName: guideData.name,
             photo: guideData.photo,
-            status: 'available', // Los nuevos guías empiezan disponibles
-            rating: 5.0, // Rating inicial
-            totalTours: 0, // Sin tours inicialmente
-            yearsExperience: guideData.yearsExperience,
+            experienceYears: guideData.yearsExperience,
             specialties: guideData.specialties,
-            languages: guideData.languages,
+            languages: guideData.languages, 
             hourlyRate: guideData.hourlyRate,
             description: guideData.description,
             phone: guideData.phone,
             email: guideData.email,
             location: guideData.location,
-            certifications: guideData.certifications,
-            reviews: [], // Sin reseñas inicialmente
-            portfolio: [], // Portfolio vacío inicialmente
-            availableFrom: '08:00',
-            availableTo: '18:00'
+            certifications: guideData.certifications
         };
 
-        // Añadir el nuevo guía al array
-        this.mockGuides.push(newGuide);
-
-        // Actualizar la lista reactiva
-        this.initializeMockData();
-
-        return of(true).pipe(delay(800));
+        return this.http.post<any>(`${this.apiUrl}`, createPayload, { headers: this.getHeaders() })
+            .pipe(
+                map(response => {
+                    console.log('Guía creado exitosamente:', response.id);
+                    this.isLoadingSubject.next(false);
+                    // Actualizar lista tras crear nuevo guía
+                    this.getGuidesList().subscribe();
+                    return true;
+                }),
+                catchError(error => {
+                    console.error('Error creando guía:', error);
+                    this.isLoadingSubject.next(false);
+                    return throwError(() => error);
+                })
+            );
     }
 
     /**
@@ -361,20 +396,22 @@ export class GuidesService {
      */
     deleteGuide(guideId: string): Observable<boolean> {
         this.isLoadingSubject.next(true);
-
-        const guideIndex = this.mockGuides.findIndex(g => g.id === guideId);
-
-        if (guideIndex !== -1) {
-            // Eliminar el guía del array
-            this.mockGuides.splice(guideIndex, 1);
-
-            // Actualizar la lista reactiva
-            this.initializeMockData();
-
-            return of(true).pipe(delay(600));
-        }
-
-        return of(false).pipe(delay(600));
+        
+        return this.http.delete(`${this.apiUrl}/${guideId}`, { headers: this.getHeaders() })
+            .pipe(
+                map(() => {
+                    console.log('Guía eliminado exitosamente:', guideId);
+                    this.isLoadingSubject.next(false);
+                    // Actualizar lista tras eliminar guía
+                    this.getGuidesList().subscribe();
+                    return true;
+                }),
+                catchError(error => {
+                    console.error('Error eliminando guía:', error);
+                    this.isLoadingSubject.next(false);
+                    return throwError(() => error);
+                })
+            );
     }
 
     /**
@@ -382,24 +419,26 @@ export class GuidesService {
      */
     updateGuideStatus(guideId: string, status: GuideStatus): Observable<boolean> {
         this.isLoadingSubject.next(true);
+        
+        const statusPayload = {
+            status: this.mapGuideStatusToBackend(status)
+        };
 
-        const guide = this.mockGuides.find(g => g.id === guideId);
-
-        if (guide) {
-            guide.status = status;
-            // Actualizar la lista reactiva
-            this.initializeMockData();
-
-            return of(true).pipe(
-                delay(400),
-                tap(() => this.isLoadingSubject.next(false))
+        return this.http.patch(`${this.apiUrl}/${guideId}/status`, statusPayload, { headers: this.getHeaders() })
+            .pipe(
+                map(() => {
+                    console.log(`Estado del guía ${guideId} actualizado a ${status}`);
+                    this.isLoadingSubject.next(false);
+                    // Actualizar lista tras cambio de estado
+                    this.getGuidesList().subscribe();
+                    return true;
+                }),
+                catchError(error => {
+                    console.error(`Error actualizando estado del guía ${guideId}:`, error);
+                    this.isLoadingSubject.next(false);
+                    return throwError(() => error);
+                })
             );
-        }
-
-        return of(false).pipe(
-            delay(400),
-            tap(() => this.isLoadingSubject.next(false))
-        );
     }
 
     /**
@@ -414,5 +453,84 @@ export class GuidesService {
      */
     clearLoading(): void {
         this.isLoadingSubject.next(false);
+    }
+
+    // Métodos de mapeo entre backend y frontend
+
+    /**
+     * Mapea array de guías del backend al formato frontend
+     */
+    private mapBackendGuidesToFrontend(backendGuides: any[]): GuideListItem[] {
+        return backendGuides.map(guide => this.mapBackendGuideToFrontend(guide));
+    }
+
+    /**
+     * Mapea un guía del backend al formato frontend
+     */
+    private mapBackendGuideToFrontend(backendGuide: any): GuideDetails {
+        return {
+            id: backendGuide.id,
+            name: backendGuide.fullName || backendGuide.name,
+            photo: backendGuide.photo || `https://via.placeholder.com/150x150?text=${(backendGuide.fullName || backendGuide.name || '?').charAt(0)}`,
+            status: this.mapGuideStatusFromBackend(backendGuide.status),
+            rating: parseFloat(backendGuide.rating) || 0,
+            totalTours: parseInt(backendGuide.totalTours) || 0,
+            yearsExperience: parseInt(backendGuide.experienceYears || backendGuide.yearsExperience) || 0,
+            specialties: Array.isArray(backendGuide.specialties) ? backendGuide.specialties : [backendGuide.specialties].filter(Boolean),
+            languages: Array.isArray(backendGuide.languages) ? backendGuide.languages : [backendGuide.languages].filter(Boolean),
+            hourlyRate: parseFloat(backendGuide.hourlyRate) || 0,
+            description: backendGuide.description || '',
+            phone: backendGuide.phone || '',
+            email: backendGuide.email || '',
+            certifications: Array.isArray(backendGuide.certifications) ? backendGuide.certifications : [],
+            location: backendGuide.location || '',
+            availableFrom: backendGuide.availableFrom || '08:00',
+            availableTo: backendGuide.availableTo || '18:00',
+            portfolio: Array.isArray(backendGuide.portfolio) ? backendGuide.portfolio : [],
+            serviceArea: Array.isArray(backendGuide.serviceArea) ? backendGuide.serviceArea : [],
+            reviews: Array.isArray(backendGuide.reviews) ? backendGuide.reviews.map((review: any) => ({
+                id: review.id,
+                touristName: review.touristName || review.customerName || 'Anónimo',
+                rating: parseFloat(review.rating) || 0,
+                comment: review.comment || '',
+                date: review.date ? new Date(review.date) : new Date(),
+                tourType: review.tourType || review.serviceType || 'general'
+            })) : [],
+            emergencyContact: backendGuide.emergencyContact || undefined
+        };
+    }
+
+    /**
+     * Mapea el estado del guía del backend al frontend
+     */
+    private mapGuideStatusFromBackend(backendStatus: string): GuideStatus {
+        if (!backendStatus) return 'offline';
+        
+        const statusMap: Record<string, GuideStatus> = {
+            'AVAILABLE': 'available',
+            'BUSY': 'busy', 
+            'OFFLINE': 'offline',
+            'INACTIVE': 'inactive',
+            'available': 'available',
+            'busy': 'busy',
+            'offline': 'offline',
+            'inactive': 'inactive'
+        };
+
+        return statusMap[backendStatus] || 'offline';
+    }
+
+    /**
+     * Mapea el estado del guía del frontend al backend
+     */
+    private mapGuideStatusToBackend(frontendStatus: GuideStatus): string {
+        const statusMap: Record<GuideStatus, string> = {
+            'available': 'AVAILABLE',
+            'busy': 'BUSY',
+            'offline': 'OFFLINE', 
+            'inactive': 'INACTIVE'
+        };
+
+        return statusMap[frontendStatus] || 'OFFLINE';
     }
 }

@@ -1,6 +1,6 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of, delay, map, catchError, throwError } from 'rxjs';
+import { Observable, of, delay, map, catchError, throwError, switchMap } from 'rxjs';
 import {
     VehicleInfo,
     VehicleDetails,
@@ -13,6 +13,7 @@ import {
 } from '../../Types';
 import { generateUniqueId } from '../../Utils/form-validation.utils';
 import { AuthService } from '../Auth/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
@@ -20,7 +21,7 @@ import { AuthService } from '../Auth/auth.service';
 export class VehiclesAndDriversService {
     private http = inject(HttpClient);
     private authService = inject(AuthService);
-    private apiUrl = 'http://localhost:3000/api';
+    private apiUrl = environment.apiUrl;
 
     // Headers con autenticación JWT
     private getHeaders(): HttpHeaders {
@@ -179,175 +180,7 @@ export class VehiclesAndDriversService {
         });
     }
 
-    // Mock data - En una aplicación real vendría de una API
-    private mockVehicles: VehicleDetails[] = [
-        {
-            id: 'vehicle-1',
-            licensePlate: 'ABC-123',
-            brand: 'Toyota',
-            model: 'Hiace',
-            year: 2022,
-            type: 'van',
-            capacity: 12,
-            status: 'available',
-            photo: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=200&fit=crop',
-            color: 'Blanco',
-            features: ['Aire acondicionado', 'WiFi', 'USB', 'Música'],
-            fuelType: 'gasoline',
-            mileage: 45000,
-            lastMaintenance: new Date('2024-06-15'),
-            documents: {
-                soat: 'valid',
-                technicalReview: 'valid',
-                circulation: 'valid'
-            },
-            maintenanceHistory: [],
-            tripHistory: []
-        },
-        {
-            id: 'vehicle-2',
-            licensePlate: 'DEF-456',
-            brand: 'Ford',
-            model: 'Transit',
-            year: 2021,
-            type: 'van',
-            capacity: 15,
-            status: 'available',
-            photo: 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=300&h=200&fit=crop',
-            color: 'Azul',
-            features: ['Aire acondicionado', 'GPS', 'Asientos reclinables'],
-            fuelType: 'diesel',
-            mileage: 52000,
-            lastMaintenance: new Date('2024-05-20'),
-            documents: {
-                soat: 'valid',
-                technicalReview: 'valid',
-                circulation: 'valid'
-            },
-            maintenanceHistory: [],
-            tripHistory: []
-        },
-        {
-            id: 'vehicle-3',
-            licensePlate: 'GHI-789',
-            brand: 'Chevrolet',
-            model: 'Aveo',
-            year: 2020,
-            type: 'carro',
-            capacity: 4,
-            status: 'busy',
-            photo: 'https://images.unsplash.com/photo-1549924231-f129b911e442?w=300&h=200&fit=crop',
-            color: 'Rojo',
-            features: ['Aire acondicionado', 'Música', 'GPS'],
-            fuelType: 'gasoline',
-            mileage: 78000,
-            lastMaintenance: new Date('2024-04-10'),
-            documents: {
-                soat: 'valid',
-                technicalReview: 'valid',
-                circulation: 'valid'
-            },
-            maintenanceHistory: [],
-            tripHistory: []
-        }
-    ];
 
-    private mockDrivers: DriverDetails[] = [
-        {
-            id: 'driver-1',
-            name: 'Carlos Mendoza',
-            photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-            licenseNumber: 'LIC-12345',
-            licenseExpiry: new Date('2025-12-31'),
-            phone: '+51 987 654 321',
-            email: 'carlos.mendoza@email.com',
-            status: 'available',
-            rating: 4.8,
-            totalTrips: 156,
-            yearsExperience: 8,
-            languages: ['Español', 'Inglés'],
-            emergencyContact: {
-                name: 'María Mendoza',
-                phone: '+51 987 123 456',
-                relationship: 'Esposa'
-            },
-            address: 'Av. Principal 123, Lima',
-            dateOfBirth: new Date('1985-03-15'),
-            hireDate: new Date('2020-01-15'),
-            vehicleTypes: ['carro', 'van'],
-            reviews: [],
-            tripHistory: [],
-            documents: {
-                license: 'valid',
-                criminalRecord: 'valid',
-                medicalCertificate: 'valid'
-            }
-        },
-        {
-            id: 'driver-2',
-            name: 'Ana García',
-            photo: 'https://images.unsplash.com/photo-1494790108755-2616b612b977?w=150&h=150&fit=crop&crop=face',
-            licenseNumber: 'LIC-67890',
-            licenseExpiry: new Date('2026-06-30'),
-            phone: '+51 987 111 222',
-            email: 'ana.garcia@email.com',
-            status: 'available',
-            rating: 4.9,
-            totalTrips: 203,
-            yearsExperience: 12,
-            languages: ['Español', 'Inglés', 'Francés'],
-            emergencyContact: {
-                name: 'Luis García',
-                phone: '+51 987 333 444',
-                relationship: 'Hermano'
-            },
-            address: 'Jr. Los Andes 456, Lima',
-            dateOfBirth: new Date('1980-07-22'),
-            hireDate: new Date('2018-03-10'),
-            vehicleTypes: ['van', 'bus'],
-            reviews: [],
-            tripHistory: [],
-            documents: {
-                license: 'valid',
-                criminalRecord: 'valid',
-                medicalCertificate: 'valid'
-            }
-        },
-        {
-            id: 'driver-3',
-            name: 'Roberto Silva',
-            photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-            licenseNumber: 'LIC-11111',
-            licenseExpiry: new Date('2024-12-31'),
-            phone: '+51 987 555 666',
-            email: 'roberto.silva@email.com',
-            status: 'busy',
-            rating: 4.6,
-            totalTrips: 89,
-            yearsExperience: 5,
-            languages: ['Español'],
-            emergencyContact: {
-                name: 'Carmen Silva',
-                phone: '+51 987 777 888',
-                relationship: 'Madre'
-            },
-            address: 'Calle Libertad 789, Lima',
-            dateOfBirth: new Date('1990-11-05'),
-            hireDate: new Date('2022-06-01'),
-            vehicleTypes: ['carro'],
-            reviews: [],
-            tripHistory: [],
-            documents: {
-                license: 'valid',
-                criminalRecord: 'valid',
-                medicalCertificate: 'valid'
-            }
-        }
-    ];
-
-    // Signals para estado reactivo
-    private vehiclesSignal = signal<VehicleDetails[]>(this.mockVehicles);
-    private driversSignal = signal<DriverDetails[]>(this.mockDrivers);
 
     // Observables públicos - INTEGRACIÓN REAL CON BACKEND
     get vehicles$(): Observable<VehicleDetails[]> {
@@ -360,12 +193,12 @@ export class VehiclesAndDriversService {
                 if (response.data && Array.isArray(response.data)) {
                     vehicles = response.data.map(vehicle => this.mapBackendVehicleToFrontend(vehicle));
                 }
-                this.vehiclesSignal.set(vehicles); // Actualizar signal para compatibilidad
+                console.log('Vehículos obtenidos del backend:', vehicles.length);
                 return vehicles;
             }),
             catchError(error => {
                 console.error('Error obteniendo lista de vehículos:', error);
-                return of(this.vehiclesSignal()); // Fallback a datos locales si hay error
+                return of([]); // Retornar array vacío en caso de error
             })
         );
     }
@@ -495,67 +328,108 @@ export class VehiclesAndDriversService {
         );
     }
 
-    // Métodos para obtener conductores y vehículos compatibles
+    // Métodos para obtener conductores y vehículos compatibles - INTEGRACIÓN REAL CON BACKEND
     getCompatibleResources(vehicleType?: VehicleType): Observable<{ vehicles: VehicleDetails[], drivers: DriverDetails[] }> {
-        let vehicles = this.mockVehicles.filter(v => v.status === 'available');
-        let drivers = this.mockDrivers.filter(d => d.status === 'available');
+        const vehiclesQuery = vehicleType ? `?status=AVAILABLE&vehicleType=${vehicleType}` : '?status=AVAILABLE';
+        const driversQuery = vehicleType ? `?status=AVAILABLE&vehicleType=${vehicleType}` : '?status=AVAILABLE';
 
-        if (vehicleType) {
-            vehicles = vehicles.filter(v => v.type === vehicleType);
-            drivers = drivers.filter(d => d.vehicleTypes.includes(vehicleType));
-        }
+        const vehicles$ = this.http.get<{data: any[]}>(
+            `${this.apiUrl}/vehicles${vehiclesQuery}`,
+            { headers: this.getHeaders() }
+        ).pipe(
+            map(response => this.mapBackendVehiclesToFrontend(response.data)),
+            catchError(error => {
+                console.error('Error obteniendo vehículos compatibles:', error);
+                return of([]);
+            })
+        );
 
-        return of({ vehicles, drivers }).pipe(delay(400));
+        const drivers$ = this.http.get<{data: any[]}>(
+            `${this.apiUrl}/drivers${driversQuery}`,
+            { headers: this.getHeaders() }
+        ).pipe(
+            map(response => this.mapBackendDriversToFrontend(response.data)),
+            catchError(error => {
+                console.error('Error obteniendo conductores compatibles:', error);
+                return of([]);
+            })
+        );
+
+        return vehicles$.pipe(
+            switchMap(vehicles => 
+                drivers$.pipe(
+                    map(drivers => ({ vehicles, drivers }))
+                )
+            )
+        );
     }
 
-    // Métodos para asignación
+    // Métodos para asignación - INTEGRACIÓN REAL CON BACKEND
     assignTransportResources(requestId: string, vehicleId: string, driverId: string): Observable<boolean> {
-        // Simular API call
-        return new Observable(observer => {
-            setTimeout(() => {
-                // Actualizar estado de vehículo y conductor
-                const vehicle = this.mockVehicles.find(v => v.id === vehicleId);
-                const driver = this.mockDrivers.find(d => d.id === driverId);
+        // Actualizar estado del vehículo a BUSY
+        const vehicleUpdate$ = this.updateVehicleStatus(vehicleId, 'busy');
+        
+        // Actualizar estado del conductor a BUSY  
+        const driverUpdate$ = this.updateDriverStatus(driverId, 'busy');
 
-                if (vehicle && driver) {
-                    vehicle.status = 'busy';
-                    driver.status = 'busy';
-
-                    // Actualizar signals
-                    this.vehiclesSignal.set([...this.mockVehicles]);
-                    this.driversSignal.set([...this.mockDrivers]);
-
-                    observer.next(true);
-                } else {
-                    observer.next(false);
+        return vehicleUpdate$.pipe(
+            switchMap(vehicleUpdated => {
+                if (!vehicleUpdated) {
+                    console.error('Error actualizando estado del vehículo');
+                    return of(false);
                 }
-                observer.complete();
-            }, 1000);
-        });
+                
+                return driverUpdate$.pipe(
+                    map(driverUpdated => {
+                        if (!driverUpdated) {
+                            console.error('Error actualizando estado del conductor');
+                            return false;
+                        }
+                        
+                        console.log(`Recursos asignados exitosamente - Viaje: ${requestId}, Vehículo: ${vehicleId}, Conductor: ${driverId}`);
+                        return true;
+                    })
+                );
+            }),
+            catchError(error => {
+                console.error('Error en asignación de recursos:', error);
+                return of(false);
+            })
+        );
     }
 
-    // Método para liberar recursos
+    // Método para liberar recursos - INTEGRACIÓN REAL CON BACKEND
     releaseTransportResources(vehicleId: string, driverId: string): Observable<boolean> {
-        return new Observable(observer => {
-            setTimeout(() => {
-                const vehicle = this.mockVehicles.find(v => v.id === vehicleId);
-                const driver = this.mockDrivers.find(d => d.id === driverId);
+        // Actualizar estado del vehículo a AVAILABLE
+        const vehicleUpdate$ = this.updateVehicleStatus(vehicleId, 'available');
+        
+        // Actualizar estado del conductor a AVAILABLE
+        const driverUpdate$ = this.updateDriverStatus(driverId, 'available');
 
-                if (vehicle && driver) {
-                    vehicle.status = 'available';
-                    driver.status = 'available';
-
-                    // Actualizar signals
-                    this.vehiclesSignal.set([...this.mockVehicles]);
-                    this.driversSignal.set([...this.mockDrivers]);
-
-                    observer.next(true);
-                } else {
-                    observer.next(false);
+        return vehicleUpdate$.pipe(
+            switchMap(vehicleUpdated => {
+                if (!vehicleUpdated) {
+                    console.error('Error liberando vehículo');
+                    return of(false);
                 }
-                observer.complete();
-            }, 500);
-        });
+                
+                return driverUpdate$.pipe(
+                    map(driverUpdated => {
+                        if (!driverUpdated) {
+                            console.error('Error liberando conductor');
+                            return false;
+                        }
+                        
+                        console.log(`Recursos liberados exitosamente - Vehículo: ${vehicleId}, Conductor: ${driverId}`);
+                        return true;
+                    })
+                );
+            }),
+            catchError(error => {
+                console.error('Error en liberación de recursos:', error);
+                return of(false);
+            })
+        );
     }
 
     // Métodos de utilidad - INTEGRACIÓN REAL CON BACKEND
@@ -597,22 +471,34 @@ export class VehiclesAndDriversService {
         );
     }
 
-    // Métodos para crear nuevos recursos
+    // Métodos para crear nuevos recursos - INTEGRACIÓN REAL CON BACKEND
     addVehicle(vehicleData: Omit<VehicleDetails, 'id'>): Observable<VehicleDetails> {
-        return new Observable(observer => {
-            setTimeout(() => {
-                const newVehicle: VehicleDetails = {
-                    ...vehicleData,
-                    id: generateUniqueId('vehicle')
-                };
+        // Mapear datos del frontend al formato del backend
+        const backendVehicleData = {
+            licensePlate: vehicleData.licensePlate,
+            brand: vehicleData.brand,
+            model: vehicleData.model,
+            year: vehicleData.year,
+            vehicleType: vehicleData.type, // frontend: 'carro'/'van'/'bus' -> backend: 'carro'/'van'/'bus'
+            capacity: vehicleData.capacity,
+            color: vehicleData.color,
+            features: vehicleData.features,
+            fuelType: vehicleData.fuelType,
+            mileage: vehicleData.mileage,
+            lastMaintenance: vehicleData.lastMaintenance?.toISOString()
+        };
 
-                this.mockVehicles.push(newVehicle);
-                this.vehiclesSignal.set([...this.mockVehicles]);
-
-                observer.next(newVehicle);
-                observer.complete();
-            }, 1000);
-        });
+        return this.http.post<any>(
+            `${this.apiUrl}/vehicles`,
+            backendVehicleData,
+            { headers: this.getHeaders() }
+        ).pipe(
+            map(response => this.mapBackendVehicleToFrontend(response)),
+            catchError(error => {
+                console.error('Error creando vehículo:', error);
+                return throwError(() => error);
+            })
+        );
     }
 
     addDriver(driverData: Omit<DriverDetails, 'id'>): Observable<DriverDetails> {

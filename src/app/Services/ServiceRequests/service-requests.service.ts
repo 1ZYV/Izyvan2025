@@ -1,9 +1,8 @@
 import { Injectable, signal, inject } from '@angular/core';
-import { Observable, of, delay, BehaviorSubject, tap, switchMap } from 'rxjs';
-import { VehiclesAndDriversService } from '../VehiclesAndDrivers/vehicles-and-drivers.service';
-import { GuidesService } from '../Guides/guides.service';
-import { GuideDetails } from '../../Types/guide.types';
-import { VehicleDetails, DriverDetails } from '../../Types/vehicle.types';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, of, BehaviorSubject, forkJoin, map, catchError, finalize, tap } from 'rxjs';
+import { AuthService } from '../Auth/auth.service';
+import { environment } from '../../../environments/environment';
 
 export type ServiceRequestType = 'transport' | 'tourism';
 export type ServiceRequestStatus = 'pending' | 'accepted' | 'rejected' | 'assigned' | 'completed' | 'cancelled';
@@ -53,8 +52,9 @@ export interface ServiceRequest {
     providedIn: 'root'
 })
 export class ServiceRequestsService {
-    private vehiclesAndDriversService = inject(VehiclesAndDriversService);
-    private guidesService = inject(GuidesService);
+    private http = inject(HttpClient);
+    private authService = inject(AuthService);
+    private apiUrl = `${environment.apiUrl}/service-requests`;
 
     private isLoadingSubject = new BehaviorSubject<boolean>(false);
     private serviceRequestsSubject = new BehaviorSubject<ServiceRequest[]>([]);
@@ -62,168 +62,85 @@ export class ServiceRequestsService {
     public isLoading$ = this.isLoadingSubject.asObservable();
     public serviceRequests$ = this.serviceRequestsSubject.asObservable();
 
-    private mockServiceRequests: ServiceRequest[] = [
-        {
-            id: 'req-001',
-            type: 'transport',
-            status: 'pending',
-            title: 'Traslado Aeropuerto - Hotel',
-            description: 'Traslado desde el aeropuerto internacional hasta hotel en el centro',
-            clientName: 'María García',
-            clientPhone: '+57 300 123 4567',
-            clientEmail: 'maria.garcia@email.com',
-            origin: 'Aeropuerto Internacional',
-            destination: 'Hotel Plaza Centro',
-            scheduledDate: new Date(Date.now() + 86400000), // Mañana
-            createdAt: new Date(),
-            price: 45.00,
-            currency: 'USD',
-            estimatedDuration: 45,
-            distance: 25.5,
-            vehicleType: 'carro',
-            passengerCount: 2,
-            notes: 'Vuelo llega a las 15:30, favor estar 10 minutos antes en la zona de llegadas'
-        },
-        {
-            id: 'req-002',
-            type: 'tourism',
-            status: 'pending',
-            title: 'Tour Ciudad Histórica',
-            description: 'Recorrido guiado por el centro histórico con explicaciones culturales',
-            clientName: 'Carlos Rodríguez',
-            clientPhone: '+57 301 987 6543',
-            clientEmail: 'carlos.rodriguez@email.com',
-            origin: 'Plaza Principal',
-            destination: 'Catedral Metropolitana',
-            scheduledDate: new Date(Date.now() + 172800000), // Pasado mañana
-            createdAt: new Date(),
-            price: 120.00,
-            currency: 'USD',
-            groupSize: 4,
-            duration: 3,
-            specialRequirements: 'Grupo familiar con niños',
-            notes: 'Prefieren explicaciones en español, los niños tienen 8 y 12 años'
-        },
-        {
-            id: 'req-003',
-            type: 'transport',
-            status: 'accepted',
-            title: 'Traslado Ejecutivo',
-            description: 'Servicio de transporte ejecutivo para reunión de negocios',
-            clientName: 'Ana López',
-            clientPhone: '+57 302 456 7890',
-            clientEmail: 'ana.lopez@company.com',
-            origin: 'Hotel Business',
-            destination: 'Centro de Convenciones',
-            scheduledDate: new Date(Date.now() + 43200000), // En 12 horas
-            createdAt: new Date(),
-            price: 60.00,
-            currency: 'USD',
-            estimatedDuration: 30,
-            distance: 15.2,
-            vehicleType: 'carro',
-            passengerCount: 1,
-            notes: 'Cliente empresarial VIP, requiere puntualidad estricta'
-        },
-        {
-            id: 'req-004',
-            type: 'tourism',
-            status: 'pending',
-            title: 'Excursión Naturaleza',
-            description: 'Tour eco-turístico por senderos naturales con observación de flora y fauna',
-            clientName: 'Roberto Martínez',
-            origin: 'Centro de Visitantes',
-            destination: 'Mirador Natural',
-            scheduledDate: new Date(Date.now() + 259200000), // En 3 días
-            createdAt: new Date(),
-            price: 180.00,
-            currency: 'USD',
-            groupSize: 6,
-            duration: 6,
-            specialRequirements: 'Caminata moderada, llevar zapatos cómodos'
-        },
-        {
-            id: 'req-005',
-            type: 'transport',
-            status: 'accepted',
-            title: 'Traslado Familiar',
-            description: 'Transporte para familia con equipaje desde hotel a aeropuerto',
-            clientName: 'Familia Torres',
-            clientPhone: '+57 303 789 0123',
-            clientEmail: 'torres.family@email.com',
-            origin: 'Hotel Familiar',
-            destination: 'Aeropuerto Internacional',
-            scheduledDate: new Date(Date.now() + 86400000),
-            createdAt: new Date(Date.now() - 3600000), // Hace 1 hora
-            price: 55.00,
-            currency: 'USD',
-            estimatedDuration: 50,
-            distance: 28.0,
-            vehicleType: 'van',
-            passengerCount: 4,
-            notes: 'Familia con 2 niños pequeños y mucho equipaje'
-        },
-        {
-            id: 'req-006',
-            type: 'tourism',
-            status: 'assigned',
-            title: 'Tour Gastronómico',
-            description: 'Recorrido por los mejores restaurantes y mercados locales',
-            clientName: 'Sophie Wilson',
-            clientPhone: '+1 555 123 4567',
-            clientEmail: 'sophie.wilson@email.com',
-            origin: 'Hotel Central',
-            destination: 'Mercado Gourmet',
-            scheduledDate: new Date(Date.now() + 7200000), // En 2 horas
-            createdAt: new Date(Date.now() - 7200000), // Hace 2 horas
-            price: 95.00,
-            currency: 'USD',
-            groupSize: 2,
-            duration: 4,
-            specialRequirements: 'Una persona es vegetariana',
-            notes: 'Turistas internacionales, prefieren explicaciones en inglés',
-            assignedResources: {
-                guideId: 'guide-001',
-                guideName: 'María Elena Rodríguez',
-                assignedAt: new Date(Date.now() - 1800000) // Hace 30 minutos
-            }
-        },
-        {
-            id: 'req-007',
-            type: 'transport',
-            status: 'assigned',
-            title: 'Servicio Corporativo',
-            description: 'Transporte ejecutivo para reunión de negocios importante',
-            clientName: 'Empresa TechCorp',
-            clientPhone: '+57 304 456 7890',
-            clientEmail: 'transport@techcorp.com',
-            origin: 'Oficina Central TechCorp',
-            destination: 'Centro de Convenciones',
-            scheduledDate: new Date(Date.now() + 10800000), // En 3 horas
-            createdAt: new Date(Date.now() - 5400000), // Hace 1.5 horas
-            price: 85.00,
-            currency: 'USD',
-            estimatedDuration: 25,
-            distance: 12.5,
-            vehicleType: 'carro',
-            passengerCount: 2,
-            notes: 'Ejecutivos VIP, puntualidad crítica',
-            assignedResources: {
-                vehicleId: 'vehicle-1',
-                vehiclePlate: 'ABC-123',
-                driverId: 'driver-1',
-                driverName: 'Carlos Mendoza',
-                assignedAt: new Date(Date.now() - 900000) // Hace 15 minutos
-            }
-        }
-    ];
+    constructor() { }
 
-    constructor() {
-        this.initializeMockData();
+    // Headers con autenticación JWT
+    private getHeaders(): HttpHeaders {
+        const token = this.authService.getToken();
+        return new HttpHeaders({
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        });
     }
 
-    private initializeMockData(): void {
-        this.serviceRequestsSubject.next([...this.mockServiceRequests]);
+    // Mapeos BACKEND (UPPERCASE) -> FRONTEND (lowercase)
+    private mapTypeFromBackend(type: string): ServiceRequestType {
+        const map: Record<string, ServiceRequestType> = {
+            'TRANSPORT': 'transport',
+            'TOURISM': 'tourism'
+        };
+        return map[type] ?? 'transport';
+    }
+
+    private mapTypeToBackend(type: ServiceRequestType): string {
+        const map: Record<ServiceRequestType, string> = {
+            'transport': 'TRANSPORT',
+            'tourism': 'TOURISM'
+        };
+        return map[type];
+    }
+
+    private mapStatusFromBackend(status: string): ServiceRequestStatus {
+        const map: Record<string, ServiceRequestStatus> = {
+            'PENDING': 'pending',
+            'ACCEPTED': 'accepted',
+            'REJECTED': 'rejected',
+            'ASSIGNED': 'assigned',
+            'COMPLETED': 'completed',
+            'CANCELLED': 'cancelled',
+        };
+        return map[status] ?? 'pending';
+    }
+
+    private mapBackendServiceToFrontend(item: any): ServiceRequest {
+        const assignedResources = {
+            guideId: item.assignedGuide?.id,
+            guideName: item.assignedGuide?.fullName,
+            vehicleId: item.assignedVehicle?.id,
+            vehiclePlate: item.assignedVehicle?.licensePlate,
+            driverId: item.assignedDriver?.id,
+            driverName: item.assignedDriver?.fullName,
+            assignedAt: item.status === 'ASSIGNED' && item.updatedAt ? new Date(item.updatedAt) : undefined,
+        } as ServiceRequest['assignedResources'];
+
+        return {
+            id: item.id,
+            type: this.mapTypeFromBackend(item.type),
+            status: this.mapStatusFromBackend(item.status),
+            title: item.title,
+            description: item.description,
+            clientName: item.clientName,
+            clientPhone: item.clientPhone,
+            clientEmail: item.clientEmail,
+            origin: item.origin,
+            destination: item.destination,
+            scheduledDate: item.scheduledDate ? new Date(item.scheduledDate) : new Date(),
+            createdAt: item.createdAt ? new Date(item.createdAt) : new Date(),
+            price: item.price,
+            currency: item.currency,
+            estimatedDuration: item.estimatedDuration,
+            distance: item.distance,
+            vehicleType: item.vehicleType,
+            passengerCount: item.passengerCount,
+            groupSize: item.groupSize,
+            specialRequirements: item.specialRequirements,
+            duration: item.duration,
+            assignedResources,
+            notes: item.notes,
+            cancellationReason: item.cancellationReason,
+            cancelledAt: item.cancelledAt ? new Date(item.cancelledAt) : undefined,
+            cancelledBy: item.cancelledBy,
+        };
     }
 
     /**
@@ -232,12 +149,38 @@ export class ServiceRequestsService {
     getServiceRequestsByProviderType(providerType: ServiceRequestType): Observable<ServiceRequest[]> {
         this.isLoadingSubject.next(true);
 
-        const filteredRequests = this.mockServiceRequests
-            .filter(request => request.type === providerType);
+        const backendType = this.mapTypeToBackend(providerType);
+        type ApiResponse<T> = { success: boolean; data: T; message: string };
 
-        return of(filteredRequests).pipe(
-            delay(600),
-            tap(() => this.isLoadingSubject.next(false))
+        const headers = this.getHeaders();
+        const accepted$ = this.http
+            .get<ApiResponse<any[]>>(`${this.apiUrl}/accepted`, { headers, params: { type: backendType } })
+            .pipe(map(res => (res.data || []).map(s => this.mapBackendServiceToFrontend(s))));
+
+        const assigned$ = this.http
+            .get<ApiResponse<any[]>>(`${this.apiUrl}/assigned`, { headers, params: { type: backendType } })
+            .pipe(map(res => (res.data || []).map(s => this.mapBackendServiceToFrontend(s))));
+
+        const completed$ = this.http
+            .get<ApiResponse<any[]>>(`${this.apiUrl}/completed`, { headers, params: { type: backendType } })
+            .pipe(map(res => (res.data || []).map(s => this.mapBackendServiceToFrontend(s))));
+
+        const pending$ = this.http
+            .get<ApiResponse<any[]>>(`${this.apiUrl}/pending/${backendType}`, { headers })
+            .pipe(map(res => (res.data || []).map(s => this.mapBackendServiceToFrontend(s))));
+
+        return forkJoin([pending$, accepted$, assigned$, completed$]).pipe(
+            map(([p, a, asg, c]) => {
+                const combined = [...p, ...a, ...asg, ...c];
+                // Ordenar por fecha programada ascendente
+                return combined.sort((x, y) => x.scheduledDate.getTime() - y.scheduledDate.getTime());
+            }),
+            tap(list => this.serviceRequestsSubject.next(list)),
+            catchError(err => {
+                console.error('Error fetching service requests:', err);
+                return of([]);
+            }),
+            finalize(() => this.isLoadingSubject.next(false))
         );
     }
 
@@ -247,16 +190,20 @@ export class ServiceRequestsService {
     getPendingRequestsByType(providerType: ServiceRequestType): Observable<ServiceRequest[]> {
         this.isLoadingSubject.next(true);
 
-        const pendingRequests = this.mockServiceRequests
-            .filter(request =>
-                request.type === providerType &&
-                request.status === 'pending'
-            );
+        const backendType = this.mapTypeToBackend(providerType);
+        type ApiResponse<T> = { success: boolean; data: T; message: string };
 
-        return of(pendingRequests).pipe(
-            delay(600),
-            tap(() => this.isLoadingSubject.next(false))
-        );
+        return this.http
+            .get<ApiResponse<any[]>>(`${this.apiUrl}/pending/${backendType}`, { headers: this.getHeaders() })
+            .pipe(
+                map(res => (res.data || []).map(s => this.mapBackendServiceToFrontend(s))),
+                tap(list => this.serviceRequestsSubject.next(list)),
+                catchError(err => {
+                    console.error('Error fetching pending service requests:', err);
+                    return of([]);
+                }),
+                finalize(() => this.isLoadingSubject.next(false))
+            );
     }
 
     /**
@@ -265,21 +212,18 @@ export class ServiceRequestsService {
     acceptServiceRequest(requestId: string): Observable<boolean> {
         this.isLoadingSubject.next(true);
 
-        const requestIndex = this.mockServiceRequests.findIndex(r => r.id === requestId);
-
-        if (requestIndex !== -1 && this.mockServiceRequests[requestIndex].status === 'pending') {
-            this.mockServiceRequests[requestIndex].status = 'accepted';
-            this.initializeMockData();
-
-            return of(true).pipe(
-                delay(800),
-                tap(() => this.isLoadingSubject.next(false))
-            );
-        }
-
-        return of(false).pipe(
-            delay(800),
-            tap(() => this.isLoadingSubject.next(false))
+        type ApiResponse<T> = { success: boolean; data: T; message: string };
+        return this.http.post<ApiResponse<any>>(
+            `${this.apiUrl}/${requestId}/accept`,
+            {},
+            { headers: this.getHeaders() }
+        ).pipe(
+            map(res => !!res.success),
+            catchError(err => {
+                console.error('Error accepting service request:', err);
+                return of(false);
+            }),
+            finalize(() => this.isLoadingSubject.next(false))
         );
     }
 
@@ -289,21 +233,18 @@ export class ServiceRequestsService {
     rejectServiceRequest(requestId: string): Observable<boolean> {
         this.isLoadingSubject.next(true);
 
-        const requestIndex = this.mockServiceRequests.findIndex(r => r.id === requestId);
-
-        if (requestIndex !== -1 && this.mockServiceRequests[requestIndex].status === 'pending') {
-            this.mockServiceRequests[requestIndex].status = 'rejected';
-            this.initializeMockData();
-
-            return of(true).pipe(
-                delay(800),
-                tap(() => this.isLoadingSubject.next(false))
-            );
-        }
-
-        return of(false).pipe(
-            delay(800),
-            tap(() => this.isLoadingSubject.next(false))
+        type ApiResponse<T> = { success: boolean; data: T; message: string };
+        return this.http.post<ApiResponse<any>>(
+            `${this.apiUrl}/${requestId}/reject`,
+            {},
+            { headers: this.getHeaders() }
+        ).pipe(
+            map(res => !!res.success),
+            catchError(err => {
+                console.error('Error rejecting service request:', err);
+                return of(false);
+            }),
+            finalize(() => this.isLoadingSubject.next(false))
         );
     }
 
@@ -313,11 +254,17 @@ export class ServiceRequestsService {
     getServiceRequestById(requestId: string): Observable<ServiceRequest | null> {
         this.isLoadingSubject.next(true);
 
-        const request = this.mockServiceRequests.find(r => r.id === requestId);
-
-        return of(request || null).pipe(
-            delay(400),
-            tap(() => this.isLoadingSubject.next(false))
+        type ApiResponse<T> = { success: boolean; data: T; message: string };
+        return this.http.get<ApiResponse<any>>(
+            `${this.apiUrl}/${requestId}`,
+            { headers: this.getHeaders() }
+        ).pipe(
+            map(res => res?.data ? this.mapBackendServiceToFrontend(res.data) : null),
+            catchError(err => {
+                console.error('Error fetching service request by id:', err);
+                return of(null);
+            }),
+            finalize(() => this.isLoadingSubject.next(false))
         );
     }
 
@@ -329,101 +276,24 @@ export class ServiceRequestsService {
     assignResources(requestId: string, resourceIds: { guideId?: string; vehicleId?: string; driverId?: string }): Observable<boolean> {
         this.isLoadingSubject.next(true);
 
-        const requestIndex = this.mockServiceRequests.findIndex(r => r.id === requestId);
+        type ApiResponse<T> = { success: boolean; data: T; message: string };
+        // Filtrar sólo campos definidos para evitar enviar undefined
+        const body: any = {};
+        if (resourceIds.guideId) body.guideId = resourceIds.guideId;
+        if (resourceIds.vehicleId) body.vehicleId = resourceIds.vehicleId;
+        if (resourceIds.driverId) body.driverId = resourceIds.driverId;
 
-        if (requestIndex === -1 || this.mockServiceRequests[requestIndex].status !== 'accepted') {
-            return of(false).pipe(
-                delay(1000),
-                tap(() => this.isLoadingSubject.next(false))
-            );
-        }
-
-        const request = this.mockServiceRequests[requestIndex];
-
-        // Asignar recursos según el tipo de servicio
-        if (request.type === 'tourism' && resourceIds.guideId) {
-            // Para turismo: asignar guía
-            return this.guidesService.getGuideById(resourceIds.guideId).pipe(
-                switchMap((guide: GuideDetails | null) => {
-                    if (guide) {
-                        return this.guidesService.updateGuideStatus(resourceIds.guideId!, 'busy').pipe(
-                            switchMap((guideStatusUpdated) => {
-                                if (guideStatusUpdated) {
-                                    // Actualizar estado de la solicitud y guardar información del guía
-                                    this.mockServiceRequests[requestIndex].status = 'assigned';
-                                    this.mockServiceRequests[requestIndex].assignedResources = {
-                                        guideId: guide.id,
-                                        guideName: guide.name,
-                                        assignedAt: new Date()
-                                    };
-                                    this.initializeMockData();
-
-                                    console.log(`Guía ${guide.name} asignado y marcado como ocupado para solicitud ${requestId}`);
-                                    return of(true);
-                                } else {
-                                    console.error('Error al actualizar estado del guía');
-                                    return of(false);
-                                }
-                            })
-                        );
-                    } else {
-                        console.error('Guía no encontrado');
-                        return of(false);
-                    }
-                }),
-                delay(1000),
-                tap(() => this.isLoadingSubject.next(false))
-            );
-        } else if (request.type === 'transport' && resourceIds.vehicleId && resourceIds.driverId) {
-            // Para transporte: asignar vehículo y conductor
-            return this.vehiclesAndDriversService.getVehicleById(resourceIds.vehicleId).pipe(
-                switchMap((vehicle: VehicleDetails | null) => {
-                    if (vehicle) {
-                        return this.vehiclesAndDriversService.getDriverById(resourceIds.driverId!).pipe(
-                            switchMap((driver: DriverDetails | null) => {
-                                if (driver) {
-                                    return this.vehiclesAndDriversService.assignTransportResources(requestId, resourceIds.vehicleId!, resourceIds.driverId!).pipe(
-                                        switchMap((transportAssigned) => {
-                                            if (transportAssigned) {
-                                                // Actualizar estado de la solicitud y guardar información de recursos
-                                                this.mockServiceRequests[requestIndex].status = 'assigned';
-                                                this.mockServiceRequests[requestIndex].assignedResources = {
-                                                    vehicleId: vehicle.id,
-                                                    vehiclePlate: vehicle.licensePlate,
-                                                    driverId: driver.id,
-                                                    driverName: driver.name,
-                                                    assignedAt: new Date()
-                                                };
-                                                this.initializeMockData();
-
-                                                console.log(`Vehículo ${vehicle.licensePlate} y conductor ${driver.name} asignados para solicitud ${requestId}`);
-                                                return of(true);
-                                            } else {
-                                                console.error('Error al asignar recursos de transporte');
-                                                return of(false);
-                                            }
-                                        })
-                                    );
-                                } else {
-                                    console.error('Conductor no encontrado');
-                                    return of(false);
-                                }
-                            })
-                        );
-                    } else {
-                        console.error('Vehículo no encontrado');
-                        return of(false);
-                    }
-                }),
-                delay(1000),
-                tap(() => this.isLoadingSubject.next(false))
-            );
-        }
-
-        // Si no se cumplen las condiciones, retornar false
-        return of(false).pipe(
-            delay(1000),
-            tap(() => this.isLoadingSubject.next(false))
+        return this.http.patch<ApiResponse<any>>(
+            `${this.apiUrl}/${requestId}/assign`,
+            body,
+            { headers: this.getHeaders() }
+        ).pipe(
+            map(res => !!res.success),
+            catchError(err => {
+                console.error('Error assigning resources to service request:', err);
+                return of(false);
+            }),
+            finalize(() => this.isLoadingSubject.next(false))
         );
     }
 
@@ -433,29 +303,18 @@ export class ServiceRequestsService {
     completeServiceRequest(requestId: string): Observable<boolean> {
         this.isLoadingSubject.next(true);
 
-        const requestIndex = this.mockServiceRequests.findIndex(r => r.id === requestId);
-
-        if (requestIndex === -1 || this.mockServiceRequests[requestIndex].status !== 'assigned') {
-            return of(false).pipe(
-                delay(600),
-                tap(() => this.isLoadingSubject.next(false))
-            );
-        }
-
-        const request = this.mockServiceRequests[requestIndex];
-
-        // TODO: En una implementación real, necesitaríamos guardar los IDs de los recursos
-        // asignados en la solicitud para poder liberarlos aquí
-        // Por ahora, solo cambiamos el estado de la solicitud
-
-        this.mockServiceRequests[requestIndex].status = 'completed';
-        this.initializeMockData();
-
-        console.log(`Solicitud ${requestId} completada. Los recursos deberían ser liberados automáticamente.`);
-
-        return of(true).pipe(
-            delay(600),
-            tap(() => this.isLoadingSubject.next(false))
+        type ApiResponse<T> = { success: boolean; data: T; message: string };
+        return this.http.patch<ApiResponse<any>>(
+            `${this.apiUrl}/${requestId}/status`,
+            { status: 'COMPLETED' },
+            { headers: this.getHeaders() }
+        ).pipe(
+            map(res => !!res.success),
+            catchError(err => {
+                console.error('Error completing service request:', err);
+                return of(false);
+            }),
+            finalize(() => this.isLoadingSubject.next(false))
         );
     }
 
@@ -465,88 +324,18 @@ export class ServiceRequestsService {
     cancelServiceRequest(requestId: string, reason: string, cancelledBy: string): Observable<boolean> {
         this.isLoadingSubject.next(true);
 
-        const requestIndex = this.mockServiceRequests.findIndex(r => r.id === requestId);
-
-        if (requestIndex === -1) {
-            return of(false).pipe(
-                delay(600),
-                tap(() => this.isLoadingSubject.next(false))
-            );
-        }
-
-        const request = this.mockServiceRequests[requestIndex];
-
-        // Solo se pueden cancelar solicitudes que no estén completadas o ya canceladas
-        if (request.status === 'completed' || request.status === 'cancelled') {
-            return of(false).pipe(
-                delay(600),
-                tap(() => this.isLoadingSubject.next(false))
-            );
-        }
-
-        // Si la solicitud está asignada, necesitamos liberar los recursos
-        if (request.status === 'assigned' && request.assignedResources) {
-            const resources = request.assignedResources;
-
-            if (request.type === 'tourism' && resources.guideId) {
-                // Liberar guía
-                return this.guidesService.releaseGuide(resources.guideId).pipe(
-                    switchMap((guideReleased) => {
-                        if (guideReleased) {
-                            // Actualizar solicitud como cancelada
-                            this.mockServiceRequests[requestIndex].status = 'cancelled';
-                            this.mockServiceRequests[requestIndex].cancellationReason = reason;
-                            this.mockServiceRequests[requestIndex].cancelledAt = new Date();
-                            this.mockServiceRequests[requestIndex].cancelledBy = cancelledBy;
-                            this.initializeMockData();
-
-                            console.log(`Solicitud ${requestId} cancelada. Guía ${resources.guideId} liberado.`);
-                            return of(true);
-                        } else {
-                            console.error('Error al liberar guía durante cancelación');
-                            return of(false);
-                        }
-                    }),
-                    delay(800),
-                    tap(() => this.isLoadingSubject.next(false))
-                );
-            } else if (request.type === 'transport' && resources.vehicleId && resources.driverId) {
-                // Liberar vehículo y conductor
-                return this.vehiclesAndDriversService.releaseTransportResources(resources.vehicleId, resources.driverId).pipe(
-                    switchMap((transportReleased) => {
-                        if (transportReleased) {
-                            // Actualizar solicitud como cancelada
-                            this.mockServiceRequests[requestIndex].status = 'cancelled';
-                            this.mockServiceRequests[requestIndex].cancellationReason = reason;
-                            this.mockServiceRequests[requestIndex].cancelledAt = new Date();
-                            this.mockServiceRequests[requestIndex].cancelledBy = cancelledBy;
-                            this.initializeMockData();
-
-                            console.log(`Solicitud ${requestId} cancelada. Vehículo ${resources.vehicleId} y conductor ${resources.driverId} liberados.`);
-                            return of(true);
-                        } else {
-                            console.error('Error al liberar recursos de transporte durante cancelación');
-                            return of(false);
-                        }
-                    }),
-                    delay(800),
-                    tap(() => this.isLoadingSubject.next(false))
-                );
-            }
-        }
-
-        // Si no hay recursos asignados, simplemente cancelar
-        this.mockServiceRequests[requestIndex].status = 'cancelled';
-        this.mockServiceRequests[requestIndex].cancellationReason = reason;
-        this.mockServiceRequests[requestIndex].cancelledAt = new Date();
-        this.mockServiceRequests[requestIndex].cancelledBy = cancelledBy;
-        this.initializeMockData();
-
-        console.log(`Solicitud ${requestId} cancelada.`);
-
-        return of(true).pipe(
-            delay(600),
-            tap(() => this.isLoadingSubject.next(false))
+        type ApiResponse<T> = { success: boolean; data: T; message: string };
+        return this.http.patch<ApiResponse<any>>(
+            `${this.apiUrl}/${requestId}/cancel`,
+            { reason, cancelledBy },
+            { headers: this.getHeaders() }
+        ).pipe(
+            map(res => !!res.success),
+            catchError(err => {
+                console.error('Error cancelling service request:', err);
+                return of(false);
+            }),
+            finalize(() => this.isLoadingSubject.next(false))
         );
     }
 

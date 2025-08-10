@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, delay, BehaviorSubject } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { TravelMapData, TravelLocation } from '../../Components/TravelMap/travel-map.types';
 import { TravelRouteInfo, RouteLocation, RouteUpdate } from '../../Components/TravelRoute/travel-route.types';
@@ -58,7 +58,7 @@ export class TravelsService {
     private apiUrl = environment.apiUrl;
 
     constructor(private http: HttpClient) {
-        this.initializeMockData();
+        // Constructor simplificado - Todos los métodos ahora usan endpoints reales
     }
 
     // Método auxiliar para obtener headers de autenticación
@@ -68,251 +68,6 @@ export class TravelsService {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
         });
-    }
-
-    // Datos mock para simular API
-    private mockTravels: Travel[] = [
-        {
-            id: 'travel-001',
-            name: 'Viaje a Aeropuerto Internacional',
-            status: 'en-progreso',
-            origin: {
-                id: 'origin-1',
-                name: 'Centro Comercial Plaza',
-                address: 'Av. Principal 456',
-                type: 'origin'
-            },
-            destination: {
-                id: 'dest-1',
-                name: 'Aeropuerto Internacional',
-                address: 'Terminal 1, Salidas',
-                type: 'destination'
-            },
-            createdAt: new Date(Date.now() - 600000), // 10 minutos atrás
-            scheduledAt: new Date(),
-            estimatedDuration: 25,
-            distance: 12.5,
-            driverId: 'driver-001',
-            price: {
-                baseFare: 15.00,
-                distanceFee: 8.50,
-                timeFee: 12.00,
-                serviceFee: 3.50,
-                taxes: 6.50,
-                discount: 0,
-                total: 45.50,
-                currency: 'USD'
-            }
-        },
-        {
-            id: 'travel-002',
-            name: 'Viaje al Centro Médico',
-            status: 'fin-servicio',
-            origin: {
-                id: 'origin-2',
-                name: 'Residencial Los Pinos',
-                address: 'Calle 15 #234',
-                type: 'origin'
-            },
-            destination: {
-                id: 'dest-2',
-                name: 'Centro Médico San José',
-                address: 'Av. Salud 123',
-                type: 'destination'
-            },
-            createdAt: new Date(Date.now() - 86400000), // 1 día atrás
-            scheduledAt: new Date(Date.now() - 82800000),
-            completedAt: new Date(Date.now() - 82200000),
-            estimatedDuration: 15,
-            distance: 8.2,
-            driverId: 'driver-002',
-            price: {
-                baseFare: 12.00,
-                distanceFee: 6.20,
-                timeFee: 8.00,
-                serviceFee: 2.50,
-                taxes: 4.30,
-                discount: 2.00,
-                total: 31.00,
-                currency: 'USD'
-            }
-        }, {
-            id: 'travel-003',
-            name: 'Viaje a Universidad Central',
-            status: 'solicitud-servicio',
-            origin: {
-                id: 'origin-3',
-                name: 'Casa',
-                address: 'Av. Libertad 789',
-                type: 'origin'
-            },
-            destination: {
-                id: 'dest-3',
-                name: 'Universidad Central',
-                address: 'Campus Principal',
-                type: 'destination'
-            },
-            createdAt: new Date(),
-            scheduledAt: new Date(Date.now() + 3600000), // 1 hora en el futuro
-            estimatedDuration: 20,
-            distance: 11.3, price: {
-                baseFare: 14.00,
-                distanceFee: 7.80,
-                timeFee: 10.00,
-                serviceFee: 3.00,
-                taxes: 5.20,
-                discount: 0,
-                total: 40.00,
-                currency: 'USD'
-            }
-        }, {
-            id: 'travel-004',
-            name: 'Viaje Confirmado al Hotel',
-            status: 'asignacion-conductor',
-            origin: {
-                id: 'origin-4',
-                name: 'Aeropuerto Internacional',
-                address: 'Terminal 2, Llegadas',
-                type: 'origin'
-            },
-            destination: {
-                id: 'dest-4',
-                name: 'Hotel Plaza Central',
-                address: 'Av. Comercial 567',
-                type: 'destination'
-            },
-            createdAt: new Date(Date.now() - 1800000), // 30 minutos atrás
-            scheduledAt: new Date(Date.now() + 1800000), // 30 minutos en el futuro
-            estimatedDuration: 18,
-            distance: 9.7,
-            driverId: 'driver-001',
-            price: {
-                baseFare: 13.00,
-                distanceFee: 6.80,
-                timeFee: 9.00,
-                serviceFee: 2.80,
-                taxes: 4.40,
-                discount: 0,
-                total: 36.00,
-                currency: 'USD'
-            }
-        }, {
-            id: 'travel-005',
-            name: 'Viaje Cancelado',
-            status: 'cancelado-turismo',
-            origin: {
-                id: 'origin-5',
-                name: 'Casa de Familia',
-                address: 'Calle Norte 123',
-                type: 'origin'
-            },
-            destination: {
-                id: 'dest-5',
-                name: 'Centro Comercial Norte',
-                address: 'Av. Norte 456',
-                type: 'destination'
-            },
-            createdAt: new Date(Date.now() - 3600000), // 1 hora atrás
-            scheduledAt: new Date(Date.now() - 1800000), // Hace 30 minutos
-            cancelledAt: new Date(Date.now() - 1200000), // Hace 20 minutos
-            estimatedDuration: 22,
-            distance: 13.4,
-            price: {
-                baseFare: 15.00,
-                distanceFee: 8.20,
-                timeFee: 11.00,
-                serviceFee: 3.20,
-                taxes: 5.60,
-                discount: 0,
-                total: 43.00,
-                currency: 'USD'
-            }
-        },
-        {
-            id: 'travel-006',
-            name: 'Viaje en Progreso',
-            status: 'en-progreso',
-            origin: {
-                id: 'origin-6',
-                name: 'Oficina Central',
-                address: 'Torre Empresarial, Piso 12',
-                type: 'origin'
-            },
-            destination: {
-                id: 'dest-6',
-                name: 'Restaurante La Terraza',
-                address: 'Zona Rosa, Local 45',
-                type: 'destination'
-            },
-            createdAt: new Date(Date.now() - 900000), // 15 minutos atrás
-            scheduledAt: new Date(Date.now() - 300000), // 5 minutos atrás
-            startedAt: new Date(Date.now() - 300000), // Comenzó hace 5 minutos
-            estimatedDuration: 25,
-            distance: 14.8,
-            driverId: 'driver-002',
-            price: {
-                baseFare: 16.00,
-                distanceFee: 9.40,
-                timeFee: 12.50,
-                serviceFee: 3.60,
-                taxes: 6.20,
-                discount: 0,
-                total: 47.70,
-                currency: 'USD'
-            }
-        }
-    ];
-
-    private mockDrivers: { [key: string]: DriverInfo } = {
-        'driver-001': {
-            id: 'driver-001',
-            name: 'Carlos Mendoza',
-            avatar: 'https://via.placeholder.com/80x80?text=CM',
-            rating: 4.8,
-            totalTrips: 347,
-            yearsExperience: 5,
-            vehicleInfo: {
-                brand: 'Toyota',
-                model: 'Corolla',
-                year: 2020,
-                color: 'Blanco',
-                licensePlate: 'ABC-123'
-            },
-            phone: '+1-555-0123',
-            status: 'active'
-        },
-        'driver-002': {
-            id: 'driver-002',
-            name: 'María García',
-            avatar: 'https://via.placeholder.com/80x80?text=MG',
-            rating: 4.9,
-            totalTrips: 523,
-            yearsExperience: 7,
-            vehicleInfo: {
-                brand: 'Honda',
-                model: 'Civic',
-                year: 2021,
-                color: 'Azul',
-                licensePlate: 'XYZ-789'
-            },
-            phone: '+1-555-0456',
-            status: 'active'
-        }
-    };
-
-    private initializeMockData(): void {
-        const travelsList: TravelListItem[] = this.mockTravels.map(travel => ({
-            id: travel.id,
-            name: travel.name,
-            status: travel.status,
-            origin: travel.origin.name,
-            destination: travel.destination.name,
-            date: travel.scheduledAt || travel.createdAt,
-            price: travel.price.total,
-            currency: travel.price.currency
-        }));
-
-        this.travelsListSubject.next(travelsList);
     }
 
     // Métodos públicos para obtener datos
@@ -348,15 +103,32 @@ export class TravelsService {
      */
     getRecentTravels(): Observable<TravelListItem[]> {
         this.isLoadingSubject.next(true);
+        console.log('[TravelsService] getRecentTravels() - Eliminando mock, usando endpoint real');
 
-        // Obtener los dos viajes más recientes basados en la fecha
-        const recentTravels = this.travelsListSubject.value
-            .sort((a, b) => b.date.getTime() - a.date.getTime()) // Ordenar por fecha descendente
-            .slice(0, 2); // Tomar solo los primeros 2
-
-        return of(recentTravels).pipe(
-            delay(500), // Simular latencia de red más rápida para el header
-        );
+        return this.http.get<any>(`${this.apiUrl}/travels/recent?limit=2`, { headers: this.getAuthHeaders() })
+            .pipe(
+                map(response => {
+                    console.log('[TravelsService] Respuesta recientes:', response);
+                    const travels = response.data || response;
+                    
+                    return travels.map((travel: any) => ({
+                        id: travel.id,
+                        name: `${travel.origin} → ${travel.destination}`,
+                        status: travel.status as TravelStatus,
+                        origin: travel.origin,
+                        destination: travel.destination,
+                        date: new Date(travel.createdAt),
+                        price: 45.50, // Valor temporal hasta implementar pricing
+                        currency: 'USD'
+                    } as TravelListItem));
+                }),
+                tap(() => this.isLoadingSubject.next(false)),
+                catchError(error => {
+                    console.error('[TravelsService] Error obteniendo viajes recientes:', error);
+                    this.isLoadingSubject.next(false);
+                    return of([]); // Retornar array vacío en caso de error
+                })
+            );
     }
 
     /**
@@ -451,16 +223,44 @@ export class TravelsService {
     }
 
     /**
-     * Obtiene información de un conductor específico
+     * Obtiene información de un conductor específico usando endpoint real
      */
     getDriverInfo(driverId: string): Observable<DriverInfo | null> {
         this.isLoadingSubject.next(true);
+        console.log('[TravelsService] getDriverInfo() - Eliminando mock, usando endpoint real');
 
-        const driver = this.mockDrivers[driverId];
-
-        return of(driver || null).pipe(
-            delay(600)
-        );
+        return this.http.get<any>(`${this.apiUrl}/drivers/${driverId}`, { headers: this.getAuthHeaders() })
+            .pipe(
+                map(response => {
+                    console.log('[TravelsService] Respuesta driver:', response);
+                    const driver = response.data || response;
+                    
+                    return {
+                        id: driver.id,
+                        name: driver.fullName || driver.name,
+                        avatar: driver.avatar || 'https://via.placeholder.com/80x80?text=' + (driver.fullName?.[0] || 'D'),
+                        rating: driver.rating || 0,
+                        totalTrips: driver.totalTrips || 0,
+                        license: driver.license || driver.licenseNumber,
+                        yearsExperience: driver.experienceYears || driver.yearsExperience || 0,
+                        vehicleInfo: {
+                            brand: 'Honda', // Temporal hasta implementar relaciones vehículo
+                            model: 'Civic',
+                            year: 2021,
+                            color: 'Azul',
+                            licensePlate: 'XYZ-789'
+                        },
+                        phone: driver.phone,
+                        status: driver.status === 'AVAILABLE' ? 'active' : 'inactive'
+                    } as DriverInfo;
+                }),
+                tap(() => this.isLoadingSubject.next(false)),
+                catchError(error => {
+                    console.error('[TravelsService] Error obteniendo información del conductor:', error);
+                    this.isLoadingSubject.next(false);
+                    return of(null);
+                })
+            );
     }
 
     /**
@@ -520,93 +320,108 @@ export class TravelsService {
     }
 
     /**
-     * Simula la cancelación de un viaje
+     * Cancela un viaje usando el endpoint del backend
      */
     cancelTravel(travelId: string): Observable<boolean> {
         this.isLoadingSubject.next(true);
+        console.log('[TravelsService] cancelTravel() - Eliminando mock, usando endpoint real');
 
-        const travelIndex = this.mockTravels.findIndex(t => t.id === travelId); if (travelIndex !== -1) {
-            this.mockTravels[travelIndex].status = 'cancelado-turismo';
-            this.initializeMockData(); // Actualizar la lista reactiva
-
-            return of(true).pipe(delay(800));
-        } return of(false).pipe(delay(800));
+        return this.http.patch<any>(`${this.apiUrl}/travels/${travelId}/cancel`, {}, { headers: this.getAuthHeaders() })
+            .pipe(
+                map(response => {
+                    console.log('[TravelsService] Viaje cancelado exitosamente:', response);
+                    return true;
+                }),
+                tap(() => this.isLoadingSubject.next(false)),
+                catchError(error => {
+                    console.error('[TravelsService] Error cancelando viaje:', error);
+                    this.isLoadingSubject.next(false);
+                    return of(false);
+                })
+            );
     }
 
     /**
-     * Obtiene los viajes del historial (completed y cancelled)
+     * Obtiene los viajes del historial usando endpoint real (completed y cancelled)
      */
     getHistoryTravels(): Observable<TravelListItem[]> {
         this.isLoadingSubject.next(true);
+        console.log('[TravelsService] getHistoryTravels() - Eliminando mock, usando endpoint real');
 
-        // Filtrar solo viajes finalizados (completados exitosamente o cancelados)
-        const historyTravels = this.travelsListSubject.value
-            .filter(travel => TravelStatusUtils.isFinishedStatus(travel.status))
-            .sort((a, b) => b.date.getTime() - a.date.getTime()); // Ordenar por fecha descendente
+        return this.http.get<any>(`${this.apiUrl}/history/travels`, { headers: this.getAuthHeaders() })
+            .pipe(
+                map(response => {
+                    console.log('[TravelsService] Respuesta historial:', response);
+                    const travels = response.data || response;
+                    
+                    return travels.map((travel: any) => ({
+                        id: travel.id,
+                        name: `${travel.origin} → ${travel.destination}`,
+                        status: travel.status as TravelStatus,
+                        origin: travel.origin,
+                        destination: travel.destination,
+                        date: new Date(travel.createdAt),
+                        price: 45.50, // Valor temporal hasta implementar pricing
+                        currency: 'USD'
+                    } as TravelListItem));
+                }),
+                tap(() => this.isLoadingSubject.next(false)),
+                catchError(error => {
+                    console.error('[TravelsService] Error obteniendo historial de viajes:', error);
+                    this.isLoadingSubject.next(false);
+                    return of([]);
+                })
+            );
+    }
 
-        return of(historyTravels).pipe(
-            delay(600) // Simular latencia de red
-        );
-    }    /**
-     * Convierte TravelListItem a HistoryTrip para compatibilidad
-     */
-    private convertToHistoryTrip(travel: TravelListItem, fullTravel?: Travel): HistoryTrip {
-        const mockDriver = fullTravel?.driverId ? this.mockDrivers[fullTravel.driverId] : undefined;
-
-        return {
-            id: travel.id,
-            destination: travel.destination,
-            address: fullTravel?.destination.address || 'Dirección no disponible',
-            date: travel.date.toISOString().split('T')[0], // Format: YYYY-MM-DD
-            time: travel.date.toTimeString().split(' ')[0].substring(0, 5), // Format: HH:MM
-            price: travel.price,
-            status: travel.status as 'fin-servicio' | 'cancelado-turismo' | 'cancelado-transportista' | 'cancelado-agencia' | 'sin-proveedores',
-            driver: {
-                name: mockDriver?.name || 'Conductor no asignado',
-                rating: mockDriver?.rating || 0
-            },
-            route: {
-                origin: travel.origin,
-                destination: travel.destination,
-                coordinates: {
-                    origin: { lat: 4.6097, lng: -74.0817 }, // Coordenadas mock
-                    destination: { lat: 4.7016, lng: -74.1469 }
-                }
-            },
-            // Información adicional del contexto del flujo
-            cancellationReason: TravelStatusUtils.isCancelledStatus(travel.status)
-                ? TravelStatusUtils.getCancellationReason(travel.status)
-                : undefined,
-            includesTourismService: false, // Se puede implementar lógica específica
-            reportedIncidents: [] // Se puede implementar funcionalidad de reportes
-        };
-    }    /**
-     * Obtiene los viajes del historial en formato HistoryTrip
+    /**
+     * Obtiene el historial de viajes en formato específico para la página de historial
      */
     getHistoryTripsFormatted(): Observable<HistoryTrip[]> {
         this.isLoadingSubject.next(true);
+        console.log('[TravelsService] getHistoryTripsFormatted() - Eliminando mock, usando endpoint real');
 
-        // Filtrar solo viajes finalizados (completados exitosamente o cancelados)
-        const historyTravels = this.travelsListSubject.value
-            .filter(travel => TravelStatusUtils.isFinishedStatus(travel.status))
-            .sort((a, b) => b.date.getTime() - a.date.getTime()); // Ordenar por fecha descendente
-
-        // Convertir a formato HistoryTrip
-        const historyTrips = historyTravels.map(travel => {
-            const fullTravel = this.mockTravels.find(t => t.id === travel.id);
-            return this.convertToHistoryTrip(travel, fullTravel);
-        });
-
-        return of(historyTrips).pipe(
-            delay(600) // Simular latencia de red
-        );
+        return this.http.get<any>(`${this.apiUrl}/history/travels`, { headers: this.getAuthHeaders() })
+            .pipe(
+                map(response => {
+                    console.log('[TravelsService] Respuesta historial formateado:', response);
+                    const travels = response.data || response;
+                    
+                    return travels.map((travel: any) => ({
+                        id: travel.id,
+                        origin: travel.origin,
+                        destination: travel.destination,
+                        date: new Date(travel.createdAt).toLocaleDateString(),
+                        status: travel.status as TravelStatus,
+                        driver: { name: 'Conductor asignado', rating: 4.5 }, // Temporal hasta implementar relación
+                        rating: 4.5,
+                        price: 45.50,
+                        currency: 'USD',
+                        duration: '45 min',
+                        address: travel.destination, // Usar destino como dirección
+                        time: new Date(travel.createdAt).toLocaleTimeString(),
+                        route: {
+                            origin: travel.origin,
+                            destination: travel.destination
+                        }
+                    } as HistoryTrip));
+                }),
+                tap(() => this.isLoadingSubject.next(false)),
+                catchError(error => {
+                    console.error('[TravelsService] Error obteniendo historial formateado:', error);
+                    this.isLoadingSubject.next(false);
+                    return of([]);
+                })
+            );
     }
 
     // Métodos privados auxiliares
 
     private generateRouteUpdates(travel: Travel): RouteUpdate[] {
         const updates: RouteUpdate[] = [];
-        const now = Date.now(); switch (travel.status) {
+        const now = Date.now();
+        
+        switch (travel.status) {
             case 'en-progreso':
             case 'comienzo-viaje':
                 updates.push({
@@ -635,7 +450,9 @@ export class TravelsService {
                     type: 'info',
                     title: 'Viaje iniciado',
                     description: 'El conductor ha recogido al pasajero'
-                }); updates.push({
+                });
+                
+                updates.push({
                     id: 'update-2',
                     timestamp: new Date(travel.completedAt!.getTime() - 120000),
                     type: 'info',
@@ -688,23 +505,24 @@ export class TravelsService {
     }
 
     /**
-     * Elimina un viaje por su ID
+     * Elimina un viaje por su ID usando endpoint real
      */
     deleteTravel(travelId: string): Observable<boolean> {
         this.isLoadingSubject.next(true);
+        console.log('[TravelsService] deleteTravel() - Eliminando mock, usando endpoint real');
 
-        const travelIndex = this.mockTravels.findIndex(t => t.id === travelId);
-
-        if (travelIndex !== -1) {
-            // Eliminar el viaje del array
-            this.mockTravels.splice(travelIndex, 1);
-
-            // Actualizar la lista reactiva
-            this.initializeMockData();
-
-            return of(true).pipe(delay(500));
-        }
-
-        return of(false).pipe(delay(500));
+        return this.http.delete<any>(`${this.apiUrl}/travels/${travelId}`, { headers: this.getAuthHeaders() })
+            .pipe(
+                map(response => {
+                    console.log('[TravelsService] Viaje eliminado exitosamente:', response);
+                    return true;
+                }),
+                tap(() => this.isLoadingSubject.next(false)),
+                catchError(error => {
+                    console.error('[TravelsService] Error eliminando viaje:', error);
+                    this.isLoadingSubject.next(false);
+                    return of(false);
+                })
+            );
     }
 }
