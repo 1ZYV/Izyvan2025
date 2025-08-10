@@ -32,9 +32,8 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # Cache buster - v1.0
 COPY --from=builder /app/dist/mvp-frontend /usr/share/nginx/html
 
-# Crear usuario no-root para seguridad
-RUN addgroup -g 1001 -S nginx
-RUN adduser -S angular -u 1001
+# Crear usuario no-root para seguridad (nginx group ya existe en base image)
+RUN adduser -S angular -u 1001 -G nginx
 
 # Cambiar permisos
 RUN chown -R angular:nginx /usr/share/nginx/html
