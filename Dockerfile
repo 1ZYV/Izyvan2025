@@ -28,8 +28,8 @@ FROM nginx:alpine AS production
 # Copiar configuración personalizada de Nginx
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Copiar archivos construidos desde builder
-COPY --from=builder /app/dist/izyvan2025 /usr/share/nginx/html
+# Copiar archivos construidos desde builder (ruta debe coincidir con outputPath en angular.json)
+COPY --from=builder /app/dist/mvp-frontend /usr/share/nginx/html
 
 # Crear usuario no-root para seguridad
 RUN addgroup -g 1001 -S nginx
