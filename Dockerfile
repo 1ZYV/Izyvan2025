@@ -62,9 +62,9 @@ RUN echo 'server {' > /etc/nginx/conf.d/default.conf && \
 # LIMPIAR completamente directorio nginx para evitar conflictos con archivos default
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copiar archivos construidos desde builder (ruta debe coincidir con outputPath en angular.json)
-# Cache buster - v1.5
-COPY --from=builder /app/dist/mvp-frontend /usr/share/nginx/html
+# Copiar archivos construidos desde builder (Angular 17 SSR usa subdirectorio browser/)
+# Cache buster - v1.6
+COPY --from=builder /app/dist/mvp-frontend/browser /usr/share/nginx/html
 
 # Debug: Verificar qué archivos se copiaron a nginx
 RUN ls -la /usr/share/nginx/html/
