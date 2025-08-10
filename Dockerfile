@@ -25,11 +25,14 @@ RUN ng build --configuration=production
 # Etapa 2: Servidor web con Nginx
 FROM nginx:alpine AS production
 
+# Remover configuración por defecto de nginx
+RUN rm -rf /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/*
+
 # Copiar configuración personalizada de Nginx
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copiar archivos construidos desde builder (ruta debe coincidir con outputPath en angular.json)
-# Cache buster - v1.0
+# Cache buster - v1.1
 COPY --from=builder /app/dist/mvp-frontend /usr/share/nginx/html
 
 # Crear usuario no-root para seguridad (nginx group ya existe en base image)
