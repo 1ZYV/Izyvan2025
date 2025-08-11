@@ -1,6 +1,6 @@
 <nav class="flex flex-col w-full h-full gap-3 px-5 pt-4 text-white bg-slate-900">
     <div class="flex flex-row items-center justify-start gap-1 px-4">
-        <div class="p-4 bg-white size-3"></div>
+        <img src="assets/logo.jpeg" alt="IzyTracking Logo" class="w-8 h-8 rounded-md object-contain">
         <span class="p-2 text-xl font-bold">IzyTracking</span>
     </div> @for (item of items; track $index) {
     @if (hasAccess(item.roles, item.providerType) ) {
