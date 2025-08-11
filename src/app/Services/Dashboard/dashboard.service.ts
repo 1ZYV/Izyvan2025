@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { AuthService } from '../Auth/auth.service';
+import { environment } from '../../../environments/environment';
 
 export interface DashboardSummary {
   summary: {
@@ -101,7 +102,7 @@ export interface DashboardFilters {
   providedIn: 'root'
 })
 export class DashboardService {
-  private readonly baseUrl = 'http://localhost:3000/api/dashboard';
+  private readonly baseUrl = `${environment.apiUrl}/dashboard`;
 
   constructor(
     private http: HttpClient,

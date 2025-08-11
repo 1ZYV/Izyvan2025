@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, map, catchError, throwError } from 'rxjs';
 import { AuthService } from '../Auth/auth.service';
+import { environment } from '../../../environments/environment';
 
 // Interfaces para las tarifas
 export interface TariffType {
@@ -89,7 +90,7 @@ export interface TariffListResponse {
 export class TariffsService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = `${environment.apiUrl}`;
 
   // Headers con autenticación JWT
   private getHeaders(): HttpHeaders {
