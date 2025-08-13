@@ -1,24 +1,20 @@
 import { DashboardLayout } from "@/Layouts/Dashboard/dashboard.component";
 import { Routes } from "@angular/router";
-import { UnauthorizedPage } from "./Unauthorized/unauthorize.component";
 import { DashboardPage } from "./dashboard.component";
 import { TravelsIndexComponent } from "../Travels/Index/index.component";
 import { TravelsCreateComponent } from "../Travels/Create/create.component";
 import { TravelsShowComponent } from "../Travels/Show/show.component";
-import { HistoryIndexComponent } from "../History/Index/index.component";
-import { InvoicesIndexComponent } from "../Invoices/Index/index.component";
+import { HistoryIndexComponent } from "../History/index.component";
+import { InvoicesIndexComponent } from "../Invoices/index.component";
 import { InvoicesShowComponent } from "../Invoices/Show/show.component";
 import { InvoiceCreateComponent } from "../Invoices/Create/create.component";
 import { ServicesIndexComponent } from "../Services/Index/index.component";
-import { DriversIndexComponent } from "../Drivers/Index/index.component";
-import { GuidesIndexComponent } from "../Guides/Index/index.component";
+import { DriversIndexComponent } from "../Drivers/index.component";
+import { GuidesIndexComponent } from "../Guides/index.component";
 import { GuidesShowComponent } from "../Guides/Show/show.component";
 import { TariffsIndexComponent } from "../Tariffs/Index/index.component";
-import { VehiclesIndexComponent } from "../Vehicles/Index/index.component";
-import { ProviderGuard } from "@/Guards/Auth/provider.guard";
+import { VehiclesIndexComponent } from "../Vehicles/index.component";
 import { AgenciesIndexComponent } from "../Agencies/index.component";
-import { TransportersIndexComponent } from "../Transporters/index.component";
-import { TransportersShowComponent } from "../Transporters/Show/show.component";
 
 type RouteData = {
     title: string;
@@ -91,35 +87,30 @@ export const ADMIN_ROUTES: Routes = [
             {
                 path: 'drivers',
                 loadComponent: () => DriversIndexComponent,
-                canActivate: [ProviderGuard],
                 data: { title: 'Tus Conductores', subtitle: 'Consulta y gestiona tus conductores', role: 'ADMIN', providerType: 'transport' },
             },
 
             {
                 path: 'vehicles',
                 loadComponent: () => VehiclesIndexComponent,
-                canActivate: [ProviderGuard],
                 data: { title: 'Tus Vehículos', subtitle: 'Consulta y gestiona tus vehículos', role: 'PROVIDER', providerType: 'transport' },
             },
 
             {
                 path: 'guides',
                 loadComponent: () => GuidesIndexComponent,
-                canActivate: [ProviderGuard],
                 data: { title: 'Tus Guías', subtitle: 'Consulta y gestiona tus guías', role: 'ADMIN', providerType: 'tourism' },
             },
 
             {
                 path: 'guides/create',
                 loadComponent: () => import('../Guides/Create/create.component').then(c => c.GuidesCreateComponent),
-                canActivate: [ProviderGuard],
                 data: { title: 'Nuevo Guía', subtitle: 'Añadir un nuevo guía turístico', role: 'ADMIN', providerType: 'tourism' },
             },
 
             {
                 path: 'guides/:id',
                 loadComponent: () => GuidesShowComponent,
-                canActivate: [ProviderGuard],
                 data: { title: 'Detalle del Guía', subtitle: 'Información detallada del guía turístico', role: 'ADMIN', providerType: 'tourism' },
             },
 

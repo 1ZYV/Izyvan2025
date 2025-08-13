@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DriverData } from '../../../Services/Dashboard/dashboard.service';
+import { DriverData } from '../../../shared/services/Dashboard/dashboard.service';
 
 @Component({
   selector: 'app-top-drivers',

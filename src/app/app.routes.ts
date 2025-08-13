@@ -1,7 +1,5 @@
 import { Routes } from '@angular/router';
 import { ADMIN_ROUTES } from './Pages/Dashboard/admin.routes';
-import { AuthGuard } from './Guards/Auth/auth.guard';
-import { RoleGuard } from './Guards/Auth/role.guard';
 import { UnauthorizedPage } from './Pages/Dashboard/Unauthorized/unauthorize.component';
 import { LoginComponent } from './Pages/Auth/login.component';
 
@@ -19,7 +17,6 @@ export const routes: Routes = [
     {
         path: 'dashboard',
         loadChildren: () => ADMIN_ROUTES,
-        canActivate: [AuthGuard, RoleGuard],
         data: { roles: ['ADMIN', 'AGENCY', 'PROVIDER'] }
     },
 

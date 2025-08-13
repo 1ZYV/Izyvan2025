@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { ActivatedRoute, Router, RouterOutlet } from "@angular/router";
-import { SidebarComponent } from "../../Components/Sidebar/sidebar.component";
+import { SidebarComponent } from "./Sidebar/sidebar.component";
 
 
 @Component({

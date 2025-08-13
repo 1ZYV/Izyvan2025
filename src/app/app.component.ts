@@ -1,6 +1,6 @@
 import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { AuthService } from './Services/Auth/auth.service';
+import { AuthService } from './shared/services/Auth/auth.service';
 import { isPlatformBrowser } from '@angular/common';
 
 @Component({
@@ -27,7 +27,7 @@ export class AppComponent {
     }
 
     // El AuthService ahora maneja automáticamente la restauración de sesión
-    const token = this.authService.getToken();
+    const token = "";
     console.log('AppComponent: Token encontrado:', !!token);
 
     // No hacer redirects aquí, dejar que las rutas y guards manejen la navegación

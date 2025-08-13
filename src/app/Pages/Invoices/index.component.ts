@@ -1,11 +1,11 @@
 import { Component } from "@angular/core";
 
 @Component({
-    selector: "pg-travels-index",
+    selector: "pg-invoices-index",
     templateUrl: "./index.component.html",
     standalone: true,
     imports: [],
 })
-export class TravelsIndexComponent {
+export class InvoicesIndexComponent {
 
 }

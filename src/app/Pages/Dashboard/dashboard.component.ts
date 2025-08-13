@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil, interval, startWith, switchMap } from 'rxjs';
-import { DashboardService, DashboardSummary, TravelMetrics, ServiceMetrics, ChargeMetrics, TopDrivers, MonthlyIncome, DailyTrips } from '../../Services/Dashboard/dashboard.service';
+import { DashboardService, DashboardSummary, TravelMetrics, ServiceMetrics, ChargeMetrics, TopDrivers, MonthlyIncome, DailyTrips } from '../../shared/services/Dashboard/dashboard.service';
 import { OverviewCardsComponent } from '../../Components/Dashboard/OverviewCards/overview-cards.component';
 import { PieChartComponent, PieChartData } from '../../Components/Dashboard/PieChart/pie-chart.component';
 import { LineChartComponent, LineChartData } from '../../Components/Dashboard/LineChart/line-chart.component';
@@ -21,12 +21,12 @@ import { TopDriversComponent } from '../../Components/Dashboard/TopDrivers/top-d
 })
 export class DashboardPage implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
-    
+
     // Estados de carga
     isLoading = true;
     hasError = false;
     errorMessage = '';
-    
+
     // Datos del dashboard
     summary: DashboardSummary | null = null;
     travelMetrics: TravelMetrics | null = null;
@@ -35,37 +35,37 @@ export class DashboardPage implements OnInit, OnDestroy {
     topDrivers: TopDrivers | null = null;
     monthlyIncome: MonthlyIncome | null = null;
     dailyTrips: DailyTrips | null = null;
-    
+
     // Datos formateados para gráficas
     travelChartData: PieChartData[] = [];
     serviceChartData: PieChartData[] = [];
     chargeChartData: PieChartData[] = [];
     monthlyIncomeData: LineChartData[] = [];
     dailyTripsData: LineChartData[] = [];
-    
+
     // Auto-refresh
     autoRefreshEnabled = true;
     refreshInterval = 60000; // 60 segundos
-    
-    constructor(private dashboardService: DashboardService) {}
-    
+
+    constructor(private dashboardService: DashboardService) { }
+
     ngOnInit() {
         this.loadDashboardData();
         this.startAutoRefresh();
     }
-    
+
     ngOnDestroy() {
         this.destroy$.next();
         this.destroy$.complete();
     }
-    
+
     /**
      * Cargar todos los datos del dashboard
      */
     loadDashboardData() {
         this.isLoading = true;
         this.hasError = false;
-        
+
         this.dashboardService.getAllDashboardData()
             .pipe(takeUntil(this.destroy$))
             .subscribe({
@@ -77,7 +77,7 @@ export class DashboardPage implements OnInit, OnDestroy {
                     this.topDrivers = data.topDrivers;
                     this.monthlyIncome = data.monthlyIncome;
                     this.dailyTrips = data.dailyTrips;
-                    
+
                     this.formatChartData();
                     this.isLoading = false;
                 },
@@ -89,7 +89,7 @@ export class DashboardPage implements OnInit, OnDestroy {
                 }
             });
     }
-    
+
     /**
      * Formatear datos para las gráficas
      */
@@ -102,7 +102,7 @@ export class DashboardPage implements OnInit, OnDestroy {
                 color: this.getColorForTravelStatus(item.status)
             }));
         }
-        
+
         // Formatear datos de servicios
         if (this.serviceMetrics) {
             this.serviceChartData = this.serviceMetrics.data.map(item => ({
@@ -111,7 +111,7 @@ export class DashboardPage implements OnInit, OnDestroy {
                 color: this.getColorForServiceStatus(item.status)
             }));
         }
-        
+
         // Formatear datos de cargos
         if (this.chargeMetrics) {
             this.chargeChartData = this.chargeMetrics.data.map(item => ({
@@ -120,7 +120,7 @@ export class DashboardPage implements OnInit, OnDestroy {
                 color: this.getColorForChargeStatus(item.status)
             }));
         }
-        
+
         // Formatear datos de ingresos mensuales
         if (this.monthlyIncome) {
             this.monthlyIncomeData = this.monthlyIncome.data.map(item => ({
@@ -128,7 +128,7 @@ export class DashboardPage implements OnInit, OnDestroy {
                 value: item.amount
             }));
         }
-        
+
         // Formatear datos de viajes diarios
         if (this.dailyTrips) {
             this.dailyTripsData = this.dailyTrips.data.map(item => ({
@@ -137,7 +137,7 @@ export class DashboardPage implements OnInit, OnDestroy {
             }));
         }
     }
-    
+
     /**
      * Iniciar auto-refresh
      */
@@ -168,14 +168,14 @@ export class DashboardPage implements OnInit, OnDestroy {
                 });
         }
     }
-    
+
     /**
      * Refrescar manualmente
      */
     refreshData() {
         this.loadDashboardData();
     }
-    
+
     /**
      * Alternar auto-refresh
      */
@@ -185,7 +185,7 @@ export class DashboardPage implements OnInit, OnDestroy {
             this.startAutoRefresh();
         }
     }
-    
+
     // Métodos para colores de estado
     private getColorForTravelStatus(status: string): string {
         const colors: { [key: string]: string } = {
@@ -196,7 +196,7 @@ export class DashboardPage implements OnInit, OnDestroy {
         };
         return colors[status] || '#6B7280';
     }
-    
+
     private getColorForServiceStatus(status: string): string {
         const colors: { [key: string]: string } = {
             'PENDING': '#F59E0B',     // amber
@@ -207,7 +207,7 @@ export class DashboardPage implements OnInit, OnDestroy {
         };
         return colors[status] || '#6B7280';
     }
-    
+
     private getColorForChargeStatus(status: string): string {
         const colors: { [key: string]: string } = {
             'DRAFT': '#6B7280',       // gray
@@ -216,13 +216,13 @@ export class DashboardPage implements OnInit, OnDestroy {
         };
         return colors[status] || '#6B7280';
     }
-    
+
     /**
      * Obtener cantidad de cargos pendientes
      */
     getPendingChargesCount(): number {
         if (!this.chargeMetrics) return 0;
-        
+
         const pendingCharge = this.chargeMetrics.data.find(item => item.status === 'PENDIENTE');
         return pendingCharge ? pendingCharge.count : 0;
     }

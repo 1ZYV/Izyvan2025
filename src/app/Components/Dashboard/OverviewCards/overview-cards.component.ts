@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DashboardSummary } from '../../../Services/Dashboard/dashboard.service';
+import { DashboardSummary } from '../../../shared/services/Dashboard/dashboard.service';
 
 @Component({
   selector: 'app-overview-cards',
