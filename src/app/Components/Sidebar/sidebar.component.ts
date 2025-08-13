@@ -24,14 +24,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
     items = [
         { label: 'Inicio', link: `${this.baseRoute}/home`, roles: ['ADMIN', 'AGENCY', 'PROVIDER'] as Role[] },
-        { label: 'Viajes', link: `${this.baseRoute}/travels`, roles: ['AGENCY', 'ADMIN'] as Role[] },
-        { label: 'Servicios', link: `${this.baseRoute}/services`, roles: ['PROVIDER', 'ADMIN'] as Role[] },
-        { label: 'Historial', link: `${this.baseRoute}/history`, roles: ['ADMIN', 'AGENCY', 'PROVIDER'] as Role[] },
-        { label: 'Vehículos', link: `${this.baseRoute}/vehicles`, roles: ['ADMIN', 'PROVIDER'] as Role[], providerType: 'transport' as 'transport' | 'tourism' },
-        { label: 'Conductores', link: `${this.baseRoute}/drivers`, roles: ['ADMIN', 'PROVIDER'] as Role[], providerType: 'transport' as 'transport' | 'tourism' },
         { label: 'Guías', link: `${this.baseRoute}/guides`, roles: ['PROVIDER', 'ADMIN'] as Role[], providerType: 'tourism' as 'transport' | 'tourism' },
-        { label: 'Tarifas', link: `${this.baseRoute}/tariffs`, roles: ['PROVIDER', 'ADMIN'] as Role[] },
-        { label: 'Cargos', link: `${this.baseRoute}/invoices`, roles: ['ADMIN', 'AGENCY', 'PROVIDER'] as Role[] },
+        { label: 'Transportistas', link: `${this.baseRoute}/transporters`, roles: ['ADMIN'] as Role[] },
+        { label: 'Agencias', link: `${this.baseRoute}/agencies`, roles: ['ADMIN'] as Role[] }
     ];
 
     constructor() { }

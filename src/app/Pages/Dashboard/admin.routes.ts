@@ -16,6 +16,9 @@ import { GuidesShowComponent } from "../Guides/Show/show.component";
 import { TariffsIndexComponent } from "../Tariffs/Index/index.component";
 import { VehiclesIndexComponent } from "../Vehicles/Index/index.component";
 import { ProviderGuard } from "@/Guards/Auth/provider.guard";
+import { AgenciesIndexComponent } from "../Agencies/index.component";
+import { TransportersIndexComponent } from "../Transporters/index.component";
+import { TransportersShowComponent } from "../Transporters/Show/show.component";
 
 type RouteData = {
     title: string;
@@ -125,6 +128,36 @@ export const ADMIN_ROUTES: Routes = [
                 loadComponent: () => TariffsIndexComponent,
                 data: { title: 'Tus Tarifas', subtitle: 'Consulta y gestiona tus tarifas', role: 'ADMIN' },
             },
+            {
+                path: 'agencies',
+                loadComponent: () => AgenciesIndexComponent,
+                data: { title: 'Tus Agencias', subtitle: 'Consulta y gestiona tus agencias', role: 'ADMIN' },
+            },
+            {
+                path: 'agencies/create',
+                loadComponent: () => import('../Agencies/Create/create.component').then(c => c.AgenciesCreateComponent),
+                data: { title: 'Nueva Agencia', subtitle: 'Añadir una nueva agencia', role: 'ADMIN' },
+            },
+            {
+                path: 'agencies/:id',
+                loadComponent: () => import('../Agencies/Show/show.component').then(c => c.AgenciesShowComponent),
+                data: { title: 'Detalle de Agencia', subtitle: 'Información detallada de la agencia', role: 'ADMIN' },
+            },
+            {
+                path: 'transporters',
+                loadComponent: () => import('../Transporters/index.component').then(c => c.TransportersIndexComponent),
+                data: { title: 'Tus Transportistas', subtitle: 'Consulta y gestiona tus transportistas', role: 'ADMIN' },
+            },
+            {
+                path: 'transporters/create',
+                loadComponent: () => import('../Transporters/Create/create.component').then(c => c.TransportersCreateComponent),
+                data: { title: 'Nuevo Transportista', subtitle: 'Añadir un nuevo transportista', role: 'ADMIN' },
+            },
+            {
+                path: 'transporters/:id',
+                loadComponent: () => import('../Transporters/Show/show.component').then(c => c.TransportersShowComponent),
+                data: { title: 'Detalle de Transportista', subtitle: 'Información detallada del transportista', role: 'ADMIN' },
+            }
 
         ]
     }
