@@ -50,8 +50,8 @@ export class LoginComponent {
 
     // Método para login con credenciales de prueba
     loginAsDemo(): void {
-        this.email = 'demo@example.com';
-        this.password = 'demo123';
+        this.email = 'admin@admin.com';
+        this.password = '123456';
         this.onSubmit();
     }
 }

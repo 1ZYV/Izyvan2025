@@ -1,4 +1,5 @@
-import { Component } from "@angular/core";
+import { UsersService } from "@/Services/Users/users.service";
+import { Component, inject } from "@angular/core";
 
 @Component({
     standalone: true,
@@ -6,4 +7,5 @@ import { Component } from "@angular/core";
     imports: [],
 })
 export class TransportersIndexComponent {
+    usersService = inject(UsersService);
 }
