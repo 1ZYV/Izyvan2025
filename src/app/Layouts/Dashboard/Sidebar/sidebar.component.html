@@ -1,7 +1,6 @@
 <nav class="flex flex-col w-full h-full gap-3 text-white bg-blue-950">
     @for (item of items; track $index) {
-    <a [routerLink]="item.link" class="px-2 py-3 mx-2 my-1 transition rounded-md hover:bg-white/10"
-        [routerLinkActive]="['bg-white/10 text-black']">
+    <a [routerLink]="item.link" class="px-2 py-3 mx-2 my-1 transition rounded-md hover:bg-white/10">
         <span>{{ item.label }}</span>
     </a>
     }

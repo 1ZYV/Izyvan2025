@@ -1,24 +1,32 @@
 <div class="grid grid-cols-2 gap-2 mx-3">
-    <div class="">
+    <div class="flex flex-col items-start justify-start gap-3">
+        @switch (stepTracker()) {
+        @case (0) {
 
+        }
+        @case (1) {}
+        @default {
+        <h2 class="text-lg font-semibold">Crear Viaje</h2>
+        <p class="text-gray-600">Por favor, completa los siguientes pasos para crear un nuevo viaje.</p>
+        }
+        }
     </div>
     <div class="flex flex-col items-center justify-center gap-3">
-        <div class="w-full h-full">
-            <google-map height="400px" width="100%" [options]="mapOptions">
-                <map-marker [position]="originCenter"></map-marker>
-                <map-polyline [path]="polylinePath"></map-polyline>
-                <map-marker [position]="destinationCenter"></map-marker>
-            </google-map>
-        </div>
-        <hr class="w-full border-gray-300">
-        <div class="flex flex-col w-full">
-            <h2 class="text-lg font-semibold">Detalles del servicio</h2>
-            <div class="flex flex-col gap-2">
-                <p class="text-gray-600">Origen: {{ originAddress }}</p>
-                <p class="text-gray-600">Destino: {{ destinationAddress }}</p>
-                <p class="text-gray-600">Fecha: {{ serviceDate | date: 'shortDate' }}</p>
-                <p class="text-gray-600">Hora: {{ serviceTime | date: 'shortTime' }}</p>
-            </div>
+
+        @if (stepTracker()
+        < 2) { <div class="w-full h-full">
+
+            <cp-travel-map />
+    </div>
+    <hr class="w-full border-gray-300">
+    <div class="flex flex-col w-full">
+        <h2 class="text-lg font-semibold">Detalles del servicio</h2>
+        <div class="flex flex-col gap-2">
+            <p class="text-gray-600">Fecha: </p>
+            <p class="text-gray-600">Número de Pasajeros: </p>
+            <p class="text-gray-600">Tipo de vehiculo: </p>
         </div>
     </div>
+    }
+</div>
 </div>

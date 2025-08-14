@@ -1,0 +1,7 @@
+<google-map height="400px" width="100%" [options]="mapOptions">
+    <map-marker [position]="originCenter()"></map-marker>
+    @if (traceMapResults() | async; as results) {
+    <map-directions-renderer [directions]="results"></map-directions-renderer>
+    }
+    <map-marker [position]="destinationCenter()"></map-marker>
+</google-map>
